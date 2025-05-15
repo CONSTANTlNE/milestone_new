@@ -1,0 +1,1 @@
+{{ $row->guard_name }}

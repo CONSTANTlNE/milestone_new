@@ -1,0 +1,193 @@
+<?php
+
+namespace App\Models;
+
+use App\Traits\EscapeUniCodeJson;
+use App\Traits\MenuTrait;
+use App\Traits\MultiTranslatableTrait;
+use App\Traits\SeoTrait;
+use App\Traits\CacheableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Translatable\HasTranslations;
+use App\Models\Seo;
+use Illuminate\Support\Facades\Cache;
+
+class Page extends Model
+{
+    use HasFactory, SoftDeletes, HasTranslations, EscapeUniCodeJson, SeoTrait, MultiTranslatableTrait, MenuTrait, CacheableTrait;
+
+    public $table = 'pages';
+    const CACHE_TTL = 86400; // 1 day
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    protected $fillable = [
+        'parent_id',
+        'title',
+        'slug',
+        'slogan',
+        'links',
+        'content',
+        'videos',
+        'icon',
+        'status',
+        'position',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
+    public array $translatable = [
+        'title',
+        'slug',
+        'links',
+        'slogan',
+        'content',
+    ];
+
+    protected static bool $logFillable = true;
+
+    public function seo(): MorphMany
+    {
+        return $this->morphMany('App\Models\Seo','seoble');
+    }
+
+    public function images()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->orderBy('ord');
+    }
+
+    public function generalImages()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('ord', '<', 1)->orderBy('ord');
+    }
+
+    public function generalImage(): MorphToMany
+    {
+        return $this->morphToMany(File::class, 'fileable')
+            ->withPivot('cover')
+            ->where('ord', '<', 1)
+            ->where('cover', 'general')
+            ->orderBy('ord');
+    }
+
+    public function coverStatusImages()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('ord', '>', 0)->orderBy('ord');
+    }
+
+    public function allImages()
+    {
+        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('ord', '>', 0)->orderBy('ord');
+    }
+
+    public function folders()
+    {
+        return $this->morphToMany(Folder::class, 'folderable');
+    }
+
+    public function mainImage()
+    {
+        return $this->morphToMany(File::class, 'fileable');
+    }
+
+    public function parent(){
+        return $this->hasMany('App\Models\Page','parent_id','id')->orderBy('position','desc')->get();
+    }
+
+    public function rowParent(){
+        return  $this->belongsTo('App\Models\Page','parent_id');
+    }
+
+    public function mainPdfShow()
+    {
+        $general = Cache::remember('mainPdfShowPage'.$this->id, self::CACHE_TTL, function (){
+            return $this->coverStatusImages()->where('type', 'document')->get();
+        });
+
+        if(is_object($general))
+        {
+            return $general;
+        }else{
+            $file_first = Cache::remember('file_first', self::CACHE_TTL, function (){
+                return File::first();
+            });
+            return $file_first;
+        }
+    }
+
+    public function mainImageShowLast()
+    {
+        $general = $this->allImages()->latest()->first();
+
+        if(is_object($general))
+        {
+            return $general;
+        }else{
+            $file_first = Cache::remember('file_first', self::CACHE_TTL, function (){
+                return File::first();
+            });
+            return $file_first;
+        }
+    }
+
+    public function mainImageShow()
+    {
+        $general = Cache::remember('generalPage'.$this->id, self::CACHE_TTL, function (){
+            return $this->generalImages()->first();
+        });
+
+        if(is_object($general))
+        {
+            return $general;
+        }else{
+            $file_first = Cache::remember('file_first', self::CACHE_TTL, function (){
+                return File::first();
+            });
+            return $file_first;
+        }
+    }
+
+    public function statusImageShow($status)
+    {
+        $general = Cache::remember('statusImageShowPage'.$this->id.'-'.$status, self::CACHE_TTL, function () use($status){
+            return $this->images()->where('cover', $status)->first();
+        });
+        if(is_object($general))
+        {
+            return $general->src;
+        }else{
+            return image_file_path($this->generalImage, '1200x630');
+        }
+    }
+
+    public function defaultImageShow()
+    {
+        $general = Cache::remember('defaultImageShowPage'.$this->id, self::CACHE_TTL, function (){
+            return $this->coverStatusImages()->where('cover', 'default')->get();
+        });
+
+        if(is_object($general))
+        {
+            return $general;
+        }else{
+            $file_first = Cache::remember('file_first', self::CACHE_TTL, function (){
+                return File::first();
+            });
+            return $file_first;
+        }
+    }
+
+    public static function getNextPosition()
+    {
+        return static::max('position') !== null ? static::max('position') + 1 : 1;
+    }
+}

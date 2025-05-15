@@ -1,0 +1,113 @@
+@media (max-width: 767px) {
+    .hidden-mobile {
+        display: none !important;
+    }
+}
+.sharing a {
+    margin-right:0;
+}
+.hidden-mobile {
+    position:relative;
+    z-index:99;
+}
+@font-face {
+    font-family: 'BPG Banner ExtraSquare Caps';
+    src: url('../fonts/BPGBannerExtraSquareCaps.eot');
+    src: url('../fonts/BPGBannerExtraSquareCaps.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/BPGBannerExtraSquareCaps.woff2') format('woff2'),
+    url('../fonts/BPGBannerExtraSquareCaps.woff') format('woff'),
+    url('../fonts/BPGBannerExtraSquareCaps.ttf') format('truetype'),
+    url('../fonts/BPGBannerExtraSquareCaps.svg#BPGBannerExtraSquareCaps') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'DejaVu Sans';
+    src: url('../fonts/DejaVuSans.eot');
+    src: url('../fonts/DejaVuSans.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/DejaVuSans.woff2') format('woff2'),
+    url('../fonts/DejaVuSans.woff') format('woff'),
+    url('../fonts/DejaVuSans.ttf') format('truetype'),
+    url('../fonts/DejaVuSans.svg#DejaVuSans') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+body {
+    font-family: 'DejaVu Sans', serif;
+}
+header .navbar-collapse .nav a,
+main .post-block .post-header h3,
+header .top-line .top-menu li a,
+main .right-wrapper .post-block.type-1 .post-header a {
+    font-family: 'BPG Banner ExtraSquare Caps', serif;
+}
+.menu-top-side {
+    width: auto !important;
+    float: left;
+}
+.top-menu {
+    position:relative;
+    z-index:9999
+}
+header .top-line .search {
+    margin:0 !important;
+}
+blockquote {
+    font-size: 1em;
+    background-color: #f3f5f8;
+    color: #000;
+    border-left: 4px solid #bb1919;
+    padding: 20px;
+    border-radius: 0;
+}
+main .post-block.type-1 ul li .post-tools .judgement .txt {
+    margin:0;
+    text-align:left;
+    top: 2px;
+}
+.judgement .truth-progress i {
+    padding: 1px 4px;
+}
+main .right-wrapper .post-block.type-1 .post-info h3 {
+    height: 53px;
+    margin: 0;
+    line-height: 1.4;
+}
+main .post-block.type-1 ul li a,
+main .post-block.type-1 ul li h3 a {
+    overflow: visible;
+}
+.nav-block .brand h1 img{
+    position: relative;
+    z-index: 999;
+}
+.nav-block .database{
+    position: relative;z-index: 99;
+}
+/*footer*/
+.footer-wrapper .brand-logo{
+    float: left;
+}
+.footer-wrapper .brand-logo h1{
+    margin: 0px;
+}
+.footer-wrapper .brand-logo h1 img{
+    width: 80%;
+}
+
+.footer-wrapper .cr_by{
+    display: flex;
+    gap: 3px;
+    justify-content: right;
+    margin-top: 13px;
+}
+
+.footer-wrapper .cr_by a{
+    display: block;
+}
+footer .footer-content .note-place .logo-items div {
+    display: inline-block;
+    margin-right: 12px;
+}
