@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->char('uuid', 36)->unique();
-            $table->uuid('src');
-            $table->string('title')->nullable();
-            $table->integer('width');
-            $table->integer('height');
-            $table->enum('type', ['image', 'document', 'video']);
+            $table->uuid('uuid')->unique();
+            $table->string('src');
+            $table->string('title')->nullable()->index();
+            $table->integer('width')->nullable();
+            $table->integer('height')->nullable();
+            $table->enum('type', ['image', 'document', 'video'])->index();
             $table->string('extension', 10)->default('webp');
-            $table->string('caption');
-            $table->string('video_id')->nullable();
+            $table->string('caption')->nullable();
+            $table->string('video_id')->nullable()->index();
             $table->timestamps();
             $table->softDeletes();
+            $table->index('deleted_at');
         });
     }
 

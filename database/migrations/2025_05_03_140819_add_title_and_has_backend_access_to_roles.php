@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::table('roles', function (Blueprint $table) {
             $table->json('title');
-            $table->boolean('has_backend_access')->default(true);
+            $table->boolean('has_backend_access')->default(true)->index();
             $table->softDeletes();
+            $table->index('deleted_at');
         });
     }
 

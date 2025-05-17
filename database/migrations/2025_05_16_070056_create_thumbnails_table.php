@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('folderables', function (Blueprint $table) {
+        Schema::create('thumbnails', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('folder_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('file_id')->constrained()->cascadeOnDelete();
-            $table->unsignedBigInteger('folderable_id');
-            $table->string('folderable_type');
-            $table->timestamps();
-            $table->unique(['folder_id', 'folderable_id', 'folderable_type']);
-        });
+            $table->uuid('uuid')->unique();
+            $table->string('src');
+            $table->string('title')->nullable()->index();
+            $table->integer('width')->nullable();
+            $table->integer('height')->nullable();
 
+            $table->foreignId('file_id')->constrained()->cascadeOnDelete();
+            $table->softDeletes();
+            $table->index('deleted_at');
+        });
     }
 
     /**
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('folderables');
+        Schema::dropIfExists('thumbnails');
     }
 };

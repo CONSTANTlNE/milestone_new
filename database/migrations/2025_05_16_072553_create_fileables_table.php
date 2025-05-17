@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('fileables', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('file_id')->constrained()->cascadeOnDelete();
-            $table->integer('order')->default(0);
+            $table->unsignedBigInteger('fileable_id');
             $table->string('fileable_type');
-            $table->enum('cover', ['general', 'image', 'document', 'video'])->default('general');
+            $table->enum('cover', ['general','slider','social','default'])->default('default')->index();
+            $table->unsignedInteger('position')->default(0)->index();
             $table->timestamps();
+
+            $table->primary(['file_id', 'fileable_id', 'fileable_type'], 'fileables_primary');
+            $table->index(['fileable_id', 'fileable_type']);
         });
     }
 
