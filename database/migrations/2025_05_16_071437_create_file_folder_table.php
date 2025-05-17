@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->softDeletes();
-            $table->index('deleted_at');
+        Schema::create('file_folder', function (Blueprint $table) {
+            $table->foreignId('folder_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('file_id')->constrained()->cascadeOnDelete();
+            $table->primary(['folder_id', 'file_id']);
         });
     }
 
@@ -22,8 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('deleted_at');
-        });
+        Schema::dropIfExists('file_folder');
     }
 };

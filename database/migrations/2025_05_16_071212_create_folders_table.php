@@ -14,11 +14,12 @@ return new class extends Migration
         Schema::create('folders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('_lft')->default(0);
-            $table->unsignedBigInteger('_rgt')->default(0);
-            $table->unsignedBigInteger('parent_id');
+            $table->nestedSet(); // _lft, _rgt, parent_id
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('deleted_at');
+            $table->index('parent_id');
         });
     }
 

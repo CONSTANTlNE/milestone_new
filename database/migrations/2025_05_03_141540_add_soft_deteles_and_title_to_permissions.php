@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('permissions', function (Blueprint $table) {
             $table->json('title');
             $table->softDeletes();
+            $table->index('deleted_at');
         });
     }
 
