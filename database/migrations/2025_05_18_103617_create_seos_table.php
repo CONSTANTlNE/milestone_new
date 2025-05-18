@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('seos', function (Blueprint $table) {
             $table->id();
-            $table->json('title');
-            $table->json('slug');
-            $table->boolean('status')->default(true)->index();
-            $table->integer('position')->nullable()->index();
+            $table->json('seoTitles')->nullable();
+            $table->json('seoKeywords')->nullable();
+            $table->json('seoDescriptions')->nullable();
+            $table->morphs('model'); // Adds model_id, model_type, and index
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('seos');
     }
 };

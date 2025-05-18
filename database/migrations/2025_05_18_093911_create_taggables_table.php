@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('taggables', function (Blueprint $table) {
             $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
-            $table->morphs('taggable'); // `taggable_id` (unsignedBigInteger) and `taggable_type` (string), both indexed
-            $table->unique(['tag_id', 'taggable_id', 'taggable_type']);
+            $table->morphs('model'); // `model_id` (unsignedBigInteger) and `model_type` (string), both indexed
+            $table->unique(['tag_id', 'model_id', 'model_type']);
 
             $table->index('tag_id');
         });

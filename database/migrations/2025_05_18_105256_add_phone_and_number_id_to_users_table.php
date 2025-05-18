@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
-            $table->id();
-            $table->json('title');
-            $table->json('slug');
-            $table->boolean('status')->default(true)->index();
-            $table->integer('position')->nullable()->index();
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('phone', 50)->nullable()->index();
+            $table->integer('number')->nullable()->index();
         });
     }
 
@@ -26,6 +22,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tags');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn([
+                'phone',
+                'number'
+            ]);
+        });
     }
 };

@@ -11,13 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('faqs', function (Blueprint $table) {
             $table->id();
             $table->json('title');
             $table->json('slug');
+            $table->json('content');
+            $table->string('src')->nullable();
             $table->boolean('status')->default(true)->index();
-            $table->integer('position')->nullable()->index();
+            $table->integer('position')->default(0)->index();
             $table->timestamps();
+            $table->softDeletes();
+            $table->index('deleted_at');
         });
     }
 
@@ -26,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('faqs');
     }
 };
