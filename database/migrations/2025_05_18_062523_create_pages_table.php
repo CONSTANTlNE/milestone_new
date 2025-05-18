@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('locales', function (Blueprint $table) {
+        Schema::create('pages', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 30)->index();
-            $table->string('native', 50)->index();
-            $table->string('regional', 30)->nullable()->index();
-            $table->string('script', 20)->nullable();
-            $table->string('code', 2)->unique();
-            $table->boolean('status')->default(false)->index();
-            $table->boolean('default')->default(false)->index();
+            $table->bigInteger('parent_id')->nullable()->index();
+            $table->json('title');
+            $table->json('slug');
+            $table->json('slogan')->nullable();
+            $table->json('content')->nullable();
+            $table->boolean('status')->default(true)->index();
             $table->string('src')->nullable();
-
             $table->timestamps();
             $table->softDeletes();
             $table->index('deleted_at');
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('locales');
+        Schema::dropIfExists('pages');
     }
 };

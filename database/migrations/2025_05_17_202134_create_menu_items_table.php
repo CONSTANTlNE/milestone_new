@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('menu_id')->constrained()->cascadeOnDelete();
             $table->json('title');
             $table->json('slug');
-            $table->integer('status')->default(1)->index();
+            $table->boolean('status')->default(true)->index();
             $table->string('route')->nullable();
-            $table->integer('is_prefix')->default(1)->index();
+            $table->boolean('is_prefix')->default(true)->index();
             $table->unsignedBigInteger('parent_id')->nullable()->index();
             $table->integer('sort')->default(0)->index();
             $table->integer('depth')->default(0)->index();
