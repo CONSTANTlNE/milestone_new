@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscribers', function (Blueprint $table) {
+        Schema::create('promocodes', function (Blueprint $table) {
             $table->id();
-            $table->string('email', 100)->unique();
+            $table->string('codes');
+            $table->boolean('status')->default(true)->index();
+            $table->unsignedInteger('percent')->default(0)->index();
+            $table->datetime('start');
+            $table->datetime('end');
+            $table->json('brand_id')->nullable();
             $table->timestamps();
-            $table->softDeletes();
-            $table->index('deleted_at');
         });
     }
 
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscribers');
+        Schema::dropIfExists('promocodes');
     }
 };
