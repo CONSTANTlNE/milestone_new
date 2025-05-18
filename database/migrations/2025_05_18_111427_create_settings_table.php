@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
+            $table->json('title');
+            $table->json('working_hours')->nullable();
+            $table->json('address')->nullable();
+            $table->string('phone')->nullable()->index();
+            $table->string('email')->nullable()->index();
+            $table->string('send_email')->nullable()->index();
+            $table->integer('number_product_page')->nullable()->index();
+            $table->string('lat')->nullable()->index();
+            $table->string('lng')->nullable()->index();
+            $table->text('g_map')->nullable()->index();
+            $table->text('g_analytics')->nullable()->index();
+            $table->string('fb_id')->nullable()->index();
             $table->timestamps();
         });
     }

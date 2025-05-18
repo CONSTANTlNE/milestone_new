@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscribers', function (Blueprint $table) {
+        Schema::create('usercodes', function (Blueprint $table) {
             $table->id();
-            $table->string('email', 100)->unique();
+            $table->json('title');
+            $table->string('code')->index();
+            $table->unsignedInteger('promocode_id')->index();
+            $table->unsignedInteger('user_id')->index();
             $table->timestamps();
-            $table->softDeletes();
-            $table->index('deleted_at');
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscribers');
+        Schema::dropIfExists('usercodes');
     }
 };

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscribers', function (Blueprint $table) {
-            $table->id();
-            $table->string('email', 100)->unique();
-            $table->timestamps();
-            $table->softDeletes();
-            $table->index('deleted_at');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('google_id', 50)->nullable()->after('facebook_id');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscribers');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('google_id');
+        });
     }
 };
