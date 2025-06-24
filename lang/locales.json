@@ -1,14 +1,14 @@
 {
-    "en": {
-        "name": "English",
-        "script": "Latn",
-        "native": "English",
-        "regional": "en_GB"
-    },
     "ka": {
         "name": "Georgian",
         "script": "Geor",
         "native": "ქართული",
         "regional": "ka_GE"
+    },
+    "en": {
+        "name": "English",
+        "script": "Latn",
+        "native": "English",
+        "regional": "en_GB"
     }
 }

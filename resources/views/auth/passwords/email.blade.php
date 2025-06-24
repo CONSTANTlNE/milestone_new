@@ -1,47 +1,46 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Reset Password') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    <form method="POST" action="{{ route('password.email') }}">
-                        @csrf
-
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
-                                @error('email')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Send Password Reset Link') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+@extends('auth.layout')
+{{--'სისტემაში შესვლა'--}}
+@section('title', __('config.reset_email_title'))
+{{--გამარჯობა! სისტემაში შესასვლელათ გამოიყენეთ სწრაფი შესვლა google-ის ავტორიზაციით ან შეიყვანეთ თქვენი ელ-ფოსტა და პაროლი.--}}
+@section('content', __('config.reset_email_text'))
+@section('form')
+    @if (session('status'))
+        <div class="alert alert-success" role="alert">
+            {{ session('status') }}
+        </div>
+    @endif
+    <form method="POST" action="{{ route('password.email') }}">
+        @csrf
+        <div class="grid grid-cols-12 gap-y-4">
+            <div class="xl:col-span-12 col-span-12 mt-0">
+                <label for="reset-email" class="form-label text-default">{{ __('config.your_email') }}</label>
+                <input
+                    id="reset-email"
+                    type="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    required
+                    autofocus
+                    autocomplete="email"
+                    class="form-control form-control-lg w-full rounded-md @error('email') is-invalid @enderror"
+                    placeholder="{{ __('config.email') }}"
+                >
+                @error('email')
+                <span class="invalid-feedback text-red-500 text-sm w-full" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+            <div class="xl:col-span-12 col-span-12 grid mt-2">
+                <button type="submit" class="ti-btn ti-btn-lg bg-primary text-white font-medium w-full dark:border-defaultborder/10">
+                    {{ __('config.send_password_reset_link') }}
+                </button>
             </div>
         </div>
+    </form>
+    <div class="text-center">
+        <p class="text-[0.75rem] text-[#8c9097] dark:text-white/50 mt-4">
+            <a href="{{ route('login') }}" class="text-primary">{{ __('config.admin_panel_login') }}</a>
+        </p>
     </div>
-</div>
 @endsection

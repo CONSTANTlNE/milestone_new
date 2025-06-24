@@ -18,23 +18,22 @@ class CheckUserRole
      */
     public function handle($request, Closure $next): mixed
     {
-        if (Auth::check()) {
+        if (!Auth::check()) {
+            return redirect('/');
+        }
 
-//            if (!Cache::has('UserHasBackendAccess')){
+        $role = Auth::user()->roles()->first();
+
+        if ($role && $role->has_backend_access) {
+            return $next($request);
+        }
+
+        return redirect('/');
+        //            if (!Cache::has('UserHasBackendAccess')){
 //                $hasBackendAccess = Cache::remember('UserHasBackendAccess', 60*60*24, function (){
 //                    return Auth::user()->roles()->where('has_backend_access', 1)->first();
 //                });
 //            }else{
 //            }
-            $hasBackendAccess = Auth::user()->roles()->first();
-            if ($hasBackendAccess->has_backend_access) {
-                return $next($request);
-            } else {
-                return redirect('/');
-            }
-        } else {
-            return redirect('/');
-        }
-        //return $next($request);
     }
 }

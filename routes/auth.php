@@ -31,11 +31,14 @@ use Laravel\Fortify\RoutePath;
 |
 */
 
-Route::group([
-    'prefix' => LaravelLocalization::setLocale(),
-    'middleware' => ['web', 'localizeValidations', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath'],
-], function () {
-    $enableViews = config('fortify.views', true);
+Route::group(
+    [
+        'prefix' => LaravelLocalization::setLocale() . '/customer',
+        'middleware' => ['web', 'localizeValidations', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath'],
+        'as' => 'frontend.auth.'
+    ], function()
+{
+    $enableViews = config('fortify.views_customers', true);
 
     // Authentication...
     if ($enableViews) {
@@ -45,10 +48,83 @@ Route::group([
     }
 
     $limiter = config('fortify.limiters.login');
-    $twoFactorLimiter = config('fortify.limiters.two-factor');
     $verificationLimiter = config('fortify.limiters.verification', '6,1');
 
     Route::post(RoutePath::for('login', '/login'), [AuthenticatedSessionController::class, 'store'])
+        ->middleware(array_filter([
+            'guest:' . config('fortify.guard'),
+            $limiter ? 'throttle:' . $limiter : null,
+        ]))->name('login.store');
+
+    Route::post(RoutePath::for('logout', '/logout'), [AuthenticatedSessionController::class, 'destroy'])
+        ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
+        ->name('logout');
+
+    // Password Reset...
+    if (feature_enabled_for_customer(Features::resetPasswords())) {
+        Route::get(RoutePath::for('password.request', '/forgot-password'), [PasswordResetLinkController::class, 'create'])
+            ->middleware(['guest:' . config('fortify.guard')])
+            ->name('password.request');
+
+        Route::get(RoutePath::for('password.reset', '/reset-password/{token}'), [NewPasswordController::class, 'create'])
+            ->middleware(['guest:' . config('fortify.guard')])
+            ->name('password.reset');
+
+        Route::post(RoutePath::for('password.email', '/forgot-password'), [PasswordResetLinkController::class, 'store'])
+            ->middleware(['guest:' . config('fortify.guard')])
+            ->name('password.email');
+
+        Route::post(RoutePath::for('password.update', '/reset-password'), [NewPasswordController::class, 'store'])
+            ->middleware(['guest:' . config('fortify.guard')])
+            ->name('password.update');
+    }
+
+    // Registration...
+    if (feature_enabled_for_customer(Features::registration())) {
+        Route::get(RoutePath::for('register', '/register'), [RegisteredUserController::class, 'create'])
+            ->middleware(['guest:' . config('fortify.guard')])
+            ->name('register');
+
+        Route::post(RoutePath::for('register', '/register'), [RegisteredUserController::class, 'store'])
+            ->middleware(['guest:' . config('fortify.guard')])
+            ->name('register.store');
+    }
+
+    // Email Verification...
+    if (feature_enabled_for_customer(Features::emailVerification())) {
+        Route::get(RoutePath::for('verification.notice', '/email/verify'), [EmailVerificationPromptController::class, '__invoke'])
+            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
+            ->name('verification.notice');
+
+        Route::get(RoutePath::for('verification.verify', '/email/verify/{id}/{hash}'), [VerifyEmailController::class, '__invoke'])
+            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard'), 'signed', 'throttle:' . $verificationLimiter])
+            ->name('verification.verify');
+
+        Route::post(RoutePath::for('verification.send', '/email/verification-notification'), [EmailVerificationNotificationController::class, 'store'])
+            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard'), 'throttle:' . $verificationLimiter])
+            ->name('verification.send');
+    }
+});
+
+Route::group(
+    [
+        'prefix' => LaravelLocalization::setLocale(),
+        'middleware' => ['web', 'localizeValidations', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath'],
+    ], function()
+{
+    $enableViews = config('fortify.views', true);
+    $limiter = config('fortify.limiters.login');
+    $twoFactorLimiter = config('fortify.limiters.two-factor');
+    $verificationLimiter = config('fortify.limiters.verification', '6,1');
+
+    // Authentication...
+    if ($enableViews) {
+        Route::get(RoutePath::for('login721', '/login721'), [AuthenticatedSessionController::class, 'create'])
+            ->middleware(['guest:' . config('fortify.guard')])
+            ->name('login');
+    }
+
+    Route::post(RoutePath::for('login721', '/login721'), [AuthenticatedSessionController::class, 'store'])
         ->middleware(array_filter([
             'guest:' . config('fortify.guard'),
             $limiter ? 'throttle:' . $limiter : null,
@@ -123,22 +199,22 @@ Route::group([
             ->name('user-password.update');
     }
 
-    // Password Confirmation...
-    if ($enableViews) {
-        Route::get(RoutePath::for('password.confirm', '/user/confirm-password'), [ConfirmablePasswordController::class, 'show'])
+        // Password Confirmation...
+        if ($enableViews) {
+            Route::get(RoutePath::for('password.confirm', '/user/confirm-password'), [ConfirmablePasswordController::class, 'show'])
+                ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
+                ->name('password.confirm');
+        }
+
+        Route::get(RoutePath::for('password.confirmation', '/user/confirmed-password-status'), [ConfirmedPasswordStatusController::class, 'show'])
             ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
-            ->name('password.confirm');
-    }
+            ->name('password.confirmation');
 
-    Route::get(RoutePath::for('password.confirmation', '/user/confirmed-password-status'), [ConfirmedPasswordStatusController::class, 'show'])
-        ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
-        ->name('password.confirmation');
+        Route::post(RoutePath::for('password.confirm', '/user/confirm-password'), [ConfirmablePasswordController::class, 'store'])
+            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
+            ->name('password.confirm.store');
 
-    Route::post(RoutePath::for('password.confirm', '/user/confirm-password'), [ConfirmablePasswordController::class, 'store'])
-        ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
-        ->name('password.confirm.store');
-
-    // Two Factor Authentication...
+    // Two-Factor Authentication...
     if (Features::enabled(Features::twoFactorAuthentication())) {
         if ($enableViews) {
             Route::get(RoutePath::for('two-factor.login', '/two-factor-challenge'), [TwoFactorAuthenticatedSessionController::class, 'create'])

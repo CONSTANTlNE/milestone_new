@@ -116,6 +116,7 @@ return [
 
     'limiters' => [
         'login' => 'login',
+        'login721' => 'login721',
         'two-factor' => 'two-factor',
     ],
 
@@ -132,6 +133,8 @@ return [
 
     'views' => true,
 
+    'views_customers' => true,
+
     /*
     |--------------------------------------------------------------------------
     | Features
@@ -143,17 +146,37 @@ return [
     |
     */
 
+    'view_paths' => [
+        '' => 'auth',
+        'customer' => 'frontend.auth',
+    ],
+
+    'two-factor-authentication' => false,
+
     'features' => [
         Features::registration(),
-        Features::resetPasswords(),
-        // Features::emailVerification(),
-        Features::updateProfileInformation(),
-        Features::updatePasswords(),
-        Features::twoFactorAuthentication([
-            'confirm' => true,
-            'confirmPassword' => true,
-            // 'window' => 0,
-        ]),
+//        Features::resetPasswords(),
+//        Features::emailVerification(),
+//        Features::updateProfileInformation(),
+//        Features::updatePasswords(),
+//        Features::twoFactorAuthentication([
+//            'confirm' => true,
+//            'confirmPassword' => true,
+//            // 'window' => 0,
+//        ]),
+    ],
+
+    'feature_customers' => [
+        Features::registration(),
+//        Features::resetPasswords(),
+//        Features::emailVerification(),
+//        Features::updateProfileInformation(),
+//        Features::updatePasswords(),
+//        Features::twoFactorAuthentication([
+//            'confirm' => true,
+//            'confirmPassword' => true,
+//            // 'window' => 0,
+//        ]),
     ],
 
 ];
