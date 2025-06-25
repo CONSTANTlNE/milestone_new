@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Middleware\CheckUserRole;
+use App\Http\Middleware\CheckAdminUserRole;
 use App\Http\Middleware\LaravelLocalizationValidations;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -10,6 +10,9 @@ use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect;
 use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
+use Laravel\Fortify\Fortify;
+
+Fortify::ignoreRoutes();
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,14 +20,14 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         then: function () {
-            require base_path('routes/auth.php');
             require base_path('routes/admin.php');
+            require base_path('routes/customer.php');
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             /**** OTHER MIDDLEWARE ALIASES ****/
-            'backend'                 => CheckUserRole::class,
+            'backend'                 => CheckAdminUserRole::class,
             'localizeValidations'     => LaravelLocalizationValidations::class,
             'localize'                => LaravelLocalizationRoutes::class,
             'localizationRedirect'    => LaravelLocalizationRedirectFilter::class,

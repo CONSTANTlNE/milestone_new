@@ -21,7 +21,7 @@ return new class extends Migration
             $table->boolean('status')->default(false)->index();
             $table->boolean('default')->default(false)->index();
             $table->string('src')->nullable();
-
+            $table->integer('position')->default(0)->index();
             $table->timestamps();
             $table->softDeletes();
             $table->index('deleted_at');

@@ -4,8 +4,25 @@ import laravel from 'laravel-vite-plugin';
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['public/css/app.css', 'public/js/app.js'],
+            input: [
+                'public/css/app.css',
+                'public/js/app.js',
+                'public/css/admin-app.css',
+                'public/js/admin-app.js',
+                'public/css/error-app.css',
+                'public/js/error-app.js',
+                'public/css/auth-app.css',
+                'public/js/auth-app.js',
+            ],
             refresh: true,
         }),
     ],
+    build: {
+        rollupOptions: {
+
+        },
+        commonjsOptions: {
+          transformMixedEsModules: true,
+        }
+    }
 });

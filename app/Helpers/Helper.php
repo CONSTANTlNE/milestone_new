@@ -11,6 +11,14 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use Laravel\Fortify\Features;
+
+if (! function_exists('feature_enabled_for_customer')) {
+    function feature_enabled_for_customer($feature): bool
+    {
+        return in_array($feature, config('fortify.feature_customers', []));
+    }
+}
 
 if (!function_exists('image_file_path')) {
     /**

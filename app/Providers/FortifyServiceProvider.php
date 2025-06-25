@@ -2,16 +2,20 @@
 
 namespace App\Providers;
 
+use App\Actions\Fortify\CreateNewCustomer;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Contracts\ConfirmPasswordViewResponse;
+use Illuminate\Http\Response;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -20,7 +24,6 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
     }
 
     /**
@@ -29,27 +32,44 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Fortify::ignoreRoutes();
+        $prefix = request()->segment(2);
 
-        Fortify::createUsersUsing(CreateNewUser::class);
-        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
-        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
-        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        if ( $prefix == 'customer') {
+            Config::set('fortify.guard', 'customers');
+            Fortify::createUsersUsing(CreateNewCustomer::class);
+        } else {
+            Config::set('fortify.guard', 'web');
+            Fortify::createUsersUsing(CreateNewUser::class);
+        }
 
-        RateLimiter::for('login', function (Request $request) {
+//        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
+//        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
+//        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+
+        RateLimiter::for('login721', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
-
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        RateLimiter::for('login', function (Request $request) {
+            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
+            return Limit::perMinute(5)->by($throttleKey);
         });
 
-        Fortify::loginView(fn () => view('auth.login'));
-        Fortify::registerView(fn () => view('auth.register'));
-        Fortify::requestPasswordResetLinkView(fn () => view('auth.passwords.email'));
-        Fortify::resetPasswordView(fn ($request) => view('auth.passwords.reset', ['request' => $request]));
 
+//        RateLimiter::for('two-factor', function (Request $request) {
+//            return Limit::perMinute(5)->by($request->session()->get('login.id'));
+//        });
+
+        $viewPath = config("fortify.view_paths.$prefix", 'auth');
+
+        Fortify::loginView(fn() => view("$viewPath.login"));
+        Fortify::registerView(fn() => view("$viewPath.register"));
+        Fortify::requestPasswordResetLinkView(fn() => view("$viewPath.passwords.email"));
+        Fortify::resetPasswordView(fn($request) => view("$viewPath.passwords.reset", [
+            'request' => $request,
+            'token' => $request->route('token'),
+        ]));
 
 //        Fortify::loginView(fn () => view('auth.login'));
 //        Fortify::registerView(fn () => view('auth.register'));

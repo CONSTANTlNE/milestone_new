@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('roles', function (Blueprint $table) {
-            $table->json('title');
+            $table->jsonb('title');
             $table->boolean('has_backend_access')->default(true)->index();
             $table->softDeletes();
             $table->index('deleted_at');

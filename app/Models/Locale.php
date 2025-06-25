@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 class Locale extends Model
 {
-    use SoftDeletes, EscapeUniCodeJson;
+    use SoftDeletes;
 
     public $table = 'locales';
 

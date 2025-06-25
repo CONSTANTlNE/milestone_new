@@ -21,7 +21,7 @@ class DashboardController extends Controller
 //        $verdicts = Verdict::count();
 //        $data = Data::count();
 //        return view('backend.index', compact('users', 'subscribers', 'articles', 'persons', 'verdicts', 'data'));
-        return view('backend.index');
+        return view('backend.dashboard.index');
 
     }
 

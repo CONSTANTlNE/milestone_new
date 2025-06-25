@@ -3,6 +3,7 @@
 namespace App\Http\Responses;
 
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -12,18 +13,14 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request): Response|RedirectResponse
     {
-        $locale = LaravelLocalization::getCurrentLocale();
-//        $user = $request->user();
-//
-//        if ($user->hasRole('admin')) {
-//            $redirect = "/$locale/backend/dashboard";
-//        } elseif ($user->hasRole('editor')) {
-//            $redirect = "/$locale/editor";
-//        } else {
-//            $redirect = "/$locale/user/home";
-//        }
-        $redirect = "/$locale/backend";
+        if (Auth::guard('customers')->check()) {
+            return redirect()->route('frontend.customers.index');
+        }
 
-        return redirect()->intended($redirect);
+        if (Auth::guard('web')->check()) {
+            return redirect()->route('backend.index');
+        }
+
+        return redirect()->route('frontend.index');
     }
 }

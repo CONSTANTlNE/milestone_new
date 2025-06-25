@@ -1,38 +1,8 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-100">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>{{ __('site title') }}</title>
-    <meta content="{{ __('site title') }}" name="description" />
-    <meta content="boris barabadze" name="author" />
-    <!-- Favicon icon -->
-    <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <!-- App favicon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon.png') }}">
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-</head>
-<body class="h-100">
-    <div class="authincation h-100">
-        <div class="container h-100">
-            <div class="row justify-content-center h-100 align-items-center">
-            <div class="col-md-5">
-                <div class="form-input-content text-center error-page">
-                    <h1 class="error-text font-weight-bold">404</h1>
-                    <h4><i class="fa fa-exclamation-triangle text-warning"></i> The page you were looking for is not found!</h4>
-                    <p>You may have mistyped the address or the page may have moved.</p>
-                    <div>
-                        <a class="btn btn-primary" href="/">Back to Home</a>
-                    </div>
-                </div>
-            </div>
-            </div>
-        </div>
-    </div>
-<script src="{{ asset('vendor/global/global.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('vendor/bootstrap-select/dist/js/bootstrap-select.min.js') }}" type="text/javascript"></script>
-<script src="{{ asset('js/deznav-init.js') }}" type="text/javascript"></script>
-</body>
+@extends('errors.layout')
 
-</html>
+@section('code', '404')
+@section('error-message', __('errors.page_not_found'))
+@section('message', __('errors.message_404'))
+@section('link')
+	<a href="{{ route('frontend.index') }}" class="ti-btn bg-primary text-white font-semibold font-second-geo"><i class="ri-arrow-left-line align-middle inline-block"></i>{{ __('errors.back_to_home')}}</a>
+@endsection
