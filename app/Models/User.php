@@ -17,7 +17,7 @@ use Spatie\Translatable\HasTranslations;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles, HasTranslations, SoftDeletes;
+    use HasFactory, Notifiable, HasRoles, EscapeUniCodeJson, HasTranslations, SoftDeletes;
 
     protected $table = 'users';
     const CACHE_TTL = 86400; // 1 day
@@ -62,6 +62,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'title' => 'array',
     ];
 
     public function toSearchableArray(): array

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('colors', function (Blueprint $table) {
             $table->id();
-            $table->json('title');
+            $table->jsonb('title');
             $table->boolean('status')->default(true)->index();
             $table->timestamps();
             $table->softDeletes();

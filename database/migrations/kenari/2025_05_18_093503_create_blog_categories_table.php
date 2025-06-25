@@ -11,8 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('permissions', function (Blueprint $table) {
+        Schema::create('blog_categories', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('parent_id')->nullable()->index();
             $table->jsonb('title');
+            $table->jsonb('slug');
+            $table->jsonb('content');
+            $table->boolean('status')->default(true)->index();
+            $table->string('src')->nullable();
+            $table->timestamps();
             $table->softDeletes();
             $table->index('deleted_at');
         });
@@ -23,11 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('permissions', function (Blueprint $table) {
-            $table->dropColumn([
-                'title',
-                'deleted_at'
-            ]);
-        });
+        Schema::dropIfExists('blog_categories');
     }
 };

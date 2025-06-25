@@ -13,9 +13,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->json('title')->after('id');
-            $table->json('slug')->after('title');
-            $table->json('content')->after('slug')->nullable();
+            $table->jsonb('title')->nullable()->after('id');
+            $table->jsonb('slug')->nullable()->after('title');
+            $table->jsonb('content')->nullable()->after('slug')->nullable();
         });
     }
 

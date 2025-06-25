@@ -15,12 +15,23 @@ class Permission extends SpatiePermission
     public $table = 'permissions';
     protected $guard_name = 'web';
 
+    protected $casts = [
+        'title' => 'array',
+    ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'guard_name',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     public array $translatable = [
         'title',
     ];
-
-    public static function getNextPosition()
-    {
-        return static::max('position') !== null ? static::max('position') + 1 : 1;
-    }
 }

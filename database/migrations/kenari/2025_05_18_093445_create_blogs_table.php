@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sliders', function (Blueprint $table) {
+        Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->json('title');
-            $table->json('content');
-            $table->enum('align', ['CENTER', 'LEFT', 'RIGHT'])->nullable();
-            $table->boolean('has_link')->default(0)->index();
-            $table->json('links');
-            $table->enum('link_target', ['_blank', '_parent', '_self', '_top'])->default('_self');
+            $table->jsonb('title');
+            $table->jsonb('slug');
+            $table->jsonb('slogan');
+            $table->jsonb('content');
             $table->string('src')->nullable();
+            $table->integer('views')->default(0);
             $table->boolean('status')->default(true)->index();
             $table->integer('position')->default(0)->index();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
             $table->index('deleted_at');
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sliders');
+        Schema::dropIfExists('blogs');
     }
 };

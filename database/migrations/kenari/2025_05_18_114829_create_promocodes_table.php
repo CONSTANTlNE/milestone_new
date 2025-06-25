@@ -23,7 +23,7 @@ return new class extends Migration
             $table->double('maximum_amount')->nullable();
             $table->datetime('start');
             $table->datetime('end');
-            $table->json('brand_ids')->nullable();
+            $table->jsonb('brand_ids')->nullable();
             $table->timestamps();
         });
     }

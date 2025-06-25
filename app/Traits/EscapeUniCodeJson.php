@@ -13,8 +13,8 @@ trait EscapeUniCodeJson
      * @param  mixed  $value
      * @return string
      */
-    protected function asJson($value): string
+    protected function asJson($value, $flags = 0): string
     {
-        return json_encode($value, JSON_UNESCAPED_UNICODE);
+        return json_encode($value, $flags | JSON_UNESCAPED_UNICODE);
     }
 }

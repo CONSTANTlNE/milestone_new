@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->json('title');
-            $table->json('slug');
-            $table->json('content')->nullable();
+            $table->jsonb('title');
+            $table->jsonb('slug');
+            $table->jsonb('content')->nullable();
             $table->boolean('status')->default(true)->index();
             $table->boolean('is_lens')->default(false)->index();
             $table->unsignedInteger('percent')->default(0)->index();

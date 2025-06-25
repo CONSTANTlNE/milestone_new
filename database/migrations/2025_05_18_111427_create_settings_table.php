@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
-            $table->json('title');
-            $table->json('working_hours')->nullable();
-            $table->json('address')->nullable();
+            $table->jsonb('title');
+            $table->jsonb('working_hours')->nullable();
+            $table->jsonb('address')->nullable();
             $table->string('phone')->nullable()->index();
             $table->string('email')->nullable()->index();
             $table->string('send_email')->nullable()->index();

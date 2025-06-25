@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tags', function (Blueprint $table) {
+        Schema::create('usercodes', function (Blueprint $table) {
             $table->id();
-            $table->json('title');
-            $table->json('slug');
-            $table->boolean('status')->default(true)->index();
-            $table->integer('position')->nullable()->index();
+            $table->jsonb('title');
+            $table->string('code')->index();
+            $table->unsignedInteger('promocode_id')->index();
+            $table->unsignedInteger('user_id')->index();
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tags');
+        Schema::dropIfExists('usercodes');
     }
 };

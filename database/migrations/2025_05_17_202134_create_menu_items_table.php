@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('menu_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('menu_id')->constrained()->cascadeOnDelete();
-            $table->json('title');
-            $table->json('slug');
+            $table->jsonb('title');
+            $table->jsonb('slug');
             $table->boolean('status')->default(true)->index();
             $table->string('route')->nullable();
             $table->boolean('is_prefix')->default(true)->index();

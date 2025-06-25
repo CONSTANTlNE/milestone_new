@@ -17,9 +17,9 @@ use Spatie\Translatable\HasTranslations;
 
 class Customer extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles, HasTranslations, SoftDeletes;
+    use HasFactory, Notifiable, HasTranslations, SoftDeletes;
 
-    protected $table = 'users';
+    protected $table = 'customers';
     const CACHE_TTL = 86400; // 1 day
 
     /**

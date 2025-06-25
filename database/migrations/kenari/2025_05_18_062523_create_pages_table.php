@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_categories', function (Blueprint $table) {
+        Schema::create('pages', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('parent_id')->nullable()->index();
-            $table->unsignedInteger('percent')->default(0)->index();
-            $table->json('title');
-            $table->json('slug');
-            $table->json('slogan')->nullable();
-            $table->json('content')->nullable();
+            $table->jsonb('title');
+            $table->jsonb('slug');
+            $table->jsonb('slogan')->nullable();
+            $table->jsonb('content')->nullable();
             $table->boolean('status')->default(true)->index();
             $table->string('src')->nullable();
             $table->timestamps();
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_categories');
+        Schema::dropIfExists('pages');
     }
 };

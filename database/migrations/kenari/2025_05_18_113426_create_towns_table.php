@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('faqs', function (Blueprint $table) {
+        Schema::create('towns', function (Blueprint $table) {
             $table->id();
-            $table->json('title');
-            $table->json('slug');
-            $table->json('content');
-            $table->string('src')->nullable();
+            $table->jsonb('title');
             $table->boolean('status')->default(true)->index();
-            $table->integer('position')->default(0)->index();
+            $table->unsignedInteger('day')->default(0)->index();
+            $table->decimal('price', 10, 2)->default(0)->index();
             $table->timestamps();
             $table->softDeletes();
             $table->index('deleted_at');
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('faqs');
+        Schema::dropIfExists('towns');
     }
 };

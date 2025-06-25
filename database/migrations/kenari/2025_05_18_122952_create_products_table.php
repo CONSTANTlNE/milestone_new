@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->json('title');
+            $table->jsonb('title');
             $table->string('code')->nullable();
-            $table->json('slug');
-            $table->json('slogan')->nullable();
-            $table->json('content')->nullable();
+            $table->jsonb('slug');
+            $table->jsonb('slogan')->nullable();
+            $table->jsonb('content')->nullable();
 
             $table->boolean('status')->default(true)->index();
             $table->unsignedTinyInteger('gender')->default(0)->index();

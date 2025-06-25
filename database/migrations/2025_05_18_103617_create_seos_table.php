@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('seos', function (Blueprint $table) {
             $table->id();
-            $table->json('seoTitles')->nullable();
-            $table->json('seoKeywords')->nullable();
-            $table->json('seoDescriptions')->nullable();
+            $table->jsonb('seoTitles')->nullable();
+            $table->jsonb('seoKeywords')->nullable();
+            $table->jsonb('seoDescriptions')->nullable();
             $table->morphs('model'); // Adds model_id, model_type, and index
             $table->timestamps();
         });

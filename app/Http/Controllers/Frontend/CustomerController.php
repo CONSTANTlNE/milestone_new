@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 class CustomerController extends Controller
 {
 	public function index() {
-        return view('frontend.customer.index');
-
+        return view('frontend.customers.index');
     }
 
 	public function logout(Request $request): \Illuminate\Http\RedirectResponse

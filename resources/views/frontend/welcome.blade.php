@@ -39,35 +39,57 @@
         <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6 not-has-[nav]:hidden">
             @if (Route::has('login'))
                 <nav class="flex items-center justify-end gap-4">
+                    @auth('customers')
+                        <a
+                            href="{{ route('frontend.customers.index') }}"
+                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
+                        >
+                            Dashboard Costumers 2
+                        </a>
+
+                        <form method="POST" action="{{ route('frontend.customers.logout') }}">
+                            @csrf
+                            <button type="submit" class="text-left w-full text-red-600 hover:underline">
+                                {{ __('Logout') }} Costumers 2
+                            </button>
+                        </form>
+                    @endauth
+
                     @auth
                         <a
                             href="{{ route('backend.index') }}"
                             class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
                         >
-                            Dashboard
+                            Dashboard 1
                         </a>
 
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="text-left w-full text-red-600 hover:underline">
-                                {{ __('Logout') }}
+                                {{ __('Logout') }}1
                             </button>
                         </form>
                     @else
-                        <a
-                            href="{{ route('login') }}"
-                            class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
-                        >
-                            Log in
-                        </a>
-
-                        @if (Route::has('register'))
                             <a
-                                href="{{ route('register') }}"
-                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
-                                Register
+                                href="{{ route('frontend.auth.login') }}"
+                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
+                            >
+                                Customer Log in
                             </a>
-                        @endif
+
+                            <a
+                                href="{{ route('frontend.auth.register') }}"
+                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal">
+                                Customer Register
+                            </a>
+<br>
+                            <a
+                                href="{{ route('login') }}"
+                                class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
+                            >
+                                Admin Log in
+                            </a>
+
                     @endauth
                 </nav>
             @endif

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('blog_categories', function (Blueprint $table) {
+        Schema::create('faqs', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('parent_id')->nullable()->index();
-            $table->json('title');
-            $table->json('slug');
-            $table->json('content');
-            $table->boolean('status')->default(true)->index();
+            $table->jsonb('title');
+            $table->jsonb('slug');
+            $table->jsonb('content');
             $table->string('src')->nullable();
+            $table->boolean('status')->default(true)->index();
+            $table->integer('position')->default(0)->index();
             $table->timestamps();
             $table->softDeletes();
             $table->index('deleted_at');
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blog_categories');
+        Schema::dropIfExists('faqs');
     }
 };
