@@ -7,7 +7,7 @@ use App\Http\Controllers\Frontend\CustomerController;
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale() . '/customer',
-        'middleware' => ['web', 'auth', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath'],
+        'middleware' => ['web', 'auth:customers', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath'],
         'as' => 'frontend.customers.'
     ], function()
 {

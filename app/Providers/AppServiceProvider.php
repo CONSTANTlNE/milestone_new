@@ -9,6 +9,7 @@ use App\Http\Responses\LoginResponse as CustomLoginResponse;
 use App\Http\Responses\LogoutResponse as CustomLogoutResponse;
 use Illuminate\Support\Facades\Blade;
 use Laravel\Fortify\Features;
+use Laravel\Fortify\Fortify;
 
 class AppServiceProvider extends ServiceProvider
 {

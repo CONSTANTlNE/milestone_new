@@ -10,6 +10,9 @@ use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationRoutes;
 use Mcamara\LaravelLocalization\Middleware\LaravelLocalizationViewPath;
 use Mcamara\LaravelLocalization\Middleware\LocaleCookieRedirect;
 use Mcamara\LaravelLocalization\Middleware\LocaleSessionRedirect;
+use Laravel\Fortify\Fortify;
+
+Fortify::ignoreRoutes();
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             require base_path('routes/auth.php');
             require base_path('routes/admin.php');
+            require base_path('routes/customer.php');
         }
     )
     ->withMiddleware(function (Middleware $middleware) {

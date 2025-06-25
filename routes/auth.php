@@ -113,18 +113,18 @@ Route::group(
     ], function()
 {
     $enableViews = config('fortify.views', true);
-    $limiter = config('fortify.limiters.login');
+    $limiter = config('fortify.limiters.login721');
     $twoFactorLimiter = config('fortify.limiters.two-factor');
     $verificationLimiter = config('fortify.limiters.verification', '6,1');
 
     // Authentication...
     if ($enableViews) {
-        Route::get(RoutePath::for('login721', '/login721'), [AuthenticatedSessionController::class, 'create'])
+        Route::get(RoutePath::for('login', '/login721'), [AuthenticatedSessionController::class, 'create'])
             ->middleware(['guest:' . config('fortify.guard')])
             ->name('login');
     }
 
-    Route::post(RoutePath::for('login721', '/login721'), [AuthenticatedSessionController::class, 'store'])
+    Route::post(RoutePath::for('login', '/login721'), [AuthenticatedSessionController::class, 'store'])
         ->middleware(array_filter([
             'guest:' . config('fortify.guard'),
             $limiter ? 'throttle:' . $limiter : null,
@@ -200,19 +200,19 @@ Route::group(
     }
 
         // Password Confirmation...
-        if ($enableViews) {
-            Route::get(RoutePath::for('password.confirm', '/user/confirm-password'), [ConfirmablePasswordController::class, 'show'])
-                ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
-                ->name('password.confirm');
-        }
-
-        Route::get(RoutePath::for('password.confirmation', '/user/confirmed-password-status'), [ConfirmedPasswordStatusController::class, 'show'])
-            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
-            ->name('password.confirmation');
-
-        Route::post(RoutePath::for('password.confirm', '/user/confirm-password'), [ConfirmablePasswordController::class, 'store'])
-            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
-            ->name('password.confirm.store');
+//        if ($enableViews) {
+//            Route::get(RoutePath::for('password.confirm', '/user/confirm-password'), [ConfirmablePasswordController::class, 'show'])
+//                ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
+//                ->name('password.confirm');
+//        }
+//
+//        Route::get(RoutePath::for('password.confirmation', '/user/confirmed-password-status'), [ConfirmedPasswordStatusController::class, 'show'])
+//            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
+//            ->name('password.confirmation');
+//
+//        Route::post(RoutePath::for('password.confirm', '/user/confirm-password'), [ConfirmablePasswordController::class, 'store'])
+//            ->middleware([config('fortify.auth_middleware', 'auth') . ':' . config('fortify.guard')])
+//            ->name('password.confirm.store');
 
     // Two-Factor Authentication...
     if (Features::enabled(Features::twoFactorAuthentication())) {
