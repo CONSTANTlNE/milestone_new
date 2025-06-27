@@ -10,6 +10,7 @@
         "dev": "vite"
     },
     "dependencies": {
+        "@fontsource/firago": "^5.2.5",
         "@popperjs/core": "^2.11.6",
         "@simonwep/pickr": "^1.8.2",
         "animate.css": "^4.1.1",

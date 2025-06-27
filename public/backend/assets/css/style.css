@@ -1,21 +1,12 @@
 @charset "UTF-8";
 @font-face {
     font-family: 'BPG Nateli Mtavruli';
-    src: url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.eot?t=1490207869815'); /* IE9 Compat Modes */
-    src: url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.eot?t=1490207869815#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.woff2?t=1490207869815') format('woff2'), /* Super Modern Browsers */
-    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.woff?t=1490207869815') format('woff'), /* Pretty Modern Browsers */
-    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.ttf?t=1490207869815') format('truetype'), /* Safari, Android, iOS */
-    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.svg?t=1490207869815#bpg_nateli_mtavruliregular') format('svg'); /* Legacy iOS */
-}
-@font-face {
-    font-family: 'BPG Nateli';
-    src: url('../fonts/nateli/bpg-nateli-webfont.eot?t=1390207869815'); /* IE9 Compat Modes */
-    src: url('../fonts/nateli/bpg-nateli-webfont.eot?t=1390207869815#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../fonts/nateli/bpg-nateli-webfont.woff2?t=1390207869815') format('woff2'), /* Super Modern Browsers */
-    url('../fonts/nateli/bpg-nateli-webfont.woff?t=1390207869815') format('woff'), /* Pretty Modern Browsers */
-    url('../fonts/nateli/bpg-nateli-webfont.ttf?t=1390207869815') format('truetype'), /* Safari, Android, iOS */
-    url('../fonts/nateli/bpg-nateli-webfont.svg?t=1390207869815#bpg_nateliregular') format('svg'); /* Legacy iOS */
+    src: url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.eot?t=1590207869815'); /* IE9 Compat Modes */
+    src: url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.eot?t=1590207869815#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.woff2?t=1590207869815') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.woff?t=1590207869815') format('woff'), /* Pretty Modern Browsers */
+    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.ttf?t=1590207869815') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.svg?t=1590207869815#bpg_nateli_mtavruliregular') format('svg'); /* Legacy iOS */
 }
 *,
 ::before,
@@ -23392,14 +23383,15 @@ input.gridjs-input {
     color: rgb(var(--primary));
 }
 .form-check-input {
-    height: 0.9rem;
-    width: 0.9rem;
+    height: 0.98rem;
+    width: 0.98rem;
     border-radius: 0.25rem;
     border-width: 1px;
     border-style: solid;
     border-color: rgb(var(--input-border));
     --tw-bg-opacity: 1;
     background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+    outline: none;
 }
 :is(.dark .form-check-input) {
     border-color: rgb(255 255 255 / 0.1);
@@ -24093,7 +24085,7 @@ select:focus {
     padding-inline-start: 0;
 }
 .form-check .form-check-label {
-    padding-inline-start: 0.5rem;
+    padding-inline-start: 0.2rem;
 }
 .form-check-input:disabled ~ .form-check-label,
 .form-check-input[disabled] ~ .form-check-label {
@@ -33372,7 +33364,6 @@ caption {
 .index-table-page .ti-pagination{
     padding: 0 0 0 0.75rem;
 }
-
 .index-table-page .ti-pagination li .page-link {
     font-size: .75rem;
     min-width: 40px;
@@ -33384,17 +33375,26 @@ caption {
     font-size: 11px !important;
     border-radius: 0 !important;
 }
-
 .index-table-page .choices__list--single{
     padding: 0;
 }
-
 .index-table-page .choices__list--dropdown .choices__item--selectable[data-select-text]:after{
     display:none;
 }
-
 .index-table-page .choices__list--dropdown .choices__item--selectable[data-select-text],
 .index-table-page .choices__list[aria-expanded] .choices__item--selectable[data-select-text] {
     padding-right: 0;
     font-size:12px;
+}
+.font-first-geo{
+    font-family: "BPG Nateli Mtavruli", sans-serif;
+}
+.font-second-geo{
+    font-family: 'FiraGO', sans-serif;
+}
+.login .form-check-input[type=checkbox]{
+    margin-top: 2px;
+}
+.invalid-feedback{
+    color:red;
 }
