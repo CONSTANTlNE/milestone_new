@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\SettingController;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Illuminate\Support\Facades\Artisan;
@@ -28,7 +29,7 @@ use Laravel\Fortify\RoutePath;
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale(),
-        'middleware' => ['web', 'localizeValidations', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath'],
+        'middleware' => ['web', 'localizeValidations', 'localeSessionRedirect', 'localizationRedirect'],
     ], function()
 {
     $enableViews = config('fortify.views', true);
@@ -190,62 +191,19 @@ Route::group(
 {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
 
-    Route::get('clear-cache', function () {
-        Artisan::call('cache:clear');
-        return response()->json([
-            'message' => __('strings.Cache facade value cleared'),
-            'alert-type' => 'success'
-        ]);
-    })->name('clear-cache');
+    Route::get('clear-cache', [SettingController::class, 'clearCache'])->name('clear-cache');
+    Route::get('optimize', [SettingController::class, 'optimize'])->name('optimize');
 
-    Route::get('clear-route', function () {
-        Artisan::call('route:clear');
-        return response()->json([
-            'message' => __('strings.Route cache cleared'),
-            'alert-type' => 'success'
-        ]);
-    })->name('clear-route');
+    Route::get('clear-route', [SettingController::class, 'clearRoute'])->name('clear-route');
+    Route::get('cache-route', [SettingController::class, 'cacheRoute'])->name('cache-route');
 
-    Route::get('clear-view', function () {
-        Artisan::call('view:clear');
-        return response()->json([
-            'message' => __('strings.View cache cleared'),
-            'alert-type' => 'success'
-        ]);
-    })->name('clear-view');
+    Route::get('clear-view', [SettingController::class, 'clearView'])->name('clear-view');
+    Route::get('cache-view', [SettingController::class, 'cacheView'])->name('cache-view');
 
-    Route::get('cache-route', function () {
-        Artisan::call('route:cache');
-        return response()->json([
-            'message' => __('strings.Routes cached'),
-            'alert-type' => 'success'
-        ]);
-    })->name('cache-route');
+    Route::get('cache-config', [SettingController::class, 'cacheConfig'])->name('cache-config');
+    Route::get('clear-config', [SettingController::class, 'clearConfig'])->name('clear-config');
 
-    Route::get('cache-config', function () {
-        Artisan::call('config:cache');
-        return response()->json([
-            'message' => __('strings.Clear Config cleared'),
-            'alert-type' => 'success'
-        ]);
-    })->name('cache-config');
-
-
-    Route::get('optimize', function () {
-        Artisan::call('optimize');
-        return response()->json([
-            'message' => __('strings.Re-optimized class loader'),
-            'alert-type' => 'success'
-        ]);
-    })->name('optimize');
-
-    Route::get('storage', function () {
-        Artisan::call('storage:link');
-        return response()->json([
-            'message' => __('strings.Clear Config cleared'),
-            'alert-type' => 'success'
-        ]);
-    });
+    Route::get('storage', [SettingController::class, 'storageLink'])->name('storage.link');
 
     Route::get('linkstorage', function () {
         $targetFolder = base_path() . '/storage/app/public';

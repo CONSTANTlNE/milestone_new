@@ -39,21 +39,21 @@ class Locale extends Model
 
     public function images(): MorphToMany
     {
-        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->orderBy('ord');
+        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->orderBy('position');
     }
 
     public function generalImages(): MorphToMany
     {
-        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('ord', '<', 1)->orderBy('ord');
+        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('position', '<', 1)->orderBy('ord');
     }
 
     public function generalImage(): MorphToMany
     {
         return $this->morphToMany(File::class, 'fileable')
             ->withPivot('cover')
-            ->where('ord', '<', 1)
+            ->where('position', '<', 1)
             ->where('cover', 'general')
-            ->orderBy('ord');
+            ->orderBy('position');
     }
 
     public function folders(): MorphToMany

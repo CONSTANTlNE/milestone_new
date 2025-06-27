@@ -1,61 +1,36 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="ltr" data-nav-layout="vertical" class="light" data-header-styles="light" data-menu-styles="dark">
 <head>
-    <meta charset="utf-8" />
-    <title> @yield('title') | {{ __('site title') }}</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="{{ __('site title') }}" name="description" />
-    <meta content="boris barabadze" name="author" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <!-- App favicon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon.png') }}">
-{{--    @include('backend.layouts.head')--}}
-{{--    <link href="{{ asset('build/assets/app-hvPi3zSJ.css') }}" rel="stylesheet" type="text/css"/>--}}
-{{--    @vite(['public/css/style.css'])--}}
-    @stack('styles')
+    <title>@yield('title') | {{ __('config.admin_title') }}</title>
+    <meta name="description" content="{{ __('config.admin_description') }}">
+    <meta name="keywords" content="{{ __('config.admin_keywords') }}">
+    <meta name="author" content="{{ __('config.admin_author') }}" />
 
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset(config('filemanager.favicons.32')) }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset(config('filemanager.favicons.16')) }}">
+    <link rel="apple-touch-icon" href="{{ asset(config('filemanager.favicons.apple')) }}">
+    <meta name="theme-color" content="#ffffff">
+
+    @vite('public/css/admin-app.css')
+    @stack('styles')
 </head>
 <body>
-<div id="preloader">
-    <div class="sk-three-bounce">
-        <div class="sk-child sk-bounce1"></div>
-        <div class="sk-child sk-bounce2"></div>
-        <div class="sk-child sk-bounce3"></div>
-    </div>
-</div>
-
-<div id="main-wrapper">
-    <div class="nav-header">
-        <a href="{{ route('backend.index')}}" class="brand-logo">
-            <img class="logo-abbr" src="{{ asset('images/logo.png') }}" alt="">
-        </a>
-        <div class="nav-control">
-            <div class="hamburger">
-                <span class="line"></span><span class="line"></span><span class="line"></span>
-            </div>
-        </div>
+    <div id="loader" >
+        <img src="{{ asset('backend/assets/images/loader.svg') }}" alt="{{ __('config.admin_title') }} - loader">
     </div>
 
-    @include('backend.layouts.header')
-
-{{--    @include('backend.layouts.sidebar')--}}
-    <div class="content-body">
+    <div class="page">
+        @include('backend.layouts.header')
+        @include('backend.layouts.sidebar')
         @yield('content')
+        @include('backend.layouts.footer')
     </div>
 
-    @include('backend.layouts.footer')
-</div>
-    {{--	@include('elements.footer-scripts')--}}
-    {{--<script src="{{ asset('build/assets/app-X0b48MIg.js') }}" type="text/javascript"></script>--}}
-    {{--@vite(['public/js/app.js'])--}}
-
-    <script src="{{ asset('vendor/global/global.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('vendor/bootstrap-select/dist/js/bootstrap-select.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('vendor/peity/jquery.peity.min.js') }}" type="text/javascript"></script>
-    {{--defer="defer"--}}
+    @vite('public/js/admin-app.js')
     @stack('scripts')
-    <script src="{{ asset('js/custom.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/deznav-init.js') }}" type="text/javascript"></script>
-
 </body>
 </html>

@@ -10,7 +10,7 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale(),
-        'middleware' => ['localizeValidations', 'localize', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath'],
+        'middleware' => ['localizeValidations', 'localize', 'localeSessionRedirect', 'localizationRedirect'],
         'as' => 'frontend.'
     ], function()
 {

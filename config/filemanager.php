@@ -1,18 +1,28 @@
 <?php
 
 return [
-/**
- * URL path to admin panel.
- */
-  'favicons' => [
-    '32' => 'storage/defaults/favicons/favicon-32x32.png',
-    '16' => 'storage/defaults/favicons/favicon-16x16.png',
-    'apple' => 'storage/defaults/favicons/apple-touch-icon.png',
-  ],
+    /**
+    * URL path to admin panel.
+    */
+    'favicons' => [
+        '32' => 'storage/defaults/favicons/favicon-32x32.png',
+        '16' => 'storage/defaults/favicons/favicon-16x16.png',
+        'apple' => 'storage/defaults/favicons/apple-touch-icon.png',
+    ],
 
-  'default_auth_company_image' => 'storage/defaults/logos/auth-logo.png',
-  'default_auth_loader' => 'storage/defaults/loaders/auth-loader.svg',
+    'logos' => [
+        'desktop'       => 'storage/defaults/logos/desktop-logo.png',
+        'toggle'        => 'storage/defaults/logos/toggle-logo.png',
+        'desktop_dark'  => 'storage/defaults/logos/desktop-dark.png',
+        'toggle_dark'   => 'storage/defaults/logos/toggle-dark.png',
+        'desktop_white' => 'storage/defaults/logos/desktop-white.png',
+        'toggle_white'  => 'storage/defaults/logos/toggle-white.png',
+    ],
 
+    'default_auth_company_image' => 'storage/defaults/logos/auth-logo.png',
+    'default_auth_loader' => 'storage/defaults/loaders/auth-loader.svg',
+    'default_backend_image' => 'storage/defaults/default.jpg',
+    'default_seo_image' => 'storage/defaults/default-seo.jpg',
   /**
    * URL path to admin panel.
    */
@@ -29,7 +39,6 @@ return [
 
   'default_images' => [],
 
-  // 'default_backend_image' => 'storage/defaults/default.jpg',
-  // 'default_seo_image' => 'storage/defaults/default-seo.jpg',
+
   'response_cache_enabled' => false,
 ];
