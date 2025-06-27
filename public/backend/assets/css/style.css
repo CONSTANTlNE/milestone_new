@@ -33398,3 +33398,14 @@ caption {
 .invalid-feedback{
     color:red;
 }
+.app-sidebar .side-menu__label {
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+.app-sidebar .side-menu__icon {
+    position: relative;
+}
+.app-sidebar .side-menu__icon:before {
+    position: absolute;
+    top: -3px;
+}
