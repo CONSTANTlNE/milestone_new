@@ -1,12 +1,21 @@
 @charset "UTF-8";
 @font-face {
     font-family: 'BPG Nateli Mtavruli';
-    src: url('../fonts/nino-mtavruli/bpg-nateli-mtavruli-webfont.eot?t=1590207869815'); /* IE9 Compat Modes */
-    src: url('../fonts/nino-mtavruli/bpg-nateli-mtavruli-webfont.eot?t=1590207869815#iefix') format('embedded-opentype'), /* IE6-IE8 */
-    url('../fonts/nino-mtavruli/bpg-nateli-mtavruli-webfont.woff2?t=1590207869815') format('woff2'), /* Super Modern Browsers */
-    url('../fonts/nino-mtavruli/bpg-nateli-mtavruli-webfont.woff?t=1590207869815') format('woff'), /* Pretty Modern Browsers */
-    url('../fonts/nino-mtavruli/bpg-nateli-mtavruli-webfont.ttf?t=1590207869815') format('truetype'), /* Safari, Android, iOS */
-    url('../fonts/nino-mtavruli/bpg-nateli-mtavruli-webfont.svg?t=1590207869815#bpg_nateli_mtavruliregular') format('svg'); /* Legacy iOS */
+    src: url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.eot?t=1490207869815'); /* IE9 Compat Modes */
+    src: url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.eot?t=1490207869815#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.woff2?t=1490207869815') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.woff?t=1490207869815') format('woff'), /* Pretty Modern Browsers */
+    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.ttf?t=1490207869815') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/nateli-mtavruli/bpg-nateli-mtavruli-webfont.svg?t=1490207869815#bpg_nateli_mtavruliregular') format('svg'); /* Legacy iOS */
+}
+@font-face {
+    font-family: 'BPG Nateli';
+    src: url('../fonts/nateli/bpg-nateli-webfont.eot?t=1390207869815'); /* IE9 Compat Modes */
+    src: url('../fonts/nateli/bpg-nateli-webfont.eot?t=1390207869815#iefix') format('embedded-opentype'), /* IE6-IE8 */
+    url('../fonts/nateli/bpg-nateli-webfont.woff2?t=1390207869815') format('woff2'), /* Super Modern Browsers */
+    url('../fonts/nateli/bpg-nateli-webfont.woff?t=1390207869815') format('woff'), /* Pretty Modern Browsers */
+    url('../fonts/nateli/bpg-nateli-webfont.ttf?t=1390207869815') format('truetype'), /* Safari, Android, iOS */
+    url('../fonts/nateli/bpg-nateli-webfont.svg?t=1390207869815#bpg_nateliregular') format('svg'); /* Legacy iOS */
 }
 *,
 ::before,
