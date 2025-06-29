@@ -33513,3 +33513,10 @@ caption {
 .header-logo {
     margin-left: 5px;
 }
+.main-locale{
+    font-weight: bold !important;
+}
+.second-locale{
+    margin-top: 5px;
+    padding-left: 10px;
+}

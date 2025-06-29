@@ -1,8 +1,8 @@
 @if(count((array)getLocales()) > 1)
 <div class="header-element py-[1rem] md:px-[0.65rem] px-2  header-country hs-dropdown ti-dropdown  hidden sm:block [--placement:bottom-left]">
     <button id="dropdown-flag" type="button"
-            class="hs-dropdown-toggle ti-dropdown-toggle !p-0 flex-shrink-0  !border-0 !rounded-full !shadow-none">
-        <img class="h-[1.25rem] w-[1.25rem] rounded-full" src="{{ asset(getLangName(app()->getLocale())->image ?? asset(config('filemanager.default_backend_image'))) }}" alt="logo language" title="logo language" width="30">
+            class="main-locale hs-dropdown-toggle ti-dropdown-toggle !p-0 flex-shrink-0  !border-0 !rounded-full !shadow-none font-second-geo">
+        <img src="{{ asset(getLangName(app()->getLocale())->image ?? asset(config('filemanager.default_backend_image'))) }}" alt="logo language" title="logo language" width="30" height="30">
         {{ getLangName(app()->getLocale())->name }}
     </button>
 
@@ -22,13 +22,13 @@
 {{--                                    </li>--}}
 {{--                                @endforeach--}}
 
-                                <a href="{{ LaravelLocalization::getLocalizedURL($locale->code, null, [], true) }}" hreflang="{{ $locale->code }}" class="language-link">
-                                    <div class="h-[1.375rem] flex items-center w-[1.375rem] rounded-full">
+                                <a href="{{ LaravelLocalization::getLocalizedURL($locale->code, null, [], true) }}" hreflang="{{ $locale->code }}" class="language-link flex">
+                                    <div class="flex items-center">
                                         <img src="{{ asset($locale->image ?? asset(config('filemanager.default_backend_image'))) }}" alt="flag-img"
-                                             class="h-[1rem] w-[1rem] rounded-full" width="30">
+                                             width="30" height="30">
                                     </div>
                                     <div>
-                                        <p class="!text-[0.8125rem] font-medium">
+                                        <p class="!text-[0.8125rem] font-bold font-second-geo uppercase second-locale">
                                             {{ $locale->name }}
                                         </p>
                                     </div>
