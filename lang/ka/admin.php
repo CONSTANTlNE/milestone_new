@@ -36,5 +36,18 @@ return [
     'sidebar_social_networks' => 'სოციალური ქსელები',
     'sidebar_backups' => 'საიტის ბექაპები',
     'sidebar_logout' => 'გასვლა',
+    'footer_title' => 'ews.ge',
+    'all_rights_reserved' => 'ყველა უფლება დაცულია.',
+    'profile' => 'პროფილი',
+    'information' => 'ინფორმაცია',
+    'role' => 'როლი',
+    'no_new_notifications' => 'არ არის ახალი ნოტიფიკაციები',
+    'view_all' => 'ყველას ნახვა',
+    'view_all_locales' => 'იხილეთ ყველა ენა',
+    'notifications' => 'ნოთიფიკაციები',
+    'unread' => 'წაუკითხავი',
+    'read' => 'წაკითხული',
+    'no_view_all_notifications' => 'თქვენ არ გაქვთ ყველა ნოტიფიკაციის ნახვის უფლება',
+    'no_view_all_locales' => 'თქვენ არ გაქვთ ყველა ენის ნახვის უფლება',
     'no_access' => 'თქვენ არ გავქთ სისტემაში შესვლის უფლება.'
 ];

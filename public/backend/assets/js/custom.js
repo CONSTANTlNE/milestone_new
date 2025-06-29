@@ -466,6 +466,7 @@ function openFullscreen() {
     open.classList.add("block");
   }
 }
+window.openFullscreen = openFullscreen;
 
 /* count-up */
 var i = 1;

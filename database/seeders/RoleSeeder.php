@@ -7,48 +7,39 @@ use App\Models\Role;
 
 class RoleSeeder extends Seeder
 {
+    private array $roles = [];
 
-    private array $roles = [
-        'Admin' => [
-            'guard_name' => 'web',
-            'title' => [
-                "ka" => "ადმინ იუზერი",
-                "en" => "Admin User"
+    public function __construct()
+    {
+        $permissions = include database_path('seeders/data/permissions_for_roles.php');
+
+        $this->roles = [
+            'Super Admin' => [
+                'guard_name' => 'web',
+                'title' => [
+                    "ka" => "სუპერ ადმინისტრატორი",
+                    "en" => "Super Admin"
+                ],
+                'permissions' => $permissions['super'] ?? [],
             ],
-            'permissions' => [
-                'backend.dashboard.index',
-                'backend.users.index',
-                'backend.users.create',
-                'backend.users.store',
-                'backend.users.edit',
-                'backend.users.update',
-                'backend.users.destroy'
-            ]
-        ],
-    ];
+            'Admin' => [
+                'guard_name' => 'web',
+                'title' => [
+                    "ka" => "ადმინ იუზერი",
+                    "en" => "Admin User"
+                ],
+                'permissions' => $permissions['admin'] ?? [],
+            ],
+        ];
+    }
 
     /**
      * Run the database seeds.
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
-        $x = [
-            "ka" => "სუპერ ადმინისტრატორი",
-            "en" => "Super Admin"
-        ];
-        //Super Admin Role
-        Role::updateOrCreate(
-            [
-                'name' => 'Super Admin',
-                'guard_name' => 'web'
-            ],
-            [
-                'title' => json_encode($x, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT),
-            ]
-        );
-
         array_walk($this->roles, function ($roleContent, $roleName) {
             $role = Role::firstOrCreate(
                 [
@@ -56,7 +47,7 @@ class RoleSeeder extends Seeder
                     'guard_name' => $roleContent['guard_name'],
                 ],
                 [
-                    'title' => json_encode($roleContent['title'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT),
+                    'title' => $roleContent['title'],
                 ]
             );
 

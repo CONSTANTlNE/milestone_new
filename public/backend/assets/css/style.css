@@ -7967,10 +7967,12 @@ h6 {
     width: 1.75rem;
     border-radius: 50%;
     fill: rgb(var(--header-prime-color));
-    padding: 0.25rem;
+    padding: 0 0.25rem;
     font-size: 1.25rem;
     color: rgb(var(--header-prime-color));
     transition-property: all;
+    transition-duration: 0.05s;
+    transition-timing-function: linear;
 }
 .main-header-container .header-link-icon:hover {
     background-color: rgb(var(--light));
@@ -13649,7 +13651,7 @@ label {
     height: 3.75rem;
     width: 15rem;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     border-bottom-width: 1px;
     border-inline-end-width: 1px;
     border-bottom-color: rgb(255 255 255 / 0.1);
@@ -13678,7 +13680,7 @@ label {
 .app-sidebar .slide__category {
     position: relative;
     white-space: nowrap;
-    padding: 0.75rem 1.65rem;
+    padding: 0.4rem 1.65rem;
     font-size: 0.6rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -16922,10 +16924,10 @@ label {
     --tw-text-opacity: 1 !important;
     color: rgb(83 100 133 / var(--tw-text-opacity)) !important;
 }
-[data-header-styles=light] .app-header .ti-dropdown-toggle:hover {
-    --tw-bg-opacity: 1 !important;
-    background-color: rgb(249 250 251 / var(--tw-bg-opacity)) !important;
-}
+/*[data-header-styles=light] .app-header .ti-dropdown-toggle:hover {*/
+/*    --tw-bg-opacity: 1 !important;*/
+/*    background-color: rgb(249 250 251 / var(--tw-bg-opacity)) !important;*/
+/*}*/
 [data-header-styles=light] .app-header .ti-dropdown-toggle:focus {
     --tw-ring-color: rgb(var(--primary)) !important;
     --tw-ring-offset-color: #fff !important;
@@ -25181,6 +25183,12 @@ select {
 [class*=" ri-"] {
     display: inline-flex;
 }
+.block {
+    display: block;
+}
+.hidden {
+    display: none;
+}
 .ti-dropdown {
     position: relative;
     display: inline-flex;
@@ -33408,4 +33416,100 @@ caption {
 .app-sidebar .side-menu__icon:before {
     position: absolute;
     top: -3px;
+}
+.margin-top-min{
+    margin-top: -3px;
+}
+.ti-dropdown-item.login:hover {
+    background-color: rgb(230 83 60);
+}
+.ti-dropdown-item.login {
+    color: rgb(255 255 255);
+}
+
+.text-image span{
+    background: #111c43;
+    padding: 14px 13px !important;
+    color: #fff;
+    font-weight: 700;
+    border: 1px solid #111c43 !important;
+    border-radius: 4px !important;
+}
+
+.profile:hover {
+    background: #111c43;
+}
+
+.profile:hover .text-image span,
+.profile:hover img{
+    border:1px solid #fff !important;
+}
+
+[data-header-styles=light] .app-header .profile:hover .dropdown-profile .hover-title,
+[data-header-styles=light] .app-header .profile:hover .dropdown-profile .hover-role,
+[data-header-styles=light] .app-header .profile:hover .dropdown-profile .hover-role span{
+    color:#fff !important;
+}
+
+.hover-role {
+    font-size: 9px;
+}
+
+.profile .ti-dropdown-menu{
+    border-radius: 0 0 .25rem .25rem  !important;
+    border-top: 0  !important;
+    min-width: 11.74rem !important;
+    margin-left: -1px !important;
+    margin-top: -10px !important;
+}
+
+.profile div{
+    padding: 0 2px;
+}
+
+.profile img{
+    border: 1px solid #111c43;
+    border-radius: 4px;
+}
+[data-header-styles=dark] .profile {
+    border-bottom: 1px solid #ffffff00;
+}
+[data-header-styles=dark] .profile:hover {
+    border-bottom: 1px solid #ffffff1a;
+}
+.front-site {
+    background: #111c43;
+    padding: 7.5px 13px !important;
+    color: #fff;
+    font-weight: 700;
+    border: 1px solid #111c43 !important;
+    border-radius: 4px !important;
+}
+[data-header-styles=light] .app-header .main-header-container .front-site .header-link-icon,
+[data-header-styles=dark] .app-header .main-header-container .front-site .header-link-icon{
+    float: left;
+    padding: 0;
+    margin: 0;
+    color: rgb(255 255 255 / 50%);
+    font-size: 14px !important;
+    align-items: center;
+}
+.front-site span {
+    display: block;
+    padding-top: 5px;
+    float: left;
+    margin-left: -10px;
+    color: rgb(255 255 255 / 75%);
+}
+[data-header-styles=light] .app-header .main-header-container .front-site .header-link-icon:hover,
+[data-header-styles=dark] .app-header .main-header-container .front-site .header-link-icon:hover{
+    background-color: unset !important;
+}
+[data-header-styles=light] .app-header .main-header-container .front-site:hover .header-link-icon,
+[data-header-styles=dark] .app-header .main-header-container .front-site:hover .header-link-icon,
+.front-site:hover span{
+    color: #fff !important;
+}
+.header-logo {
+    margin-left: 5px;
 }

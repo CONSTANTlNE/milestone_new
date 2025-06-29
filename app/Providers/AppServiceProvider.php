@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        config(['laravellocalization.supportedLocales' => json_decode(file_get_contents(lang_path('locales.json')), true)]);
+        config(['laravellocalization.supportedLocales' => json_decode(file_get_contents(lang_path('config_locales.json')), true)]);
         $this->app->singleton(LoginResponse::class, CustomLoginResponse::class);
         $this->app->singleton(LogoutResponse::class, CustomLogoutResponse::class);
     }

@@ -36,9 +36,18 @@
                             </div>
                         @endif
                     @endforeach
-
                     @can('backend.locales.index')
-                        <a class="all-notification" href="{{ route('backend.locales.index', app()->getLocale())}}">{{ __('strings.See all Languages') }}</a>
+                    <div class="empty-header-item1 border-t mt-2">
+                        <div class="grid">
+                            <a href="{{route('backend.locales.index')}}" class="ti-btn ti-btn-outline-primary !m-0 w-full p-1 font-second-geo" style="font-size: 11px;padding: 5px !important;">{{ __('admin.view_all_locales') }}</a>
+                        </div>
+                    </div>
+                    @else
+                    <div class="empty-header-item1 border-t mt-2" style="max-width: 137px;">
+                        <div class="grid">
+                            <p class="ti-btn ti-btn-danger-full !m-0 w-full p-1 font-second-geo" style="font-size: 11px;padding: 2px 5px !important;">{{ __('admin.no_view_all_locales') }}</p>
+                        </div>
+                    </div>
                     @endcan
                 </div>
             </div>

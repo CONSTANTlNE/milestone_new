@@ -11,7 +11,7 @@
                 <li class="slide__category font-second-geo"><span class="category-name">{{ __('admin.sidebar_main') }}</span></li>
 
                 <li class="slide">
-                    <a href="#" class="side-menu__item font-first-geo">
+                    <a href="{{ route('backend.index') }}" class="side-menu__item font-first-geo">
                         <i class="ri ri-home-4-line side-menu__icon"></i>
                         <span class="side-menu__label font-bold">{{ __('admin.sidebar_dashboard') }}</span>
                     </a>
@@ -122,10 +122,14 @@
                     </ul>
                 </li>
                 <li class="slide">
-                    <a href="#" class="side-menu__item font-first-geo !bg-secondary/10 text-danger">
+                    <a href="{{ route('backend.logout') }}" aria-expanded="false" class="side-menu__item font-first-geo !bg-secondary/10 text-danger" onclick="event.preventDefault();
+                                     document.getElementById('logout-form').submit();">
                         <i class="ri ri-logout-circle-line side-menu__icon text-danger"></i>
                         <span class="side-menu__label font-bold text-danger">{{ __('admin.sidebar_logout') }} </span>
                     </a>
+                    <form id="logout-form" action="{{ route('backend.logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
                 </li>
             </ul>
             <div class="slide-right" id="slide-right">

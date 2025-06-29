@@ -22,23 +22,17 @@ return [
     'default_auth_company_image' => 'storage/defaults/logos/auth-logo.png',
     'default_auth_loader' => 'storage/defaults/loaders/auth-loader.svg',
     'default_backend_image' => 'storage/defaults/default.jpg',
+    'default_backend_avatar_image' => 'storage/defaults/avatar.jpg',
     'default_seo_image' => 'storage/defaults/default-seo.jpg',
+
   /**
    * URL path to admin panel.
    */
-
   'admin_path' => 'backend',
-
   'youtube_api_key' => '',
-
   'localization' => false,
-
   'self_editor_roles' => false,
-
   'image_watermark' => false, // 'img/watermark.png'
-
   'default_images' => [],
-
-
   'response_cache_enabled' => false,
 ];

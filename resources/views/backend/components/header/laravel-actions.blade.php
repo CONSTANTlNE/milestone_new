@@ -2,7 +2,7 @@
 
     <button aria-label="button" id="dropdown-apps" type="button"
             class="hs-dropdown-toggle ti-dropdown-toggle !p-0 !border-0 flex-shrink-0  !rounded-full !shadow-none text-xs">
-        <i class="bx bx-grid-alt header-link-icon text-[1.125rem]"></i>
+        <i class="ri ri-tools-fill header-link-icon text-[1.125rem]"></i>
     </button>
 
     <div
