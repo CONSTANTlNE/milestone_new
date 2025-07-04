@@ -3,6 +3,7 @@
 namespace App\Http\Requests\FileManager;
 
 use Illuminate\Foundation\Http\FormRequest;
+use JetBrains\PhpStorm\NoReturn;
 
 class CreateFile extends FormRequest
 {
@@ -11,7 +12,7 @@ class CreateFile extends FormRequest
    *
    * @return bool
    */
-  public function authorize()
+  public function authorize(): bool
   {
     return true;
   }
@@ -21,7 +22,7 @@ class CreateFile extends FormRequest
    *
    * @return array
    */
-  public function rules()
+  public function rules(): array
   {
     return [
       'files' => 'array',

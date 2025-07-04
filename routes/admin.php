@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\ArticleController;
 use App\Http\Controllers\Backend\BannerController;
 use App\Http\Controllers\Backend\ContactController;
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\FileManagerController;
 use App\Http\Controllers\Backend\LocaleController;
 use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\PermissionController;
@@ -202,6 +203,7 @@ Route::group(
     ], function()
 {
     Route::get('/', [DashboardController::class, 'index'])->name('index');
+    Route::get('analytics', [DashboardController::class, 'analytics'])->name('dashboard.analytics');
 
     Route::get('clear-cache', [SettingController::class, 'clearCache'])->name('clear-cache');
     Route::get('optimize', [SettingController::class, 'optimize'])->name('optimize');
@@ -223,22 +225,22 @@ Route::group(
         symlink($targetFolder, $linkFolder);
     });
 
-    Route::post('/files/createFolder/', 'FileManagerController@createFolder')->name('files.createFolder');
-    Route::delete('/files/deleteFolder/{folder}', 'FileManagerController@deleteFolder')->name('files.deleteFolder');
-    Route::post('/files/restoreFolder/{id}', 'FileManagerController@restoreFolder')->name('files.restoreFolder');
-    Route::post('/files/restoreFile/{id}', 'FileManagerController@restoreFile')->name('files.restoreFile');
-    Route::delete('/files/deleteFolderForever/{id}', 'FileManagerController@deleteFolderForever')->name('files.deleteFolderForever');
-    Route::delete('/files/deleteFileForever/{id}', 'FileManagerController@deleteFileForever')->name('files.deleteFileForever');
-    Route::get('/files/downloadOriginal/{id}', 'FileManagerController@downloadOriginal')->name('files.downloadOriginal');
-    Route::post('/files/removeWatermark/{id}', 'FileManagerController@removeWatermark')->name('files.removeWatermark');
+    Route::post('/files/createFolder/', [FileManagerController::class, 'createFolder'])->name('files.createFolder');
+    Route::delete('/files/deleteFolder/{folder}', [FileManagerController::class, 'deleteFolder'])->name('files.deleteFolder');
+    Route::post('/files/restoreFolder/{id}', [FileManagerController::class, 'restoreFolder'])->name('files.restoreFolder');
+    Route::post('/files/restoreFile/{id}', [FileManagerController::class, 'restoreFile'])->name('files.restoreFile');
+    Route::delete('/files/deleteFolderForever/{id}', [FileManagerController::class, 'deleteFolderForever'])->name('files.deleteFolderForever');
+    Route::delete('/files/deleteFileForever/{id}', [FileManagerController::class, 'deleteFileForever'])->name('files.deleteFileForever');
+    Route::get('/files/downloadOriginal/{id}', [FileManagerController::class, 'downloadOriginal'])->name('files.downloadOriginal');
+    Route::post('/files/removeWatermark/{id}', [FileManagerController::class, 'removeWatermark'])->name('files.removeWatermark');
 
 
-    Route::get('/files', 'FileManagerController@index')->name('files.index');
-    Route::post('/files/store', 'FileManagerController@store')->name('files.store');
-    Route::post('/files/update', 'FileManagerController@update')->name('files.update');
-    Route::delete('/files/delete/{id}', 'FileManagerController@destroy')->name('files.destroy');
+    Route::get('/files', [FileManagerController::class, 'index'])->name('files.index');
+    Route::post('/files/store', [FileManagerController::class, 'store'])->name('files.store');
+    Route::post('/files/update', [FileManagerController::class, 'update'])->name('files.update');
+    Route::delete('/files/delete/{id}', [FileManagerController::class, 'destroy'])->name('files.destroy');
 
-    Route::post('/files/sortImages/', 'FileManagerController@nestable')->name('files.sort');
+    Route::post('/files/sortImages/', [FileManagerController::class, 'nestable'])->name('files.sort');
 
     //languages - static
     Route::get('/locales/static', 'LanguageTranslationController@index')->name('locales.static.index');
@@ -274,6 +276,18 @@ Route::group(
         Route::get('/trash', ['uses' => 'UserController@trash', 'as' => 'trash']);
     });
     Route::resource('users', UserController::class);
+
+    //customers additional
+    Route::group(['prefix' => 'customers', 'as' => 'customers.'], function () {
+        Route::post('/status', ['uses' => 'UserController@status', 'as' => 'status']);
+        Route::delete('/massDestroy', ['uses' => 'UserController@massDestroy', 'as' => 'massDestroy']);
+        // trash
+        Route::get('/restore/{id}', ['uses' => 'UserController@restore', 'as' => 'restore']);
+        Route::delete('/remove/{id}', ['uses' => 'UserController@remove', 'as' => 'remove']);
+        Route::delete('/remove', ['uses' => 'UserController@massRemove', 'as' => 'massRemove']);
+        Route::get('/trash', ['uses' => 'UserController@trash', 'as' => 'trash']);
+    });
+    Route::resource('customers', UserController::class);
 
     //subscribers additional
     Route::group(['prefix' => 'subscribers', 'as' => 'subscribers.'], function () {
@@ -429,6 +443,7 @@ Route::group(
 
     //settings
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
+        Route::get('/show', ['uses' => 'SettingController@show', 'as' => 'show']);
         Route::get('/edit/{id}', ['uses' => 'SettingController@edit', 'as' => 'edit']);
         Route::post('/update/{setting}', ['uses' => 'SettingController@update', 'as' => 'update']);
     });

@@ -17,7 +17,7 @@
                 {{Auth::user()->title}}
             @endif
         </p>
-        <span class="font-second-geo text-[#536485] block hover-role">
+        <span class="font-second-geo text-[#536485] block hover-role dropdown-profile">
             @if(!empty(Auth::user()->roles()->pluck('id')->implode(' ')))
                 {{ __('admin.role') }} : <span class="font-bold">{{ Auth::user()->roles()->pluck('name')->implode(' ') }}</span>
             @endif

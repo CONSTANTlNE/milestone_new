@@ -3,65 +3,37 @@
 namespace App\Repositories\FileManager;
 
 
-
 use App\Http\Requests\FileManager\CreateFile;
-
 use App\Http\Requests\FileManager\CreateFolder;
-
 use App\Http\Requests\FileManager\UpdateFile;
-
 use App\Models\File;
-
 use App\Models\Folder;
-
 use App\Models\Thumbnail;
 use App\Repositories\BaseRepository;
-
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Response;
-
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\Encoders\WebpEncoder;
-
-use DB;
-
-use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\DB;
 use Spatie\ResponseCache\Facades\ResponseCache;
-
 use Illuminate\Support\Str;
-
-
+use Intervention\Image\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 
 class FileManagerRepository extends BaseRepository {
-
-
-
   private $uploadBehaviour = 'default';
 
-
-
   public function index(Request $request) {
-
     if ($request->ajax()) {
-
       $user = \Auth::user();
-
-
-
       $type = $request->type;
-
       $folderId = $request->folderId;
 
-
-
       $breadcrumb = [
-
-        (object)['name' => 'All', 'id' => 0]
-
+        (object)['name' => __("admin.all"), 'id' => 0]
       ];
 
 
@@ -86,7 +58,6 @@ class FileManagerRepository extends BaseRepository {
         } else {
 
           $folders = $folder->children;
-
           $files = $folder->files()->with('thumbnails');
 
         }
@@ -185,7 +156,6 @@ class FileManagerRepository extends BaseRepository {
 
 
       $fileTypes = File::select('type')->groupBy('type')->get();
-//        dd($files);
 
       return [
 
@@ -214,9 +184,7 @@ class FileManagerRepository extends BaseRepository {
 
 
   public function store($request, $inputName = 'files') {
-
     $user = \Auth::user();
-
 
 
 
@@ -371,19 +339,7 @@ class FileManagerRepository extends BaseRepository {
       $fileIds = $result['uploadedFileIds'];
 
     }
-
-
-
-    if(config('filemanager.response_cache_enabled')) {
-
-      ResponseCache::clear();
-
-    }
-
-
-
     return ['success' => true, 'folder' => $folder, 'fileIds' => $fileIds];
-
   }
 
 
@@ -505,16 +461,16 @@ class FileManagerRepository extends BaseRepository {
         }
         if($file && $file->trashed()) {
             $fileSrc = str_replace('storage/files/', '', $file->src);
-            if (Storage::disk('filesTrash')->exists($fileSrc)) {
-                $sizes = ['145x97', '320x180', '737x401', '1200x630'];
-                foreach ($sizes as $size) {
-                    $fileSize = $size . '/' . $fileSrc;
-                    if (Storage::disk('filesThumbs')->exists($fileSize)) {
-                        Storage::disk('filesThumbs')->delete($fileSize);
-                    }
-                }
-                Storage::disk('filesTrash')->delete($fileSrc);
-            }
+//            if (Storage::disk('filesTrash')->exists($fileSrc)) {
+//                $sizes = ['145x97', '320x180', '737x401', '1200x630'];
+//                foreach ($sizes as $size) {
+//                    $fileSize = $size . '/' . $fileSrc;
+//                    if (Storage::disk('filesThumbs')->exists($fileSize)) {
+//                        Storage::disk('filesThumbs')->delete($fileSize);
+//                    }
+//                }
+//                Storage::disk('filesTrash')->delete($fileSrc);
+//            }
             $file->forceDelete();
         }
         return [ 'deleted' => true, 'folderId' => $folderTrashId->id];
@@ -875,14 +831,14 @@ public function nestable(){
       ]);
 
       DB::transaction(function () use ($file, $uploadedFile, $uuid) {
-        $file->save();
         if ($file->type == 'image'){
           $webpEncoder = new WebpEncoder();
-          $webpImage = Image::read($uploadedFile)->encode($webpEncoder);
+            $manager = new ImageManager(new GdDriver());
+            $webpImage = $manager->read($uploadedFile)->encode($webpEncoder);
 
           $webpImagePath = 'storage/files/' . $uuid . '.webp';
           $webpImage->save(public_path($webpImagePath));
-          $this->createProgressiveThumbnails($uploadedFile, $webpEncoder, $uuid);
+          //$this->createProgressiveThumbnails($uploadedFile, $webpEncoder, $uuid);
 //          if ($file->width > 320 or $file->width > 140 ){
 //              $file->thumbs = $this->createProgressiveThumbnails($uploadedFile, $webpEncoder, $file->title);
 //          }
@@ -894,6 +850,7 @@ public function nestable(){
         $file->save();
       });
       $uploadedFileIds[] = $file->id;
+
       if(config('filemanager.self_editor_roles')) {
         $file->owners()->attach($user);
       }

@@ -25,6 +25,15 @@ return [
     'default_backend_avatar_image' => 'storage/defaults/avatar.jpg',
     'default_seo_image' => 'storage/defaults/default-seo.jpg',
 
+    'sizes' => [
+        '1' => '120x240',
+        '2' => '240x480',
+        '3' => '480x960',
+    ],
+
+    'base_path' => 'files',
+    'base_trash_path' => 'files/trash',
+
   /**
    * URL path to admin panel.
    */
