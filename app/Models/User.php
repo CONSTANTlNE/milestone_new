@@ -74,7 +74,7 @@ class User extends Authenticatable
 
     public function articles(): HasMany
     {
-        return $this->hasMany('App\Models\Article', 'user_id');
+        return $this->hasMany('App\Models\Blog', 'user_id');
     }
 
     public function images(): MorphToMany

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Permission;
 use App\Rules\NonEmptyTitleArray;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PermissionCreateRequest extends FormRequest
 {
@@ -26,6 +27,8 @@ class PermissionCreateRequest extends FormRequest
         return [
             'title' => ['array', new NonEmptyTitleArray],
             'name' => ['required','string','not_in:0','unique:permissions,name'],
+            'published_at' => ['nullable'],
+            'status' => ['required', 'integer', Rule::in([0, 1])]
         ];
     }
 

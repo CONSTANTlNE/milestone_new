@@ -1,89 +1,142 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.Permission Create') }} @endsection
+@section('title') {{ __('admin.create_permission') }} @endsection
 @section('content')
-    <div class="container-fluid">
-        <div class="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
-            <div class="mr-auto  d-lg-block">
-                <h2 class="text-black font-w600">{{ __('strings.Permission Create') }}</h2>
-                <p class="mb-0 font-w600">{{ __('strings.Welcome') }}</p>
+    <div class="content">
+        <div class="main-content">
+
+            <div class="block justify-between page-header md:flex">
+                <div>
+                    <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.375rem] font-semibold font-first-geo">
+                        {{ __('admin.create_permission') }}
+                    </h3>
+                    <p class="font-second-geo text-defaulttextcolor/70">{{ __('admin.welcome') }}</p>
+                </div>
+                <ol class="flex items-center whitespace-nowrap min-w-0 gap-3 header-nav-links">
+                    @can('backend.permissions.index')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.permissions.index') }}" class="ti-btn bg-secondary text-white !font-medium font-second-geo">
+                                <i class="ri-arrow-go-back-line text-[1.375rem]"></i>
+                                {{ __('admin.return_back') }} - {{ __('admin.all_permissions') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('backend.permissions.trash')
+                        <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-danger dark:text-[#8c9097] dark:text-white/50">
+                            <a href="{{ route('backend.permissions.trash') }}" class="ti-btn bg-danger text-white !font-medium font-second-geo">
+                                <i class="ri-delete-bin-2-line text-[1.375rem]"></i>
+                                {{__('admin.deleted_permissions')}}
+                            </a>
+                        </li>
+                    @endcan
+                </ol>
             </div>
-            @can('backend.permissions.index')
-                <a href="{{ route('backend.permissions.index', app()->getLocale())}}" class="btn btn-info rounded"><i class="flaticon-381-repeat-1"></i> {{ __('strings.Return Back') }} - {{ __('strings.All Permission') }}</a>
-            @endcan
-            @can('backend.permissions.trash')
-                <a href="{{ route('backend.permissions.trash', app()->getLocale())}}" class="btn btn-primary rounded light deleted-archive ml-3"><i class="flaticon-381-trash-2"></i>  {{ __('strings.Deleted Permissions') }}</a>
-            @endcan
-        </div>
-        @include('backend.layouts.components.errors',[
-          'errors' => $errors,
-        ])
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <form method="post" class="needs-validation" action="{{ route('backend.permissions.store', app()->getLocale()) }}" novalidate enctype="multipart/form-data">
-                            {{csrf_field()}}
-                             <div class="col-md-12">
+
+            @include('backend.layouts.components.errors',[
+              'errors' => $errors,
+            ])
+
+            <form method="post" action="{{ route('backend.permissions.store') }}" novalidate enctype="multipart/form-data">
+                @csrf
+                <div class="grid grid-cols-12 gap-6 white-bg">
+                    <div class="xl:col-span-9 col-span-12">
+                        <div class="box">
+                            <div class="box-body">
                                 @include('backend.layouts.includes.langTabComponent')
-                                <div class="tab-content p-3 text-muted">
+                                <div class="tab-content">
                                     @foreach(getLocales() as $key => $lang)
-                                        <div class="tab-pane {{($key == 0) ? 'active' : ''}}" id="locale-{{$lang->code}}" role="tabpanel">
-                                            <div class="row">
-                                                <x-input
-                                                    type="text"
-                                                    :lang="$lang"
-                                                    :data="null"
-                                                    label="Title"
-                                                    column="title"
-                                                    place-holder="Holder Title"
-                                                    success-text="Success Field"
-                                                    help-text="Error Field"
-                                                    :required="false"
-                                                    :disabled="false"
-                                                    width="12"
-                                                />
+                                        <div
+                                            class="{{($key == 0) ? '' : 'hidden'}}"
+                                            id="locale-{{$lang->code}}"
+                                            role="tabpanel"
+                                            aria-labelledby="locale-item-{{$lang->code}}"
+                                        >
+                                            <div class=""
+                                                 id="content-locale-{{$lang->code}}"
+                                                 role="tabpanel"
+                                                 aria-labelledby="content-locale-item-{{$lang->code}}">
+                                                <div class="p-5 border rounded-ss-none rounded-sm dark:border-white/10 border-gray-200 content-section">
+
+                                                    <x-backend.input
+                                                        type="text"
+                                                        :lang="$lang"
+                                                        :data="null"
+                                                        label="title"
+                                                        column="title"
+                                                        place-holder="holder_title"
+                                                        success-text="success_field"
+                                                        help-text="error_field"
+                                                        :required="true"
+                                                        :disabled="false"
+                                                    />
+
+
+                                                </div>
                                             </div>
+
                                         </div>
                                     @endforeach
                                 </div>
-                                <hr>
-                                <div class="col-md-8 p-3">
-                                    <div class="form-group position-relative">
-                                        <label for="single-select" class="control-label font-w600">{{ __('strings.Choose Permissions Route') }}</label>
-                                        <select class="form-control font-w600 select2" name="name" id="single-select" required>
-                                            <option value="0">{{ __('strings.View All Route') }}</option>
-                                            @foreach($routes as $route)
-                                                <option value="{{ $route }}">{{ str_replace('.', '/', $route) }}</option>
-                                            @endforeach
-                                        </select>
-                                        <div class="valid-tooltip">
-                                            {{ __('strings.Success Field') }}
-                                        </div>
-                                        <div class="invalid-tooltip">
-                                            {{ __('strings.Error Field') }}
-                                        </div>
-                                    </div>
-                                </div>
-                                 <x-checkbox
-                                     column="block"
-                                     label="Review"
-                                     place-holder="Review"
-                                     success-text="Checkbox Success"
-                                     help-text="Checkbox Error"
-                                     :required="true"
-                                 />
-                                <div class="col-lg-12 p-3">
-                                    <button class="btn btn-primary" type="submit">{{ __('strings.Create') }}</button>
-                                </div>
                             </div>
-                        </form>
+                            <div class="box-footer text-end">
+                                <button type="submit" class="ti-btn bg-primary text-white font-second-geo">
+                                    <i class="ri-add-line"></i>
+                                    {{__('admin.create')}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xl:col-span-3 col-span-12">
+                        <div class="box">
+                            <div class="box-body">
+
+                                <x-backend.publishDate
+                                    :data="null"
+                                    column="published_at"
+                                    label="published_at"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="false"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    width="12"
+                                />
+
+                                <x-backend.selectMulti
+                                    :data="$routes"
+                                    column="name"
+                                    label="permission_route"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="true"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    hidden="show-search"
+                                    firstSelect="select_route"
+                                    width="12"
+                                />
+
+                                <x-backend.selectStatic
+                                    :data="config('crm.status')"
+                                    column="status"
+                                    label="status_type"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="true"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    hidden="show-search-hidden"
+                                    width="12"
+                                />
+
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
+
         </div>
     </div>
 @endsection
-@push('scripts')
-    <script src="{{URL::asset('/js/additional/form-advanced.min.js')}}"></script>
-@endpush
-

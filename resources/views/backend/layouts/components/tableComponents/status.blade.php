@@ -3,7 +3,7 @@
         <button
             id="status-{{$locale->id}}"
             type="button"
-            hx-post="{{ route('backend.locales.status', [app()->getLocale(), 'id'=>$locale->id]) }}"
+            hx-post="{{ route('backend.locales.status', [app()->getLocale(), 'id'=>$locale->code]) }}"
             hx-trigger="click"
             hx-target="#parent-{{$locale->id}}"
             hx-swap="innerHTML"

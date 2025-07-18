@@ -439,91 +439,93 @@ class FileManagerRepository extends BaseRepository {
 
     //destroyFile, deleteFileForever
     public function deleteFile($fileID) {
-    $user = \Auth::user();
-    if(config('filemanager.self_editor_roles') && $user->can(Right::SELF_EDITOR)) {
-      if(!$file->isOwnedByUser($user)) {
-        return ['deleted' => false];
-      }
+        $user = \Auth::user();
+        $file = File::findOrFail($fileID);
+        
+        if(config('filemanager.self_editor_roles') && $user->can(Right::SELF_EDITOR)) {
+            if(!$file->isOwnedByUser($user)) {
+                return ['deleted' => false];
+            }
+        }
+        
+        $folderID = $file->folders()->first()->id;
+        return ['deleted' => $file->deleteFiles(), 'folderId' => $folderID];
     }
-    $file = File::findOrFail($fileID);
-    $folderID = $file->folders()->first()->id;
-    return ['deleted' => $file->deleteFiles(), 'folderId' => $folderID];
-  }
+    
     public function deleteFileForever($id)
     {
         $file = File::withTrashed()->find($id);
         $folderTrashId = Folder::where('name','trash')->first();
         $user = \Auth::user();
+        
         if(config('filemanager.self_editor_roles')) {
             if(!$file->isOwnedByUser($user)) {
                 return ['deleted' => false];
             }
         }
+        
         if($file && $file->trashed()) {
             $fileSrc = str_replace('storage/files/', '', $file->src);
-//            if (Storage::disk('filesTrash')->exists($fileSrc)) {
-//                $sizes = ['145x97', '320x180', '737x401', '1200x630'];
-//                foreach ($sizes as $size) {
-//                    $fileSize = $size . '/' . $fileSrc;
-//                    if (Storage::disk('filesThumbs')->exists($fileSize)) {
-//                        Storage::disk('filesThumbs')->delete($fileSize);
-//                    }
-//                }
-//                Storage::disk('filesTrash')->delete($fileSrc);
-//            }
             $file->forceDelete();
         }
+        
         return [ 'deleted' => true, 'folderId' => $folderTrashId->id];
     }
+    
     //deleteFolder, deleteFolderForever
     public function deleteFolder($folderID)
-  {
-    $user = \Auth::user();
-   if(config('filemanager.self_editor_roles')) {
-      if(!$folder->isOwnedByUser($user)) {
-        return ['deleted' => false, 'error' => 'This folder can be deleted only by it\'s owners'];
-      }
-    }
+    {
+        $user = \Auth::user();
+        $folder = Folder::findOrFail($folderID);
+        
+        if(config('filemanager.self_editor_roles')) {
+            if(!$folder->isOwnedByUser($user)) {
+                return ['deleted' => false, 'error' => 'This folder can be deleted only by it\'s owners'];
+            }
+        }
 
-    $folder = Folder::findOrFail($folderID);
+        if($folder->name == '.tmp' || $folder->name == 'trash') {
+            return ['deleted' => false, 'error' => 'Unable to delete system folder'];
+        }
 
-    if($folder->name == '.tmp' || $folder->name == 'trash') {
-        return ['deleted' => false, 'error' => 'Unable to delete system folder'];
-    }
+        $files = $folder->files;
+        $returnData = ['error' => 'Files is used', 'description' => '', 'deleteFolder' => true];
 
-    $files = $folder->files;
-
-    $returnData = ['error' => 'Files is used', 'description' => '', 'deleteFolder' => true];
-
-    foreach ($files as $file) {
-      $destroyedFile = $this->deleteFile($file->id);
-      if (isset($destroyedFile['error'])) {
-        $returnData['deleteFolder'] = false;
-        $returnData['description'] .= $destroyedFile['description'];
-      }
+        foreach ($files as $file) {
+            $destroyedFile = $this->deleteFile($file->id);
+            if (isset($destroyedFile['error'])) {
+                $returnData['deleteFolder'] = false;
+                $returnData['description'] .= $destroyedFile['description'];
+            }
+        }
+        
+        if(config('filemanager.response_cache_enabled')) {
+            ResponseCache::clear();
+        }
+        
+        if ($returnData['deleteFolder']) {
+            return ['deleted' => $folder->delete(), 'folderId' => $folder->parent_id];
+        } else {
+            return $returnData;
+        }
     }
-    if(config('filemanager.response_cache_enabled')) {
-      ResponseCache::clear();
-    }
-    if ($returnData['deleteFolder']) {
-        return ['deleted' => $folder->delete(), 'folderId' => $folder->parent_id];
-    } else {
-      return $returnData;
-    }
-  }
+    
     public function deleteFolderForever($id)
     {
         $folder = Folder::withTrashed()->find($id);
         $folderTrashId = Folder::where('name','trash')->first();
         $user = \Auth::user();
+        
         if(config('filemanager.self_editor_roles')) {
             if(!$folder->isOwnedByUser($user)) {
                 return ['deleted' => false];
             }
         }
+        
         if($folder && $folder->trashed()) {
             $folder->forceDelete();
         }
+        
         return [ 'deleted' => true, 'folderId' => $folderTrashId->id ];
     }
     //restoreFile

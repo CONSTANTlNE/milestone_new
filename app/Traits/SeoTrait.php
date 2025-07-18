@@ -18,7 +18,7 @@ trait SeoTrait
     {
         if (count(is_not_null($seoData['seoTitles']))) {
             $locales = getLocalesCode();
-            $seo = new Seo();
+            $seo = $this->seo()->first() ?? new Seo();
             foreach ($locales as $localeCode) {
                 $seo->setTranslation('seoTitles', $localeCode, $seoData['seoTitles'][$localeCode]);
                 $seo->setTranslation('seoKeywords', $localeCode, $seoData['seoKeywords'][$localeCode]);
@@ -36,6 +36,6 @@ trait SeoTrait
      */
     public function seo(): morphMany
     {
-        return $this->morphMany(Seo::class, 'seoable');
+        return $this->morphMany(Seo::class, 'seoble');
     }
 }

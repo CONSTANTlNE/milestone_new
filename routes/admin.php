@@ -1,26 +1,26 @@
 <?php
 
-use App\Http\Controllers\Backend\ArticleCategoryController;
-use App\Http\Controllers\Backend\ArticleController;
-use App\Http\Controllers\Backend\BannerController;
-use App\Http\Controllers\Backend\ContactController;
+use App\Http\Controllers\Backend\Projects\FaqController;
+use App\Http\Controllers\Backend\Projects\ServiceController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\FileManagerController;
+use App\Http\Controllers\Backend\LanguageTranslationController;
 use App\Http\Controllers\Backend\LocaleController;
+use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\PermissionController;
+use App\Http\Controllers\Backend\Projects\BlogCategoryController;
+use App\Http\Controllers\Backend\Projects\BlogController;
+use App\Http\Controllers\Backend\Projects\PortfolioController;
+use App\Http\Controllers\Backend\Projects\SliderController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\SocialController;
 use App\Http\Controllers\Backend\SubscriberController;
-use App\Http\Controllers\Backend\TeamController;
 use App\Http\Controllers\Backend\UserController;
 use Illuminate\Support\Facades\Route;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use Illuminate\Support\Facades\Artisan;
-use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
-use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Fortify\Features;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\ConfirmablePasswordController;
 use Laravel\Fortify\Http\Controllers\ConfirmedPasswordStatusController;
 use Laravel\Fortify\Http\Controllers\ConfirmedTwoFactorAuthenticationController;
@@ -31,12 +31,14 @@ use Laravel\Fortify\Http\Controllers\PasswordController;
 use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
 use Laravel\Fortify\Http\Controllers\ProfileInformationController;
 use Laravel\Fortify\Http\Controllers\RecoveryCodeController;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\TwoFactorAuthenticationController;
 use Laravel\Fortify\Http\Controllers\TwoFactorQrCodeController;
 use Laravel\Fortify\Http\Controllers\TwoFactorSecretKeyController;
 use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 use Laravel\Fortify\RoutePath;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 //admins auth routes
 Route::group(
@@ -243,209 +245,306 @@ Route::group(
     Route::post('/files/sortImages/', [FileManagerController::class, 'nestable'])->name('files.sort');
 
     //languages - static
-    Route::get('/locales/static', 'LanguageTranslationController@index')->name('locales.static.index');
-    Route::get('/locales/staticadmin', 'LanguageTranslationController@index')->name('locales.static.staticadmin');
-    Route::post('/translations/update', 'LanguageTranslationController@transUpdate')->name('translation.update.json');
-    Route::post('/translations/updateKey', 'LanguageTranslationController@transUpdateKey')->name('translation.update.json.key');
-    Route::post('/translations/destroy', 'LanguageTranslationController@destroy')->name('translation.destroy');
-    Route::post('/translations/create', 'LanguageTranslationController@store')->name('translation.create');
-    Route::post('/folders/create', 'LanguageTranslationController@folder')->name('folders.create');
+    Route::get('/locales/static', [LanguageTranslationController::class, 'index'])->name('locales.static.index');
+    Route::get('/locales/staticadmin', [LanguageTranslationController::class, 'index'])->name('locales.static.staticadmin');
 
-    //languages additional
-    Route::group(['prefix' => 'locales', 'as' => 'locales.'], function () {
-        Route::get('/status/{locale}', ['uses' => 'LocaleController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'LocaleController@massDestroy', 'as' => 'massDestroy']);
-        Route::get('/general/{locale}', ['uses' => 'LocaleController@general', 'as' => 'general']);
-        Route::post('/reorder', ['uses' => 'LocaleController@reorder', 'as' => 'reorder']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'LocaleController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'LocaleController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'LocaleController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'LocaleController@trash', 'as' => 'trash']);
+    Route::post('/translations/update', [LanguageTranslationController::class, 'transUpdate'])->name('translation.update.json');
+    Route::post('/translations/updateKey', [LanguageTranslationController::class, 'transUpdateKey'])->name('translation.update.json.key');
+    Route::post('/translations/destroy', [LanguageTranslationController::class, 'destroy'])->name('translation.destroy');
+    Route::post('/translations/create', [LanguageTranslationController::class, 'store'])->name('translation.create');
+
+    Route::post('/folders/create', [LanguageTranslationController::class, 'folder'])->name('folders.create');
+
+// locales
+    Route::prefix('locales')->as('locales.')->group(function () {
+        // Additional routes
+        Route::post('status', [LocaleController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [LocaleController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [LocaleController::class, 'massDestroy'])->name('massDestroy');
+        Route::post('reorder', [LocaleController::class, 'reorder'])->name('reorder');
+
+        // Trash-related
+        Route::post('/restore/{id}', [LocaleController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [LocaleController::class, 'remove'])->name('remove');
+        Route::post('/remove', [LocaleController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [LocaleController::class, 'trash'])->name('trash');
     });
     Route::resource('locales', LocaleController::class);
+// users
+    Route::prefix('users')->name('users.')->group(function () {
+        // Additional routes
+        Route::post('status', [UserController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [UserController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [UserController::class, 'massDestroy'])->name('massDestroy');
 
-    //users additional
-    Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
-        Route::post('/status', ['uses' => 'UserController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'UserController@massDestroy', 'as' => 'massDestroy']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'UserController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'UserController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'UserController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'UserController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [UserController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [UserController::class, 'remove'])->name('remove');
+        Route::post('/remove', [UserController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [UserController::class, 'trash'])->name('trash');
     });
     Route::resource('users', UserController::class);
+// customers
+    Route::prefix('customers')->name('customers.')->group(function () {
+        // Additional routes
+        Route::post('status', [UserController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [UserController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [UserController::class, 'massDestroy'])->name('massDestroy');
 
-    //customers additional
-    Route::group(['prefix' => 'customers', 'as' => 'customers.'], function () {
-        Route::post('/status', ['uses' => 'UserController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'UserController@massDestroy', 'as' => 'massDestroy']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'UserController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'UserController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'UserController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'UserController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [UserController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [UserController::class, 'remove'])->name('remove');
+        Route::post('/remove', [UserController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [UserController::class, 'trash'])->name('trash');
     });
     Route::resource('customers', UserController::class);
+// subscribers
+    Route::prefix('subscribers')->name('subscribers.')->group(function () {
+        // Additional routes
+        Route::post('status', [SubscriberController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [SubscriberController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [SubscriberController::class, 'massDestroy'])->name('massDestroy');
 
-    //subscribers additional
-    Route::group(['prefix' => 'subscribers', 'as' => 'subscribers.'], function () {
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'SubscriberController@restore', 'as' => 'restore']);
-        Route::post('/remove/{id}', ['uses' => 'SubscriberController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'SubscriberController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'SubscriberController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [SubscriberController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [SubscriberController::class, 'remove'])->name('remove');
+        Route::post('/remove', [SubscriberController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [SubscriberController::class, 'trash'])->name('trash');
     });
     Route::resource('subscribers', SubscriberController::class);
+// roles
+    Route::prefix('roles')->name('roles.')->group(function () {
+        // Additional routes
+        Route::post('status', [RoleController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [RoleController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [RoleController::class, 'massDestroy'])->name('massDestroy');
 
-    //roles additional
-    Route::group(['prefix' => 'roles', 'as' => 'roles.'], function () {
-        Route::post('/status', ['uses' => 'RoleController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'RoleController@massDestroy', 'as' => 'massDestroy']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'RoleController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'RoleController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'RoleController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'RoleController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [RoleController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [RoleController::class, 'remove'])->name('remove');
+        Route::post('/remove', [RoleController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [RoleController::class, 'trash'])->name('trash');
     });
     Route::resource('roles', RoleController::class);
+// permissions
+    Route::prefix('permissions')->name('permissions.')->group(function () {
+        // Additional routes
+        Route::post('status', [PermissionController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [PermissionController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [PermissionController::class, 'massDestroy'])->name('massDestroy');
 
-    //permissions additional
-    Route::group(['prefix' => 'permissions', 'as' => 'permissions.'], function () {
-        Route::post('/status', ['uses' => 'PermissionController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'PermissionController@massDestroy', 'as' => 'massDestroy']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'PermissionController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'PermissionController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'PermissionController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'PermissionController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [PermissionController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [PermissionController::class, 'remove'])->name('remove');
+        Route::post('/remove', [PermissionController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [PermissionController::class, 'trash'])->name('trash');
     });
     Route::resource('permissions', PermissionController::class);
+//pages
+    Route::prefix('pages')->as('pages.')->group(function () {
+        // Additional routes
+        Route::post('status', [PageController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [PageController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [PageController::class, 'massDestroy'])->name('massDestroy');
 
-    //pages additional
-    Route::group(['prefix' => 'pages', 'as' => 'pages.'], function () {
-        Route::post('/status', ['uses' => 'PageController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'PageController@massDestroy', 'as' => 'massDestroy']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'PageController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'PageController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'PageController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'PageController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [PageController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [PageController::class, 'remove'])->name('remove');
+        Route::post('/remove', [PageController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [PageController::class, 'trash'])->name('trash');
     });
     Route::resource('pages', PageController::class);
+//sliders
+    Route::prefix('sliders')->name('sliders.')->group(function () {
+        // Additional routes
+        Route::post('status', [SliderController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [SliderController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [SliderController::class, 'massDestroy'])->name('massDestroy');
+        Route::post('reorder', [SliderController::class, 'reorder'])->name('reorder');
 
-    //menus
-    Route::group(['prefix' => 'menus', 'as' => 'menus.'], function () {
-        Route::get('/', ['uses' => 'MenuController@index', 'as' => 'index']);
-        Route::get('/create', ['uses' => 'MenuController@create', 'as' => 'create']);
-        Route::post('/store', ['uses' => 'MenuController@store', 'as' => 'store']);
-        Route::get('/show/{id}', ['uses' => 'MenuController@show', 'as' => 'show']);
-        Route::get('/edit/{id}', ['uses' => 'MenuController@edit', 'as' => 'edit']);
-        Route::post('/update/{id}', ['uses' => 'MenuController@update', 'as' => 'update']);
-        Route::post('/delete/{id}', ['uses' => 'MenuController@destroy', 'as' => 'destroy']);
-        Route::post('/status', ['uses' => 'MenuController@status', 'as' => 'status']);
-        Route::post('/reorder', ['uses' => 'MenuController@reorder', 'as' => 'reorder']);
-        Route::delete('/massDestroy', ['uses' => 'MenuController@massDestroy', 'as' => 'massDestroy']);
-        // trash
-        Route::get('/trash', ['uses' => 'MenuController@trash', 'as' => 'trash']);
-        Route::get('/restore/{id}', ['uses' => 'MenuController@restore', 'as' => 'restore']);
-        Route::post('/remove/{id}', ['uses' => 'MenuController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'MenuController@massRemove', 'as' => 'massRemove']);
-
-        // Routes for menu items
-        Route::post('/updateMenu', ['uses' => 'MenuController@updateMenu', 'as' => 'updateMenu']);
-        Route::post('/deleteMenu', ['uses' => 'MenuController@deleteMenu', 'as' => 'deleteMenu']);
-        Route::post('/menu-items/create', ['uses' => 'MenuController@addMenuItem', 'as' => 'items.create']);
-        Route::post('/menu-items/update', ['uses' => 'MenuController@updateMenuItem', 'as' => 'items.update']);
-        Route::post('/menu-items/delete', ['uses' => 'MenuController@deleteMenuItem', 'as' => 'items.delete']);
+        // Trash-related
+        Route::post('/restore/{id}', [SliderController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [SliderController::class, 'remove'])->name('remove');
+        Route::post('/remove', [SliderController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [SliderController::class, 'trash'])->name('trash');
     });
+    Route::resource('sliders', SliderController::class);
+//portfolios
+    Route::prefix('portfolios')->name('portfolios.')->group(function () {
+        // Additional routes
+        Route::post('status', [PortfolioController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [PortfolioController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [PortfolioController::class, 'massDestroy'])->name('massDestroy');
 
-    //articles additional
-    Route::group(['prefix' => 'articles', 'as' => 'articles.'], function () {
-        Route::post('/status', ['uses' => 'ArticleController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'ArticleController@massDestroy', 'as' => 'massDestroy']);
-        Route::post('/reorder', ['uses' => 'ArticleController@reorder', 'as' => 'reorder']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'ArticleController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'ArticleController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'ArticleController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'ArticleController@trash', 'as' => 'trash']);
-        Route::get('/up', ['uses' => 'ArticleController@up', 'as' => 'up']);
+        // Trash-related
+        Route::post('/restore/{id}', [PortfolioController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [PortfolioController::class, 'remove'])->name('remove');
+        Route::post('/remove', [PortfolioController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [PortfolioController::class, 'trash'])->name('trash');
     });
-    Route::resource('articles', ArticleController::class);
+    Route::resource('portfolios', PortfolioController::class);
 
-    //article's Categories additional
-    Route::group(['prefix' => 'articleCategory', 'as' => 'articleCategory.'], function () {
-        Route::post('/status', ['uses' => 'ArticleCategoryController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'ArticleCategoryController@massDestroy', 'as' => 'massDestroy']);
-        Route::post('/reorder', ['uses' => 'ArticleCategoryController@reorder', 'as' => 'reorder']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'ArticleCategoryController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'ArticleCategoryController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'ArticleCategoryController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'ArticleCategoryController@trash', 'as' => 'trash']);
+    Route::prefix('menus')->name('menus.')->group(function () {
+        Route::get('/', [MenuController::class, 'index'])->name('index');
+        Route::get('/create', [MenuController::class, 'create'])->name('create');
+        Route::post('/store', [MenuController::class, 'store'])->name('store');
+        Route::get('/show/{id}', [MenuController::class, 'show'])->name('show');
+        Route::get('/edit/{id}', [MenuController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [MenuController::class, 'update'])->name('update');
+        Route::post('/delete/{id}', [MenuController::class, 'destroy'])->name('destroy');
+        Route::post('/status', [MenuController::class, 'status'])->name('status');
+        Route::post('/reorder', [MenuController::class, 'reorder'])->name('reorder');
+        Route::delete('/massDestroy', [MenuController::class, 'massDestroy'])->name('massDestroy');
+        Route::get('/trash', [MenuController::class, 'trash'])->name('trash');
+        Route::get('/restore/{id}', [MenuController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [MenuController::class, 'remove'])->name('remove');
+        Route::delete('/remove', [MenuController::class, 'massRemove'])->name('massRemove');
+
+        Route::post('/updateMenu', [MenuController::class, 'updateMenu'])->name('updateMenu');
+        Route::post('/deleteMenu', [MenuController::class, 'deleteMenu'])->name('deleteMenu');
+        Route::post('/menu-items/create', [MenuController::class, 'addMenuItem'])->name('items.create');
+        Route::post('/menu-items/update', [MenuController::class, 'updateMenuItem'])->name('items.update');
+        Route::post('/menu-items/delete', [MenuController::class, 'deleteMenuItem'])->name('items.delete');
     });
-    Route::resource('articleCategory', ArticleCategoryController::class);
+//blogs
+    Route::prefix('blogs')->name('blogs.')->group(function () {
+        // Additional routes
+        Route::post('status', [BlogController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [BlogController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [BlogController::class, 'massDestroy'])->name('massDestroy');
 
-    //banners additional
-    Route::group(['prefix' => 'banners', 'as' => 'banners.'], function () {
-        Route::post('/status', ['uses' => 'BannerController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'BannerController@massDestroy', 'as' => 'massDestroy']);
-        Route::get('/position', ['uses' => 'BannerController@position', 'as' => 'position']);
-        Route::post('/reorder', ['uses' => 'BannerController@reorder', 'as' => 'reorder']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'BannerController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'BannerController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'BannerController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'BannerController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [BlogController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [BlogController::class, 'remove'])->name('remove');
+        Route::post('/remove', [BlogController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [BlogController::class, 'trash'])->name('trash');
     });
-    Route::resource('banners', BannerController::class);
+    Route::resource('blogs', BlogController::class);
+//blogCategory
+    Route::prefix('blogCategories')->name('blogCategories.')->group(function () {
+        // Additional routes
+        Route::post('status', [BlogCategoryController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [BlogCategoryController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [BlogCategoryController::class, 'massDestroy'])->name('massDestroy');
 
-    //teams additional
-    Route::group(['prefix' => 'teams', 'as' => 'teams.'], function () {
-        Route::post('/status', ['uses' => 'TeamController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'TeamController@massDestroy', 'as' => 'massDestroy']);
-        Route::get('/position', ['uses' => 'TeamController@position', 'as' => 'position']);
-        Route::post('/reorder', ['uses' => 'TeamController@reorder', 'as' => 'reorder']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'TeamController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'TeamController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'TeamController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'TeamController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [BlogCategoryController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [BlogCategoryController::class, 'remove'])->name('remove');
+        Route::post('/remove', [BlogCategoryController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [BlogCategoryController::class, 'trash'])->name('trash');
     });
-    Route::resource('teams', TeamController::class);
+    Route::resource('blogCategories', BlogCategoryController::class);
+//tags
+    Route::prefix('tags')->name('tags.')->group(function () {
+        // Additional routes
+        Route::post('status', [BlogCategoryController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [BlogCategoryController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [BlogCategoryController::class, 'massDestroy'])->name('massDestroy');
+        Route::post('reorder', [BlogCategoryController::class, 'reorder'])->name('reorder');
 
-    //socials additional
-    Route::group(['prefix' => 'socials', 'as' => 'socials.'], function () {
-        Route::post('/status', ['uses' => 'SocialController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'SocialController@massDestroy', 'as' => 'massDestroy']);
-        Route::post('/reorder', ['uses' => 'SocialController@reorder', 'as' => 'reorder']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'SocialController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'SocialController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'SocialController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'SocialController@trash', 'as' => 'trash']);
+        // Trash-related
+        Route::post('/restore/{id}', [BlogCategoryController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [BlogCategoryController::class, 'remove'])->name('remove');
+        Route::post('/remove', [BlogCategoryController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [BlogCategoryController::class, 'trash'])->name('trash');
+    });
+    Route::resource('tags', BlogCategoryController::class);
+//socials
+    Route::prefix('socials')->as('socials.')->group(function () {
+        // Additional routes
+        Route::post('status', [SocialController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [SocialController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [SocialController::class, 'massDestroy'])->name('massDestroy');
+        Route::post('reorder', [SocialController::class, 'reorder'])->name('reorder');
+
+        // Trash-related
+        Route::post('/restore/{id}', [SocialController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [SocialController::class, 'remove'])->name('remove');
+        Route::post('/remove', [SocialController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [SocialController::class, 'trash'])->name('trash');
     });
     Route::resource('socials', SocialController::class);
-//
-    //contacts additional
-    Route::group(['prefix' => 'contacts', 'as' => 'contacts.'], function () {
-        Route::post('/status', ['uses' => 'ContactController@status', 'as' => 'status']);
-        Route::delete('/massDestroy', ['uses' => 'ContactController@massDestroy', 'as' => 'massDestroy']);
-        // trash
-        Route::get('/restore/{id}', ['uses' => 'ContactController@restore', 'as' => 'restore']);
-        Route::delete('/remove/{id}', ['uses' => 'ContactController@remove', 'as' => 'remove']);
-        Route::delete('/remove', ['uses' => 'ContactController@massRemove', 'as' => 'massRemove']);
-        Route::get('/trash', ['uses' => 'ContactController@trash', 'as' => 'trash']);
-    });
-    Route::resource('contacts', ContactController::class);
 
-    //settings
-    Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
-        Route::get('/show', ['uses' => 'SettingController@show', 'as' => 'show']);
-        Route::get('/edit/{id}', ['uses' => 'SettingController@edit', 'as' => 'edit']);
-        Route::post('/update/{setting}', ['uses' => 'SettingController@update', 'as' => 'update']);
+//faqs
+    Route::prefix('faqs')->as('faqs.')->group(function () {
+        // Additional routes
+        Route::post('status', [FaqController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [FaqController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [FaqController::class, 'massDestroy'])->name('massDestroy');
+        Route::post('reorder', [FaqController::class, 'reorder'])->name('reorder');
+
+        // Trash-related
+        Route::post('/restore/{id}', [FaqController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [FaqController::class, 'remove'])->name('remove');
+        Route::post('/remove', [FaqController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [FaqController::class, 'trash'])->name('trash');
+    });
+    Route::resource('faqs', FaqController::class);
+//services
+    Route::prefix('services')->as('services.')->group(function () {
+        // Additional routes
+        Route::post('status', [ServiceController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [ServiceController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [ServiceController::class, 'massDestroy'])->name('massDestroy');
+
+        // Trash-related
+        Route::post('/restore/{id}', [ServiceController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [ServiceController::class, 'remove'])->name('remove');
+        Route::post('/remove', [ServiceController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [ServiceController::class, 'trash'])->name('trash');
+    });
+    Route::resource('services', ServiceController::class);
+
+//services
+//    Route::prefix('services')->as('services.')->group(function () {
+//        // Additional routes
+//        Route::post('status', [SocialController::class, 'status'])->name('status');
+//        Route::post('delete/{id}', [SocialController::class, 'destroy'])->name('delete');
+//        Route::post('massDestroy', [SocialController::class, 'massDestroy'])->name('massDestroy');
+//        Route::post('reorder', [SocialController::class, 'reorder'])->name('reorder');
+//// htmx
+//        route::get('/service/get/htmx', 'getServiceHtmx')->name('service.get.htmx');
+//        route::post('/service/upload/image/htmx', 'uploadImageHtmx')->name('service.upload.image.htmx');
+//
+//        // Trash-related
+//        Route::post('/restore/{id}', [SocialController::class, 'restore'])->name('restore');
+//        Route::post('/remove/{id}', [SocialController::class, 'remove'])->name('remove');
+//        Route::post('/remove', [SocialController::class, 'massRemove'])->name('massRemove');
+//        Route::get('/trash', [SocialController::class, 'trash'])->name('trash');
+//    });
+//    Route::resource('services', SocialController::class);
+
+//quotations
+//    Route::prefix('quotations')->as('quotations.')->group(function () {
+//        // Additional routes
+//        Route::post('delete/{id}', [SocialController::class, 'destroy'])->name('delete');
+//        Route::post('massDestroy', [SocialController::class, 'massDestroy'])->name('massDestroy');
+//
+//        Route::get('/quotations', 'getQuotation')->name('quotations.get');
+//        Route::post('/quotation/delete', 'delete')->name('quotation.delete');
+//        Route::post('/calculate/distance', 'calculateDistance')->name('distance.calculate');
+//
+//        // Trash-related
+//        Route::post('/restore/{id}', [SocialController::class, 'restore'])->name('restore');
+//        Route::post('/remove/{id}', [SocialController::class, 'remove'])->name('remove');
+//        Route::post('/remove', [SocialController::class, 'massRemove'])->name('massRemove');
+//        Route::get('/trash', [SocialController::class, 'trash'])->name('trash');
+//    });
+//    Route::resource('quotations', SocialController::class);
+//
+//    Route::prefix('contacts')->name('contacts.')->group(function () {
+//        Route::post('/status', [ContactController::class, 'status'])->name('status');
+//        Route::delete('/massDestroy', [ContactController::class, 'massDestroy'])->name('massDestroy');
+//        Route::get('/restore/{id}', [ContactController::class, 'restore'])->name('restore');
+//        Route::delete('/remove/{id}', [ContactController::class, 'remove'])->name('remove');
+//        Route::delete('/remove', [ContactController::class, 'massRemove'])->name('massRemove');
+//        Route::get('/trash', [ContactController::class, 'trash'])->name('trash');
+//    });
+//    Route::resource('contacts', ContactController::class);
+//settings
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/edit', [SettingController::class, 'edit'])->name('edit');
+        Route::post('/update/{setting}', [SettingController::class, 'update'])->name('update');
     });
 
 //        Route::group(['prefix' => 'logs', 'as' => 'logs.'], function () {
@@ -465,5 +564,34 @@ Route::group(
 //        Route::any('image/{id}/delete', 'ImageController@destroy');
 //        Route::any('ime/{id}/{positionId}/update', 'ImageController@update');
 //        Route::any('cover/{id}/{cover}/cover', 'ImageController@cover');
+
+
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('/users/all', 'allUsers')->name('all.users');
+        Route::get('/payments/all', 'payments')->name('payments');
+        Route::get('/restaurants/all', 'restaurants')->name('restaurants');
+        Route::post('/users/delete', 'deleteuser')->name('user.delete');
+        Route::post('/locale/add', 'addLocaleRestaurant')->name('locale.add.restaurant');
+        Route::post('/image/optimization', 'imageOptimization')->name('image.optimization');
+        Route::post('image/delete', 'deleteimage')->name('image.delete');
+    });
+
+    Route::controller(QuotationController::class)->group(function () {
+        Route::get('/quotations', 'getQuotation')->name('quotations.get');
+        Route::post('/quotation/delete', 'delete')->name('quotation.delete');
+        Route::post('/calculate/distance', 'calculateDistance')->name('distance.calculate');
+    });
+
+//    Route::controller(ServiceController::class)->group(function () {
+//        route::get('/service/create', 'createService')->name('service.create');
+//        route::post('/service/store', 'storeService')->name('service.store');
+//        route::get('/service/all', 'adminAllService')->name('service.all');
+//        route::get('/service/edit/{service}', 'editService')->name('service.edit');
+//        route::post('/service/update', 'updateService')->name('service.update');
+//        route::post('/service/delete', 'deleteService')->name('service.delete');
+//        route::get('/service/get/htmx', 'getServiceHtmx')->name('service.get.htmx');
+//        route::post('/service/upload/image/htmx', 'uploadImageHtmx')->name('service.upload.image.htmx');
+//    });
+
     Route::post('/logout', [DashboardController::class, 'logout'])->name('logout');
 });

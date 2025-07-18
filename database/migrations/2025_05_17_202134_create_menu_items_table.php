@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('class', 100)->nullable();
             $table->string('icon_class')->nullable();
             $table->unsignedBigInteger('model_id')->nullable()->index();
-            $table->string('fileable_type', 100)->nullable();
+            $table->string('model_type', 100)->nullable();
             $table->enum('target', ['_blank', '_parent', '_self', '_top'])->default('_self');
             $table->string('url')->nullable()->index();
             $table->timestamps();

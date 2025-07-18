@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Frontend;
 
-use App\Models\Article;
+use App\Models\Blog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Region;
@@ -11,7 +11,7 @@ class RegionController extends Controller
 {
     public function index($lang)
     {
-        $articles = Article::whereNotNull('slug->' . $lang)
+        $articles = Blog::whereNotNull('slug->' . $lang)
             ->where('slug->'.$lang, "!=", '')
             ->where('verdict_id', '!=', null)
             ->where('status', 1)

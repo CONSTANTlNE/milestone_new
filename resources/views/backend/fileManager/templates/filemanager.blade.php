@@ -7,7 +7,7 @@
             modal: true,
             fileType: window.anyFileType ?? '',
             folderId: window.folderId ?? '',
-            indexRoute: window.indexRoute,
+            indexRoute: @json($indexRoute),
             uploadBehaviour: 'related',
             onSelect: (files) => {
                 if (!imageGroup) return;
@@ -15,6 +15,7 @@
                 const name = imageGroup.dataset.name || 'images[]';
                 const multi = imageGroup.dataset.multi !== 'false';
                 const siteName = window.location.origin;
+                console.log(siteName);
 
                 if (files.length > 0) {
                     imageGroup.querySelector('.image-previews').closest('.form-group').style.display = 'block';
@@ -40,8 +41,9 @@
 
                     const previewImage = document.createElement('img');
                     previewImage.className = 'avatar-lg';
-                    previewImage.src = file.type === 'image' ? `${siteName}/${file.src}` : `${siteName}/storage/defaults/files.svg`;
-                    previewImage.alt = file.title;
+
+                    previewImage.src = file.type === 'image' ? `${file.src}` : `${siteName}/storage/defaults/files.svg`;
+                    previewImage.alt = file.id;
                     previewImage.dataset.fancybox = 'gallery';
 
                     let sel = document.createElement('select');
@@ -55,14 +57,14 @@
                     const li = document.createElement('li');
                     li.className = 'image';
                     li.dataset.id = file.id;
-                    li.title = file.title;
-                    li.setAttribute('href', `${siteName}/${file.src}`);
+                    li.title = file.id;
+                    li.setAttribute('href', `${file.src}`);
 
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'btn btn-danger btn-circle';
                     btn.dataset.id = file.id;
-                    btn.innerHTML = '<i class="fa fa-times"></i>';
+                    btn.innerHTML = '<i class="ri ri-close-line"></i>';
                     btn.addEventListener('click', (e) => handleRemove(e, imageGroup));
 
                     li.appendChild(sel);
@@ -88,11 +90,19 @@
 
         const id = e.currentTarget.dataset.id;
         const parent = e.currentTarget.parentElement;
+        const deleteTextDiv = document.querySelector('.file-manager-modal-delete-text');
+
+        const title = deleteTextDiv.dataset.question || '';
+        const text = deleteTextDiv.dataset.text || '...';
+        const yes = deleteTextDiv.dataset.name || '';
+        const no = deleteTextDiv.dataset.cancel || '';
 
         Modal.show({
-            yesClass: 'btn-danger',
-            body: 'Are you sure, you want to Remove file?',
-            yes: 'Yes',
+            title,
+            text,
+            yes,
+            no,
+            yesClass : 'bg-danger',
             callback: (btn) => {
                 Modal.hide();
                 if (btn === 'yes') {

@@ -3,44 +3,71 @@
 namespace App\Services;
 
 use App\Contracts\SocialInterface;
-use App\Http\Requests\ChangeStatusRequest;
-use App\Http\Requests\MassDestroyRequest;
-use App\Http\Requests\MassRemoveRequest;
-use App\Http\Requests\RemoveRequest;
+use App\Http\Requests\Social\SocialChangeStatusRequest;
 use App\Http\Requests\Social\SocialCreateRequest;
+use App\Http\Requests\Social\SocialDestroyRequest;
+use App\Http\Requests\Social\SocialMassDestroyRequest;
+use App\Http\Requests\Social\SocialMassRemoveRequest;
+use App\Http\Requests\Social\SocialRemoveRequest;
+use App\Http\Requests\Social\SocialRestoreRequest;
+use App\Http\Requests\Social\SocialTrashRequest;
 use App\Http\Requests\Social\SocialUpdateRequest;
 use App\Http\Resources\Social\SocialResource;
-use App\Models\Social;
-use App\Traits\ImageUploadTrait;
-use App\Traits\MenuTrait;
-use App\Traits\MultiTranslatableTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Collection;
+use App\Models\Social;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\Social\SocialIndexRequest;
 
 class SocialService implements SocialInterface
 {
-    use MenuTrait, ImageUploadTrait, MultiTranslatableTrait;
-    const CACHE_TTL = 86400; // 1 day
-
-    public function getSocial()
+    public function index(SocialIndexRequest $request): LengthAwarePaginator
     {
-        if (!Cache::has('Socials')){
-            $lang = Cache::remember('Socials', self::CACHE_TTL, function (){
-                return Social::orderBy('position','asc')->get();
-            });
-        }
-        return Social::orderBy('position','asc')->get();
+        return Social::query()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title ILIKE ?", ['%' . $search . '%']);
+                });
+            })
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->when(
+                $request->filled('sort_column'),
+                function ($q) use ($request) {
+                    $q->orderBy(
+                        $request->input('sort_column'),
+                        $request->input('sort_direction', 'asc')
+                    );
+                },
+                function ($q) {
+                    $q->orderBy('position', 'asc');
+                }
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
     }
-    public function changeStatus(ChangeStatusRequest $request): JsonResponse
+
+    public function changeStatus(SocialChangeStatusRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('Social');
+        Cache::forget('socials');
 
         $social = Social::find($data['id']);
-        $social->update(['status' => $data['status']]);
 
-        return  response()->json([
+        if (!$social) {
+            return response()->json([
+                'message' => 'Social not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
+
+        $social->update(['status' => $data['status']]);
+        $social->save();
+
+        return response()->json([
             'message' => __('strings.Status changed successfully'),
             'alert-type' => 'success'
         ]);
@@ -49,13 +76,15 @@ class SocialService implements SocialInterface
     public function store(SocialCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('Social');
+        Cache::forget('socials');
+
         $social = new Social();
         $social->title = $data['title'];
         $social->icon = $data['icon'];
-        $social->link = $data['link'];
+        $social->url = $data['url'];
         $social->status = $data['status'];
         $social->position = Social::getNextPosition();
+        $social->created_at = $data['published_at'] ?? now();
         $social->save();
         $social->fresh();
 
@@ -78,11 +107,12 @@ class SocialService implements SocialInterface
     public function update(SocialUpdateRequest $request, Social $social): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('Social');
+        Cache::forget('socials');
         $social->title = $data['title'];
         $social->icon = $data['icon'];
-        $social->link = $data['link'];
+        $social->url = $data['url'];
         $social->status = $data['status'];
+        $social->created_at = $data['published_at'] ?? now();
         $social->save();
         $social->fresh();
 
@@ -92,19 +122,30 @@ class SocialService implements SocialInterface
         ], 201);
     }
 
-    public function destroy(Social $social): JsonResponse
+    public function destroy(SocialDestroyRequest $request): JsonResponse
     {
-        Cache::forget('Social');
+        $data = $request->validated();
+        Cache::forget('socials');
+        $social = Social::find($data['id']);
+        if (!$social) {
+            return response()->json([
+                'message' => 'Social not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
         $social->delete();
+
         return response()->json([
             'message' => __('strings.Deleted Successfully'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massDestroy(MassDestroyRequest $request): JsonResponse
+    public function massDestroy(SocialMassDestroyRequest $request): JsonResponse
     {
-        Cache::forget('Social');
-        Social::whereIn('id', $request->ids)->delete();
+        $data = $request->validated();
+        Cache::forget('socials');
+        Social::whereIn('id', $data['ids'])->delete();
         return response()->json([
             'message' => __('strings.massDestroy Successfully'),
         ], 204);
@@ -112,7 +153,7 @@ class SocialService implements SocialInterface
 
     public function reorder($request): JsonResponse
     {
-        Cache::forget('Social');
+        Cache::forget('socials');
         foreach($request->order as $index => $id)
         {
             Social::find($id)->update([
@@ -126,38 +167,58 @@ class SocialService implements SocialInterface
     }
 
     // Archive Function Method
-    public function getSocialTrash(): array|Collection
+    public function trash(SocialTrashRequest $request): LengthAwarePaginator
     {
-        return Social::onlyTrashed()->get();
+        return Social::onlyTrashed()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title ILIKE ?", ['%' . $search . '%']);
+                });
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                $request->input('sort_direction', 'desc')
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
     }
 
-    public function restore($id): void
+    public function restore(SocialRestoreRequest $request): JsonResponse
     {
-        Cache::forget('Social');
-        $social = Social::where('id', $id)->withTrashed()->first();
+        Cache::forget('socials');
+        $social = Social::where('id', $request->id)->withTrashed()->first();
         $social->restore();
         $social->fresh();
+
+        return response()->json([
+            'message' => __('strings.Restored Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function remove($id): JsonResponse
+    public function remove(SocialRemoveRequest $request): JsonResponse
     {
-        Cache::forget('Social');
-        $social = Social::where('id', $id)->withTrashed()->first();
-
-        $social->forceDelete();
-        $social->fresh();
+        Cache::forget('socials');
+        $socialId = $request->id;
+        $data = Social::where('id', $socialId)->withTrashed()->first();
+        $data->forceDelete();
+        $data->fresh();
 
         return response()->json([
             'message' => __('strings.Deleted Successfully from Archive'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massRemove(MassRemoveRequest $request): JsonResponse
+    public function massRemove(SocialMassRemoveRequest $request): JsonResponse
     {
-        Cache::forget('Social');
+        Cache::forget('socials');
         Social::whereIn('id', $request->ids)->withTrashed()->forceDelete();
         return response()->json([
-            'message' => __('strings.Deleted Successfully from Archive'),
-        ], 200);
+            'message' => __('strings.Mass Deleted Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
     }
 }

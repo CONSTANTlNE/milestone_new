@@ -2,7 +2,7 @@
 
 namespace App\DataTables;
 
-use App\Models\Article;
+use App\Models\Blog;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Yajra\DataTables\EloquentDataTable;
@@ -39,7 +39,7 @@ class VersusDataTableTrash extends DataTable
         });
     }
 
-    public function query(Article $model): QueryBuilder
+    public function query(Blog $model): QueryBuilder
     {
         return $model->onlyTrashed()->newQuery()->where('type', 3);
     }

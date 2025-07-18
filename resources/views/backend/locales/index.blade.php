@@ -1,109 +1,142 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.All Languages') }} @endsection
-@push('styles')
-    <link href="{{URL::asset('css/additional/toastr.min.css')}}" rel="stylesheet" type="text/css" >
-@endpush
+@section('title') {{ __('admin.all_locales') }} @endsection
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-table.css') }}">
+@endsection
 @section('content')
-    <div class="container-fluid">
-        <div class="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
-            <div class="mr-auto  d-lg-block">
-                <h2 class="text-black font-w600">{{ __('strings.All Languages') }}</h2>
-                <p class="mb-0 font-w600">{{ __('strings.Welcome') }}</p>
+    <div class="content">
+        <div class="main-content">
+            <!-- Header -->
+            <div class="block justify-between page-header md:flex">
+                <div>
+                    <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.375rem] font-semibold font-first-geo">
+                        {{ __('admin.all_locales') }}
+                    </h3>
+                    <p class="font-second-geo text-defaulttextcolor/70">{{ __('admin.welcome') }}</p>
+                </div>
+                <ol class="flex items-center whitespace-nowrap min-w-0 gap-3 header-nav-links">
+                    @can('backend.locales.create')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.locales.create') }}" class="ti-btn bg-primary text-white !font-medium font-second-geo">
+                                <i class="ri-add-circle-line text-[1.375rem]"></i>
+                                {{__('admin.create_new_locale')}}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('backend.locales.trash')
+                        <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-danger dark:text-[#8c9097] dark:text-white/50">
+                            <a href="{{ route('backend.locales.trash') }}" class="ti-btn bg-danger text-white !font-medium font-second-geo">
+                                <i class="ri-delete-bin-2-line text-[1.375rem]"></i>
+                                {{__('admin.deleted_locales')}}
+                            </a>
+                        </li>
+                    @endcan
+                    <li class="text-[0.813rem]">
+                        <button id="order-toggle" class="ti-btn bg-warning text-white !font-medium font-second-geo"
+                                data-reorder-url="{{ route('backend.locales.reorder') }}">
+                            <i class="ri-drag-move-2-line text-[1.375rem]"></i>
+
+                        </button>
+                    </li>
+                </ol>
             </div>
-            @can('backend.locales.create')
-            <a href="{{ route('backend.locales.create', app()->getLocale())}}" class="btn btn-primary rounded"><i class="flaticon-381-add-2"></i> {{ __('strings.Add a new Language') }}</a>
-            @endcan
-            @can('backend.locales.trash')
-            <a href="{{ route('backend.locales.trash', app()->getLocale())}}" class="btn btn-primary rounded light deleted-archive ml-3"><i class="flaticon-381-trash-2"></i> {{ __('strings.Deleted Languages') }}</a>
-            @endcan
-        </div>
-        @if(session('success'))
-            @include('backend.layouts.components.success',[
-              'success' => session('success'),
-            ])
-        @endif
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-responsive-md">
-                                <thead>
-                                    <tr>
-                                    <th class="width80"><strong>#id</strong></th>
-                                    <th><strong>{{ __('strings.Main Language') }}</strong></th>
-                                    <th><strong>{{ __('strings.Title') }}</strong></th>
-                                    <th><strong>{{ __('strings.Code') }}</strong></th>
-                                    <th><strong>{{ __('strings.Images') }}</strong></th>
-                                    <th><strong>{{ __('strings.Status') }}</strong></th>
-                                    <th><strong>{{ __('strings.Actions') }}</strong></th>
-                                </tr>
-                                </thead>
-                                <tbody id="post_sortable" class="post_list_ul datatable-status"
-                                       data-reorder="{{route('backend.locales.reorder', app()->getLocale())}}"
-                                >
-                                    @foreach($locales as $locale)
-                                    <tr class="ui-state-default" data-id="{{ $locale->id }}">
-                                        <td><strong>{{$locale->id}}</strong></td>
-                                        <td width="150">
-                                            <div class="form-switch">
-                                                <a id="general-{{$locale->id}}"
-                                                           @if($locale->default === 0)
-                                                               href="{{ route('backend.locales.general', [app()->getLocale(), $locale->id]) }}"
-                                                           @else
-                                                               href="#"
-                                                           @endif
-                                                        class="btn btn-lg btn-toggle btn-toggle-switch {{ $locale->default === 0 ? "" : "active" }}"
-                                                        >
-                                                    <div class="switch"></div>
-                                                </a>
-                                            </div>
-                                        </td>
-                                        <td>{{$locale->name}}</td>
-                                        <td>{{$locale->code}}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="{{ asset($locale->generalImage[0]->src ?? config('filemanager.default_backend_image')) }}" class="rounded-lg mr-2" width="24" alt="">
-                                            </div>
-                                        </td>
-                                        <td width="200" id="parent-{{$locale->id}}">
-                                            @if($locale->default != 1)
-                                                <div class="form-switch mr-3">
-                                                    <a id="status-{{$locale->id}}"
-                                                       href="{{ route('backend.locales.status', [app()->getLocale(), $locale->id]) }}"
-                                                       class="btn btn-lg btn-toggle btn-toggle-switch {{ $locale->status === 0 ? "" : "active" }}"
-                                                    >
-                                                        <div class="switch"></div>
-                                                    </a>
-                                                </div>
-                                            @else
-                                                <span class="w-75 fs-12 d-block">{{ __('strings.The status of the main language will not change') }}</span>
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                @can('backend.locales.show')
-                                                <a href="{{ route('backend.locales.show', [app()->getLocale(), $locale->id]) }}" class="btn btn-warning shadow btn-xs sharp mr-1" style="color: #fff"><i class="flaticon-381-view-2"></i></a>
-                                                @endcan
-                                                @can('backend.locales.edit')
-                                                <a href="{{ route('backend.locales.edit', [app()->getLocale(), $locale->id]) }}" class="btn btn-primary shadow btn-xs sharp mr-1"><i class="flaticon-381-edit-1"></i></a>
-                                                @endcan
-                                                @if($locale->default != 1)
-                                                    @can('backend.locales.destroy')
-                                                        <form action="{{ route('backend.locales.destroy', [app()->getLocale(), $locale->id]) }}" method="POST" class="action-list d-inline-block" onsubmit="return confirm('{{ __('strings.You really want to delete it') }}');">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button class="btn btn-danger shadow btn-xs sharp"><i class="flaticon-381-trash-2"></i></button>
-                                                        </form>
-                                                    @endcan
-                                                @endif
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+
+            <x-backend.alert-messages />
+
+            <div class="grid grid-cols-12 gap-6 index-table-page white-bg">
+                <div class="xl:col-span-12 col-span-12">
+                    <div class="box custom-box">
+                        <div class="box-header justify-between">
+                            <div class="box-title box-show-number gap-5">
+                                <x-backend.table.number />
+                                @can('backend.locales.massDestroy')
+                                    <x-backend.table.massDestroy
+                                        :url="route('backend.locales.massDestroy')"
+                                    />
+                                @endcan
+                            </div>
+
+                            <x-backend.table.filter :status="true"/>
                         </div>
+
+                        <div class="box-body">
+                            <div class="table-responsive">
+                                <table class="table whitespace-nowrap table-bordered min-w-full" id="datatablesTable">
+                                    <thead class="bg-primary/10">
+                                    <tr class="border-b border-primary/10">
+                                        <th id="move-th" scope="col" class="move bg-warning text-center hidden">
+                                            <i class="ri-drag-move-2-line text-white"></i>
+                                        </th>
+                                        @can('backend.locales.massDestroy')
+                                            <th scope="col" class="select-number !text-start">
+                                                <input class="form-check-input cursor-pointer" type="checkbox" id="select-all">
+                                            </th>
+                                        @endcan
+                                        <th scope="col" class="id text-start sortable" data-sort="id">{{ __('admin.id') }}</th>
+                                        <th scope="col" class="title text-start">{{ __('admin.title') }}</th>
+                                        <th scope="col" class="code text-start">{{ __('admin.code') }}</th>
+                                        <th scope="col" class="image text-start">{{ __('admin.image') }}</th>
+                                        <th scope="col" class="created-time text-start sortable" data-sort="created_at">{{ __('admin.created_at') }}</th>
+                                        <th scope="col" class="status text-start">{{ __('admin.status') }}</th>
+                                        <th scope="col" class="actions text-start">{{ __('admin.actions') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="socials-tbody">
+                                    @forelse($locales as $locale)
+                                        <tr class="product-list border-b border-primary/10" data-id="{{$locale->id}}">
+                                            <td class="drag-handle-cell text-center hidden">
+                                                <span class="drag-handle" style="display:none;">&#9776;</span>
+                                            </td>
+                                            @can('backend.locales.massDestroy')
+                                                <td class="text-center">
+                                                    <input class="form-check-input list-checkbox-item cursor-pointer" type="checkbox" value="{{$locale->id}}">
+                                                </td>
+                                            @endcan
+                                            <td>
+                                                {{$locale->id}}
+                                            </td>
+                                            <td>
+                                                {{$locale->title}}
+                                            </td>
+                                            <td>
+                                                {{ $locale->code }}
+                                            </td>
+                                            <td class="flex justify-center">
+                                                <x-backend.image :src="$locale->src" />
+                                            </td>
+                                            <td>
+                                                <x-backend.badge type="light" :text="$locale->created_at->format('d/m/Y H:i')" />
+                                            </td>
+                                            <td>
+                                                <x-backend.table.status
+                                                    :model="$locale"
+                                                    :statusUrl="route('backend.locales.status')"
+                                                />
+                                            </td>
+                                            <td>
+                                                <x-backend.table.actions
+                                                    :model="$locale"
+                                                    show-view="backend.locales.show"
+                                                    show-edit="backend.locales.edit"
+                                                    show-delete="backend.locales.delete"
+                                                />
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="empty-state">
+                                            <td colspan="7" class="text-center py-8">
+                                                <x-backend.table.empty-state
+                                                    :actionText="__('admin.create_first_locale')"
+                                                    permission="backend.locales.create"
+                                                />
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <x-backend.pagination :paginator="$locales" />
                     </div>
                 </div>
             </div>
@@ -111,5 +144,5 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{URL::asset('/js/additional/sortable.min.js')}}"></script>
+    <script src="{{ asset('js/admin-table.js') }}"></script>
 @endpush

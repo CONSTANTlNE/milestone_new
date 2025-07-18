@@ -1,14 +1,14 @@
 {
+    "ka": {
+        "name": "ქართული",
+        "script": null,
+        "native": "ka_GE",
+        "regional": null
+    },
     "en": {
         "name": "English",
-        "script": "Latn",
-        "native": "English",
-        "regional": "en_GB"
-    },
-    "ka": {
-        "name": "Georgian",
-        "script": "Geor",
-        "native": "ქართული",
-        "regional": "ka_GE"
+        "script": null,
+        "native": "en_EN",
+        "regional": null
     }
 }

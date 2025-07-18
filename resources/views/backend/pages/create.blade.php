@@ -1,147 +1,122 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.Page Create') }} @endsection
-@push('styles')
-    <link href="{{URL::asset('css/summernote-lite.min.css')}}" rel="stylesheet" type="text/css" >
-@endpush
+@section('title') {{ __('strings.create_pages') }} @endsection
+@section('styles')
+@vite('public/css/quill-editor.css')
+@endsection
 @section('content')
-    <div class="container-fluid">
-        <div class="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
-            <div class="mr-auto  d-lg-block">
-                <h2 class="text-black font-w600">{{ __('strings.Page Create') }}</h2>
-                <p class="mb-0 font-w600">{{ __('strings.Welcome') }}</p>
+    <div class="content">
+        <div class="main-content">
+
+            <div class="block justify-between page-header md:flex">
+                <div>
+                    <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.375rem] font-semibold font-first-geo">{{ __('admin.create_pages') }}</h3>
+                    <p class="font-second-geo text-defaulttextcolor/70">{{ __('admin.welcome') }}</p>
+                </div>
+                <ol class="flex items-center whitespace-nowrap min-w-0 gap-3 header-nav-links">
+                    @can('backend.pages.index')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.pages.index') }}" class="ti-btn bg-secondary text-white !font-medium font-second-geo">
+                                <i class="ri-arrow-go-back-line text-[1.375rem]"></i>
+                                {{ __('admin.return_back') }} - {{ __('admin.all_pages') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('backend.pages.trash')
+                        <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-danger dark:text-[#8c9097] dark:text-white/50">
+                            <a href="{{ route('backend.pages.trash') }}" class="ti-btn bg-danger text-white !font-medium font-second-geo">
+                                <i class="ri-delete-bin-2-line text-[1.375rem]"></i>
+                                {{__('admin.deleted_pages')}}
+                            </a>
+                        </li>
+                    @endcan
+                </ol>
             </div>
-            @can('backend.pages.index')
-                <a href="{{ route('backend.pages.index', app()->getLocale())}}" class="btn btn-info rounded"><i class="flaticon-381-repeat-1"></i> {{ __('strings.Return Back') }} - {{ __('strings.All Page') }}</a>
-            @endcan
-            @can('backend.pages.trash')
-                <a href="{{ route('backend.pages.trash', app()->getLocale())}}" class="btn btn-primary rounded light deleted-archive ml-3"><i class="flaticon-381-trash-2"></i>  {{ __('strings.Deleted Pages') }}</a>
-            @endcan
-        </div>
-        @include('backend.layouts.components.errors',[
-          'errors' => $errors,
-        ])
-        <form method="post" class="needs-validation" action="{{ route('backend.pages.store', app()->getLocale()) }}" novalidate enctype="multipart/form-data">
-            {{csrf_field()}}
-            <div class="row">
-                <div class="col-md-12 p-0">
-                    <div class="col-md-12 col-xl-9 float-left">
-                        <div class="card">
-                            <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    @include('backend.layouts.includes.langTabComponent')
-                                    <div class="tab-content">
-                                        @foreach(getLocales() as $key => $lang)
-                                            <div class="tab-pane {{($key == 0) ? 'active' : ''}}" id="locale-{{$lang->code}}" role="tabpanel">
-                                                @include('backend.layouts.includes.seoLangTabComponent')
-                                                <div class="tab-content pt-4 pb-0 text-muted no-padding" style="width: 100%">
-                                                    <div class="tab-pane active" id="content-locale-{{$lang->code}}" role="tabpanel">
-                                                        <x-input
-                                                            type="text"
-                                                            :lang="$lang"
-                                                            :data="null"
-                                                            label="Title"
-                                                            column="title"
-                                                            place-holder="Holder Title"
-                                                            success-text="Success Field"
-                                                            help-text="Error Field"
-                                                            :required="true"
-                                                            :disabled="false"
-                                                        />
 
-                                                        <x-input
-                                                            type="text"
-                                                            :lang="$lang"
-                                                            :data="null"
-                                                            label="Description"
-                                                            column="slogan"
-                                                            place-holder="Holder Description"
-                                                            success-text="Success Field"
-                                                            help-text="Error Field"
-                                                            :required="true"
-                                                            :disabled="false"
-                                                        />
+            @include('backend.layouts.components.errors',[
+              'errors' => $errors,
+            ])
 
-                                                        <div class="testtest">
-{{--                                                            <div class="col-md-12 pb-2">--}}
-{{--                                                                <button type="button" class="btn  btn-primary btn-sm add-social" id="addPicturetextarea{{$lang->code}}" name="addPicture" data-code="textareacontent_{{$lang->code}}" data-shortcode="social_icons">{{ __('strings.Add Social Network Share links') }}</button>--}}
-{{--                                                            </div>--}}
-                                                            <div class="col-md-12 pb-2">
-                                                                <div id="clearFormattingBtn{{$lang->code}}" class="btn  btn-primary btn-sm">Clear Formatting - {{$lang->code}}</div>
-                                                            </div>
-                                                            @include('backend.layouts.components.editorTextarea',
-                                                            [
-                                                                'lang' => $lang,
-                                                                'data' => '',
-                                                                'column' => 'content',
-                                                                'label' => 'ჩაწერეთ თქვენი ტექსტი!',
-                                                                'required' => false,
-                                                                'placeHolder' => 'Holder Title',
-                                                                'successText' => 'Success Filed',
-                                                                'helpText' => 'Error Filed',
-                                                           ])
-                                                        </div>
-                                                    </div>
-                                                    @include('backend.layouts.includes.seoComponent', [
-                                                        'lang' => $lang,
-                                                        'code' => $lang->code,
-                                                        'data' => null
-                                                    ])
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <x-checkbox
-                                            column="block"
-                                            label="Review"
-                                            place-holder="Review"
-                                            success-text="Checkbox Success"
-                                            help-text="Checkbox Error"
-                                            :required="true"
-                                        />
-                                        <div class="col-lg-12">
-                                            <button class="btn btn-primary" type="submit">{{ __('strings.Create') }}</button>
+            <form method="post" action="{{ route('backend.pages.store') }}" novalidate enctype="multipart/form-data">
+                @csrf
+                <div class="grid grid-cols-12 gap-6 white-bg">
+                    <div class="xl:col-span-9 col-span-12">
+                        <div class="box">
+                            <div class="box-body">
+                                @include('backend.layouts.includes.langTabComponent')
+                                <div class="tab-content">
+                                    @foreach(getLocales() as $key => $lang)
+                                        <div
+                                            class="{{($key == 0) ? '' : 'hidden'}}"
+                                            id="locale-{{$lang->code}}"
+                                            role="tabpanel"
+                                            aria-labelledby="locale-item-{{$lang->code}}"
+                                        >
+                                            @include('backend.layouts.includes.seoLangTabComponent', ['code' => $lang->code])
+                                                @include('backend.layouts.includes.contentComponent', [
+                                                    'lang' => $lang,
+                                                    'code' => $lang->code,
+                                                    'data' => null
+                                                ])
+                                                @include('backend.layouts.includes.seoComponent', [
+                                                    'lang' => $lang,
+                                                    'code' => $lang->code,
+                                                    'data' => null
+                                                ])
                                         </div>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
+                            <div class="box-footer text-end">
+                                <button type="submit" class="ti-btn bg-primary text-white font-second-geo">
+                                    <i class="ri-add-line"></i>
+                                     {{__('admin.create')}}
+                                </button>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 col-xl-3 float-right">
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        @include('backend.fileManager.layers.both')
+                    <div class="xl:col-span-3 col-span-12">
+                        <div class="box">
+                            <div class="box-body">
+                                    @include('backend.fileManager.layers.both')
 
-                                        <x-select
-                                            :lang="null"
-                                            :data="null"
-                                            column="status"
-                                            label="Choose Status"
-                                            place-holder=""
-                                            success-text="Success Field"
-                                            help-text="Error Field"
-                                            :required="true"
-                                            :disabled="false"
-                                            :staticData="false"
-                                            width="12"
-                                        />
-                                    </div>
-                                </div>
+                                    <x-backend.publishDate
+                                        :data="null"
+                                        column="published_at"
+                                        label="published_at"
+                                        place-holder=""
+                                        success-text="success_field"
+                                        help-text="error_field"
+                                        :required="false"
+                                        :disabled="false"
+                                        :staticData="false"
+                                        width="12"
+                                    />
+
+                                    <x-backend.selectStatic
+                                        :data="config('crm.status')"
+                                        column="status"
+                                        label="status_type"
+                                        place-holder=""
+                                        success-text="success_field"
+                                        help-text="error_field"
+                                        :required="true"
+                                        :disabled="false"
+                                        :staticData="false"
+                                        hidden="show-search-hidden"
+                                        width="12"
+                                    />
+
                             </div>
                         </div>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+
+        </div>
     </div>
     @include('backend.fileManager.templates.file-manager-modal')
 @endsection
 @push('scripts')
-    <script src="{{URL::asset('/js/my/summernote-lite.min.js')}}"></script>
-    <script src="{{URL::asset('/js/my/summernote-cleaner.js')}}"></script>
-    <script src="{{URL::asset('/js/additional/jquery-ui.min.js')}}"></script>
-    @include('backend.fileManager.templates.filemanager', ['indexRoute' => route('backend.files.index', app()->getLocale())])
+    @vite('public/js/quill-editor.js')
+    @include('backend.fileManager.templates.filemanager', ['indexRoute' => route('backend.files.index')])
 @endpush

@@ -17,16 +17,18 @@ trait MenuTrait
      */
     public function setActive(bool $status): void
     {
-        $this->menu()->each(function (MenuItem $menuItem) use ($status) {
-            $menuItem->status = $status;
-            $menuItem->save();
+        if ($this->menu()->exists()) {
+            $this->menu()->each(function (MenuItem $menuItem) use ($status) {
+                $menuItem->status = $status;
+                $menuItem->save();
 
-            $menuItem->parent()->each(function (MenuItem $child) use ($status) {
-                $child->parent_id = 0;
-                $child->depth = 0;
-                $child->save();
+                $menuItem->parent()->each(function (MenuItem $child) use ($status) {
+                    $child->parent_id = 0;
+                    $child->depth = 0;
+                    $child->save();
+                });
             });
-        });
+        }
     }
     /**
      * Encode the given value as JSON.

@@ -17,25 +17,24 @@ class Locale extends Model
 
     const CACHE_TTL = 86400; // 1 day
 
-    protected $dates = [
+    protected array $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
     ];
 
     protected $fillable = [
-        'name',
+        'title',
         'native',
         'code',
         'status',
-        'default',
         'position',
         'created_at',
         'updated_at',
         'deleted_at',
     ];
 
-    protected static $logFillable = true;
+    protected static bool $logFillable = true;
 
     public function images(): MorphToMany
     {
@@ -45,6 +44,14 @@ class Locale extends Model
     public function generalImages(): MorphToMany
     {
         return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('position', '<', 1)->orderBy('ord');
+    }
+
+    public function allImages()
+    {
+        return $this->morphToMany(File::class, 'fileable')
+            ->withPivot('cover')
+            ->where('position', '>', 0)
+            ->orderBy('position');
     }
 
     public function generalImage(): MorphToMany

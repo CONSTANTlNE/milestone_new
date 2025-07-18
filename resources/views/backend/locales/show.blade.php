@@ -1,69 +1,94 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.View Language') }} @endsection
+@section('title') {{ __('admin.view_locale') }} @endsection
 @section('content')
-    <div class="container-fluid">
-        <div class="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
-            <div class="mr-auto  d-lg-block">
-                <h2 class="text-black font-w600">{{ __('strings.View Language') }}</h2>
-                <p class="mb-0 font-w600">{{ __('strings.Welcome') }}</p>
+    <div class="content">
+        <div class="main-content">
+            <div class="block justify-between page-header md:flex">
+                <div>
+                    <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.375rem] font-semibold font-first-geo">
+                        {{ __('admin.view_locale') }}
+                    </h3>
+                    <p class="font-second-geo text-defaulttextcolor/70">{{ __('admin.welcome') }}</p>
+                </div>
+                <ol class="flex items-center whitespace-nowrap min-w-0 gap-3 header-nav-links">
+                    @can('backend.locales.index')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.locales.index') }}" class="ti-btn bg-secondary text-white !font-medium font-second-geo">
+                                <i class="ri-arrow-go-back-line text-[1.375rem]"></i>
+                                {{ __('admin.return_back') }} - {{ __('admin.all_locales') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('backend.locales.update')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.locales.edit', $locale->id) }}" class="ti-btn bg-warning text-white !font-medium font-second-geo">
+                                <i class="ri-edit-line text-[1.375rem]"></i>
+                                {{__('admin.edit_locales')}}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('backend.locales.trash')
+                        <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-danger dark:text-[#8c9097] dark:text-white/50">
+                            <a href="{{ route('backend.locales.trash') }}" class="ti-btn bg-danger text-white !font-medium font-second-geo">
+                                <i class="ri-delete-bin-2-line text-[1.375rem]"></i>
+                                {{__('admin.deleted_locales')}}
+                            </a>
+                        </li>
+                    @endcan
+                </ol>
             </div>
-            @can('backend.locales.index')
-                <a href="{{ route('backend.locales.index', app()->getLocale())}}" class="btn btn-info rounded"><i class="flaticon-381-repeat-1"></i> {{ __('strings.Return Back') }} - {{ __('strings.All Languages') }}</a>
-            @endcan
-            @can('backend.locales.create')
-                <a href="{{ route('backend.locales.create', app()->getLocale())}}" class="btn btn-primary rounded ml-3"><i class="flaticon-381-add-2"></i> {{ __('strings.Add a new Language') }}</a>
-            @endcan
-            @can('backend.locales.trash')
-                <a href="{{ route('backend.locales.trash', app()->getLocale())}}" class="btn btn-primary rounded light deleted-archive ml-3"><i class="flaticon-381-trash-2"></i>  {{ __('strings.Deleted Languages') }}</a>
-            @endcan
-        </div>
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                       <div class="card bg-primary text-white-50 mb-0">
-                            <div class="card-body" style="color:#fff;">
-                                <p class="card-text">{{ __('strings.Create Date') }} -
-                                    {{ $locale->created_at->format('d-m-Y h:i:s') }}
-                                </p>
-                                <hr>
-                                <h5 class="mt-0 mb-4 text-white"><i class="mdi mdi-bullseye-arrow"></i>{{ __('strings.Title') }} - {{$locale->name}}</h5>
-                                <hr>
-                                <p class="card-text">{{ __('strings.Code') }} - {{$locale->code}}</p>
-                                @if(isset($locale->generalImage[0]))
-                                    @if($locale->generalImage[0]->type == "image")
-                                        <hr>
-                                        <p class="card-text">{{ __('strings.Main Image') }}:
-                                            <a href="{{ asset($locale->generalImage[0]->src ?? config('filemanager.default_backend_image')) }}" target="black">
-                                                <img class="avatar-lg" src="{{ asset($locale->generalImage[0]->src ?? config('filemanager.default_backend_image')) }}" style="border: 1px solid #fff;background: #fff;width: 100px">
-                                            </a>
-                                        </p>
-                                        <hr>
-                                    @else
-                                        <hr>
-                                        <p class="card-text">{{ __('strings.Main File') }}:
-                                            <a href="{{ asset($locale->generalImage[0]->src ?? config('filemanager.default_backend_image')) }}" target="_blank" class="avatar-lg" style="cursor: pointer;font-size: 52px;color: #3b5de7;display: block;background: #f5f9ff;text-align: center;width: 100px"><i class="fa fa-file sss"></i></a>
-                                        </p>
-                                        <hr>
-                                    @endif
-                                @else
-                                    <hr>
-                                    <p class="card-text">{{ __('strings.Main Image') }}:
-                                        <a href="{{ asset(config('filemanager.default_backend_image')) }}" target="black">
-                                            <img class="avatar-lg" src="{{ asset(config('filemanager.default_backend_image')) }}" style="border: 1px solid #fff;background: #fff;width: 100px">
-                                        </a>
+            <div class="grid grid-cols-12 gap-6 white-bg">
+                <div class="xl:col-span-9 col-span-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="flex items-center space-x-4 p-4 bg-primary/5 rounded-lg">
+                                <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                                    <i class="ri-eye-line text-2xl text-primary"></i>
+                                </div>
+                                <div class="mx-3">
+                                    <h4 class="text-lg font-semibold text-gray-900 dark:text-white font-second-geo">
+                                        {{ $locale->title }}
+                                    </h4>
+                                    <p class="text-sm text-gray-500 font-second-geo">
+                                        ID: #{{ $locale->id }} | {{ __('admin.status') }}
+                                        <span class="text-white badge {{ $locale->status ? 'bg-success' : 'bg-secondary' }}">
+                                            {{ $locale->status ? __('admin.active') : __('admin.inactive') }}
+                                        </span>
                                     </p>
-                                    <hr>
-                                @endif
 
-                                <p class="card-text">{{ __('strings.Status') }} -
-                                    @if($locale->status == "1")
-                                        {{ __('strings.Activated') }}
-                                    @else
-                                        {{ __('strings.Disabled') }}
-                                    @endif
-                                </p>
-                                <hr>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="xl:col-span-3 col-span-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h6 class="font-medium text-gray-900 dark:text-white mb-2 font-second-geo">
+                                        {{ __('admin.locale_information') }}
+                                    </h6>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-second-geo">
+                                        {{ $locale->code }}
+                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-second-geo">
+                                        {{ $locale->native }}
+                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-second-geo">
+                                        {{ $locale->regional }}
+                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-second-geo">
+                                        {{ $locale->script }}
+                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-second-geo">
+                                        {{ $locale->script }}
+                                    </p>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 font-second-geo">
+                                        <x-backend.image :src="$locale->src" />
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -72,3 +97,5 @@
         </div>
     </div>
 @endsection
+
+

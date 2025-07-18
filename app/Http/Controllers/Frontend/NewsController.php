@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Article;
-use App\Models\ArticleCategory;
+use App\Models\Blog;
+use App\Models\BlogCategory;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
@@ -33,7 +33,7 @@ class NewsController extends Controller
 
     public function index($lang)
     {
-        $articles = Article::whereNotNull('slug->' . $lang)
+        $articles = Blog::whereNotNull('slug->' . $lang)
         ->where('slug->'.$lang, "!=", '')
         ->where('status', 1)
         ->orderBy('id', 'DESC')
@@ -75,10 +75,10 @@ class NewsController extends Controller
 
     public function category($lang, $id)
     {
-        $category = ArticleCategory::find($id);
+        $category = BlogCategory::find($id);
         if($category->children->isNotEmpty()){
             $categoryIds = $category->children->pluck('id');
-            $categoryArticles = Article::whereHas('categories', function ($query) use ($categoryIds) {
+            $categoryArticles = Blog::whereHas('categories', function ($query) use ($categoryIds) {
                 $query->whereIn('category_id', $categoryIds);
             })
                 ->whereNotNull('slug->' . $lang)
@@ -106,7 +106,7 @@ class NewsController extends Controller
      */
     public function show($lang, $id)
     {
-        $article = Article::whereNotNull('slug->'.$lang)
+        $article = Blog::whereNotNull('slug->'.$lang)
             ->where('slug->'.$lang, "!=", '')
             ->where('id', $id)
             ->first();

@@ -21,7 +21,7 @@ function createFileManager(cfg) {
         if (!templateModal) throw new Error('file-manager-modal-template not found in DOM');
         modalEl = templateModal.cloneNode(true);
         modalEl.classList.remove('file-manager-modal-template');
-        modalEl.querySelector('.modal-body').appendChild(rootEl);
+        modalEl.querySelector('.ti-modal-body').appendChild(rootEl);
         document.body.appendChild(modalEl);
     } else {
         cfg.el.appendChild(rootEl);
@@ -29,11 +29,13 @@ function createFileManager(cfg) {
     }
 
     // Helper to find elements inside rootEl by selector
+    const find = (selector) => rootEl.querySelector(selector);
+    const findAll = (selector) => [...rootEl.querySelectorAll(selector)];
     const $ = (selector) => rootEl.querySelector(selector);
     const $$ = (selector) => [...rootEl.querySelectorAll(selector)];
 
     // Toggle view button
-    const changeViewBtn = $('.change-view');
+    const changeViewBtn = find('.change-view');
     if (changeViewBtn) {
         changeViewBtn.addEventListener('click', () => {
             const area = document.querySelector('.file-manager-area');
@@ -821,20 +823,35 @@ function createFileManager(cfg) {
                         });
 
                         setTimeout(() => {
+                            let completedCount = 0;
+                            const totalItems = selectedItems.length;
+                            
                             selectedItems.forEach(item => {
                                 if (item.classList.contains('file-box-folder')) {
-                                    deleteFolder(item.dataset.id, deleteType, deleted => {
+                                    deleteFolder(item.dataset.id, deleteType, (deleted) => {
+                                        completedCount++;
                                         if (deleted) {
                                             item.remove();
-                                            reload(currentFolder ? {folderId: currentFolder.id} : undefined);
                                         } else {
                                             item.querySelector('.file').classList.remove('loading-mask');
                                         }
+                                        
+                                        if (completedCount === totalItems) {
+                                            reload(currentFolder ? {folderId: currentFolder.id} : undefined);
+                                        }
                                     });
                                 } else {
-                                    deleteFile(item.dataset.id, deleteType, deleted => {
-                                        if (deleted) item.remove();
-                                        else item.querySelector('.file').classList.remove('loading-mask');
+                                    deleteFile(item.dataset.id, deleteType, (deleted) => {
+                                        completedCount++;
+                                        if (deleted) {
+                                            item.remove();
+                                        } else {
+                                            item.querySelector('.file').classList.remove('loading-mask');
+                                        }
+                                        
+                                        if (completedCount === totalItems) {
+                                            reload(currentFolder ? {folderId: currentFolder.id} : undefined);
+                                        }
                                     });
                                 }
                             });
@@ -984,9 +1001,9 @@ function createFileManager(cfg) {
     }
 
     if (cfg.modal) {
-        const submitBtn = modalEl.querySelector('.modal-footer .submit-modal-btn');
+        const submitBtn = modalEl.querySelector('.ti-modal-footer .submit-modal-btn');
         submitBtn.replaceWith(submitBtn.cloneNode(true)); // Remove previous event listeners
-        modalEl.querySelector('.modal-footer .submit-modal-btn').addEventListener('click', () => {
+        modalEl.querySelector('.ti-modal-footer .submit-modal-btn').addEventListener('click', () => {
             if (cfg.onSelect) {
                 const files = [];
                 const selectedFiles = rootEl.querySelectorAll('.file-manager-container > .selected');
@@ -995,7 +1012,17 @@ function createFileManager(cfg) {
                         selectedFile.classList.contains('file-box-file') ||
                         selectedFile.classList.contains('file-box-image')
                     ) {
-                        files.push(selectedFile._data || getDataFromElement(selectedFile));
+                        const fileData = selectedFile._data || getDataFromElement(selectedFile);
+
+                        // If it's an image, extract the image src and add it to the data
+                        if (selectedFile.classList.contains('file-box-image')) {
+                            const imgEl = selectedFile.querySelector('img');
+                            if (imgEl && imgEl.src) {
+                                fileData.src = imgEl.src;
+                            }
+                        }
+
+                        files.push(fileData);
                     }
                 });
                 cfg.onSelect(files);
@@ -1003,7 +1030,7 @@ function createFileManager(cfg) {
 
             rootEl.querySelectorAll('.file-manager-container > *').forEach(el => el.classList.remove('selected'));
             // Assuming modalEl.modal('show') opens modal - replace with native if needed
-            if (typeof $(modalEl).modal === 'function') $(modalEl).modal('show');
+            if (typeof modalEl.modal === 'function') $(modalEl).modal('show');
         });
     }
     function bindFolderBoxEvents() {
@@ -1289,12 +1316,12 @@ function createFileManager(cfg) {
         try {
             const data = await ajaxRequest(url, 'DELETE');
             if (data.deleted) {
-                reload(data.folderId ? {folderId: data.folderId} : undefined);
+                if (callback) callback(true);
             } else {
-                const title = document.querySelector('.modal-error').dataset.question || 'Are you sure?';
-                const text = document.querySelector('.modal-error').dataset.text || '...';
+                const title = document.querySelector('.modal-error')?.dataset.question || 'Error';
+                const text = document.querySelector('.modal-error')?.dataset.text || 'An error occurred';
                 const yes = '';
-                const no = document.querySelector('.modal-error').dataset.cancel || 'Cancel';
+                const no = document.querySelector('.modal-error')?.dataset.cancel || 'Close';
                 Modal.show({
                     body: (data.error || 'Error') + '<br><br>' + (data.description || ''),
                     withoutYes: true,
@@ -1302,16 +1329,18 @@ function createFileManager(cfg) {
                     text,
                     yes,
                     no,
-                    yesClass : '',
+                    yesClass: '',
                 });
                 const fileWithLoadingMask = document.querySelector('.file.loading-mask');
                 if (fileWithLoadingMask) fileWithLoadingMask.classList.remove('loading-mask');
+                if (callback) callback(false);
             }
-            if (callback) callback(data);
-        } catch {
-            reload();
+        } catch (error) {
+            console.error('Delete folder error:', error);
+            if (callback) callback(false);
         }
     }
+    
     async function deleteFile(id, deleteType, callback) {
         const url = deleteType === 'forever'
             ? `${indexRoute}/deleteFileForever/${id}`
@@ -1319,12 +1348,12 @@ function createFileManager(cfg) {
         try {
             const data = await ajaxRequest(url, 'DELETE');
             if (data.deleted) {
-                reload(data.folderId ? {folderId: data.folderId} : undefined);
+                if (callback) callback(true);
             } else {
-                const title = document.querySelector('.modal-error').dataset.question || 'Are you sure?';
-                const text = document.querySelector('.modal-error').dataset.text || '...';
+                const title = document.querySelector('.modal-error')?.dataset.question || 'Error';
+                const text = document.querySelector('.modal-error')?.dataset.text || 'An error occurred';
                 const yes = '';
-                const no = document.querySelector('.modal-error').dataset.cancel || 'Cancel';
+                const no = document.querySelector('.modal-error')?.dataset.cancel || 'Close';
                 Modal.show({
                     body: (data.error || 'Error') + '<br><br>' + (data.description || ''),
                     withoutYes: true,
@@ -1332,26 +1361,27 @@ function createFileManager(cfg) {
                     text,
                     yes,
                     no,
-                    yesClass : '',
+                    yesClass: '',
                 });
                 const fileWithLoadingMask = document.querySelector('.file.loading-mask');
                 if (fileWithLoadingMask) fileWithLoadingMask.classList.remove('loading-mask');
+                if (callback) callback(false);
             }
-            if (callback) callback(data);
-        } catch {
-            reload();
+        } catch (error) {
+            console.error('Delete file error:', error);
+            if (callback) callback(false);
         }
     }
     async function restoreFolder(id, callback) {
         try {
             const data = await ajaxRequest(`${indexRoute}/restoreFolder/${id}`, 'POST');
             if (data.restored) {
-                reload(data.folderId ? {folderId: data.folderId} : undefined);
+                if (callback) callback(true);
             } else {
-                const title = document.querySelector('.modal-error').dataset.question || 'Are you sure?';
-                const text = document.querySelector('.modal-error').dataset.text || '...';
+                const title = document.querySelector('.modal-error')?.dataset.question || 'Error';
+                const text = document.querySelector('.modal-error')?.dataset.text || 'An error occurred';
                 const yes = '';
-                const no = document.querySelector('.modal-error').dataset.cancel || 'Cancel';
+                const no = document.querySelector('.modal-error')?.dataset.cancel || 'Close';
                 Modal.show({
                     body: (data.error || 'Error') + '<br><br>' + (data.description || ''),
                     withoutYes: true,
@@ -1359,24 +1389,26 @@ function createFileManager(cfg) {
                     text,
                     yes,
                     no,
-                    yesClass : '',
+                    yesClass: '',
                 });
+                if (callback) callback(false);
             }
-            if (callback) callback(data);
-        } catch {
-            reload();
+        } catch (error) {
+            console.error('Restore folder error:', error);
+            if (callback) callback(false);
         }
     }
+    
     async function restoreFile(id, callback) {
         try {
             const data = await ajaxRequest(`${indexRoute}/restoreFile/${id}`, 'POST');
             if (data.restored) {
-                reload(data.folderId ? {folderId: data.folderId} : undefined);
+                if (callback) callback(true);
             } else {
-                const title = document.querySelector('.modal-error').dataset.question || 'Are you sure?';
-                const text = document.querySelector('.modal-error').dataset.text || '...';
+                const title = document.querySelector('.modal-error')?.dataset.question || 'Error';
+                const text = document.querySelector('.modal-error')?.dataset.text || 'An error occurred';
                 const yes = '';
-                const no = document.querySelector('.modal-error').dataset.cancel || 'Cancel';
+                const no = document.querySelector('.modal-error')?.dataset.cancel || 'Close';
                 Modal.show({
                     body: (data.error || 'Error') + '<br><br>' + (data.description || ''),
                     withoutYes: true,
@@ -1384,12 +1416,13 @@ function createFileManager(cfg) {
                     text,
                     yes,
                     no,
-                    yesClass : '',
+                    yesClass: '',
                 });
+                if (callback) callback(false);
             }
-            if (callback) callback(data);
-        } catch {
-            reload();
+        } catch (error) {
+            console.error('Restore file error:', error);
+            if (callback) callback(false);
         }
     }
 
@@ -1501,14 +1534,24 @@ function createFileManager(cfg) {
     self.show = function () {
         if (!modalEl) return;
 
-        if (typeof $(modalEl)?.modal === 'function') {
-            $(modalEl).modal('show');
+        if (typeof modalEl.modal === 'function') {
+            modalEl.modal('show');
         } else {
             modalEl.style.display = 'block';
         }
 
+        const observer = new MutationObserver(() => {
+            const backdrop = document.querySelector('.hs-overlay-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
         if (!self.loaded) {
-            if (folderId) self.load({folderId});
+            if (folderId) self.load({ folderId });
             else self.load();
         }
     };
@@ -1516,11 +1559,12 @@ function createFileManager(cfg) {
     self.hide = function () {
         if (!modalEl) return;
 
-        if (typeof $(modalEl)?.modal === 'function') {
-            $(modalEl).modal('hide');
+        if (typeof modalEl.modal === 'function') {
+            modalEl.modal('hidden');
         } else {
             modalEl.style.display = 'none';
         }
+
     };
 
     self.load = reload;
@@ -1528,3 +1572,4 @@ function createFileManager(cfg) {
 
     return self;
 }
+// Inside your scoped module or function

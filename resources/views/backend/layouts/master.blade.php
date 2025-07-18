@@ -16,7 +16,8 @@
     <meta name="theme-color" content="#ffffff">
 
     @vite('public/css/admin-app.css')
-    @stack('styles')
+    @yield('styles')
+    
 </head>
 <body>
     <div id="loader" >

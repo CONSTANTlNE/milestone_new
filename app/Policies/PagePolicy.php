@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Models\Page;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PagePolicy
@@ -24,22 +25,23 @@ class PagePolicy
      * Determine whether the user can view the model.
      *
      * @param User $user
+     * @param Page $page
+     * @return bool
+     */
+    public function view(User $user, Page $page): bool
+    {
+        return $user->can('backend.pages.show');
+    }
+
+    /**
+     * Determine whether the user can change status.
+     *
+     * @param User $user
      * @return bool
      */
     public function status(User $user): bool
     {
         return $user->can('backend.pages.status');
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     *
-     * @param User $user
-     * @return bool
-     */
-    public function view(User $user): bool
-    {
-        return $user->can('backend.pages.show');
     }
 
     /**
@@ -57,9 +59,10 @@ class PagePolicy
      * Determine whether the user can update the model.
      *
      * @param User $user
+     * @param Page $page
      * @return bool
      */
-    public function update(User $user): bool
+    public function update(User $user, Page $page): bool
     {
         return $user->can('backend.pages.edit');
     }
@@ -68,15 +71,16 @@ class PagePolicy
      * Determine whether the user can delete the model.
      *
      * @param User $user
+     * @param Page $page
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Page $page): bool
     {
         return $user->can('backend.pages.destroy');
     }
 
     /**
-     * Determine whether the user can remove the model, this is fast remove.
+     * Determine whether the user can view trash.
      *
      * @param User $user
      * @return bool
@@ -85,6 +89,7 @@ class PagePolicy
     {
         return $user->can('backend.pages.trash');
     }
+
     /**
      * Determine whether the user can restore the model.
      *
@@ -95,8 +100,9 @@ class PagePolicy
     {
         return $user->can('backend.pages.restore');
     }
+
     /**
-     * Determine whether the user can remove the model, this is fast remove.
+     * Determine whether the user can remove the model permanently.
      *
      * @param User $user
      * @return bool
@@ -105,5 +111,4 @@ class PagePolicy
     {
         return $user->can('backend.pages.remove');
     }
-
 }

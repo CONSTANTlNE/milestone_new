@@ -3,7 +3,7 @@
     <button id="dropdown-flag" type="button"
             class="main-locale hs-dropdown-toggle ti-dropdown-toggle !p-0 flex-shrink-0  !border-0 !rounded-full !shadow-none font-second-geo">
         <img src="{{ asset(getLangName(app()->getLocale())->image ?? asset(config('filemanager.default_backend_image'))) }}" alt="logo language" title="logo language" width="30" height="30">
-        {{ getLangName(app()->getLocale())->name }}
+        {{ getLangName(app()->getLocale())->title }}
     </button>
 
     <div class="hs-dropdown-menu ti-dropdown-menu min-w-[10rem] hidden !-mt-3" aria-labelledby="dropdown-flag">
@@ -29,7 +29,7 @@
                                     </div>
                                     <div>
                                         <p class="!text-[0.8125rem] font-bold font-second-geo uppercase second-locale">
-                                            {{ $locale->name }}
+                                            {{ $locale->title }}
                                         </p>
                                     </div>
                                 </a>

@@ -26,7 +26,8 @@ class SocialCreateRequest extends FormRequest
         'status' => ['required', 'string'],
         'title' => ['required', 'string'],
         'icon' => ['required', 'string'],
-        'link' => ['string'],
+        'url' => ['string'],
+        'published_at' => ['nullable']
     ];
   }
 }

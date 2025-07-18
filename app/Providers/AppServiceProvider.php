@@ -31,5 +31,26 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('fortifyFeature', function ($feature) {
             return Features::enabled($feature);
         });
+
+        // Custom blade directive for alerts
+        Blade::directive('alert', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'info', 'message' => $expression])->render(); ?>";
+        });
+
+        Blade::directive('alertSuccess', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'success', 'message' => $expression])->render(); ?>";
+        });
+
+        Blade::directive('alertError', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'error', 'message' => $expression])->render(); ?>";
+        });
+
+        Blade::directive('alertWarning', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'warning', 'message' => $expression])->render(); ?>";
+        });
+
+        Blade::directive('alertInfo', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'info', 'message' => $expression])->render(); ?>";
+        });
     }
 }

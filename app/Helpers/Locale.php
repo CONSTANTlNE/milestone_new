@@ -11,7 +11,7 @@ if (! function_exists('getLangName')) {
     {
         if (!Cache::has('locales')){
             Cache::remember('locales', 60*60*24, function (){
-                return Locale::select('id', 'name', 'native', 'code', 'status', 'default')
+                return Locale::select('id', 'title', 'native', 'code', 'status')
                     ->where('status', '1')
                     ->with('generalImage')
                     ->orderBy('position', 'asc')
@@ -27,14 +27,14 @@ if (!function_exists('getLocaleGeneral')) {
     {
         if (!Cache::has('locales')){
             Cache::remember('locales', 60*60*24, function (){
-                return Locale::select('id', 'name', 'native', 'code', 'status', 'default')
+                return Locale::select('id', 'title', 'native', 'code', 'status')
                     ->where('status', '1')
                     ->with('generalImage')
                     ->orderBy('position', 'asc')
                     ->get();
             });
         }
-        return Cache::get('locales')->where('default', 1)->first();
+        return Cache::get('locales')->where('status', 1)->first();
     }
 }
 
@@ -44,14 +44,14 @@ if (!function_exists('getLocales')) {
     {
         if (!Cache::has('locales')){
             Cache::remember('locales', 60*60*24, function (){
-                return Locale::select('id', 'name', 'native', 'code', 'status', 'default')
+                return Locale::select('id', 'title', 'native', 'code', 'status')
                     ->where('status', '1')
                     ->with('generalImage')
                     ->orderBy('position', 'asc')
                     ->get();
             });
         }
-        return  Cache::get('locales')->sortByDesc('default');
+        return  Cache::get('locales')->sortByDesc('position');
     }
 }
 

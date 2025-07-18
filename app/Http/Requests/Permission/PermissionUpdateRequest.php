@@ -27,6 +27,8 @@ class PermissionUpdateRequest extends FormRequest
         return [
             'title' => ['array', new NonEmptyTitleArray],
             'name' => ['required', 'string', 'not_in:0', Rule::unique('permissions', 'name')->ignore($this->route('permission')->id)],
+            'published_at' => ['nullable'],
+            'status' => ['required', 'integer', Rule::in([0, 1])]
         ];
     }
 

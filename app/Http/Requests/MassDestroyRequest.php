@@ -25,7 +25,7 @@ class MassDestroyRequest extends FormRequest
     {
         return [
             'ids' => ['required', 'array'],
-            'ids.*' => ['exists:pages,id'], // Validate that all ids exist in the pages table
+//            'ids.*' => ['exists:pages,id'], // Validate that all ids exist in the pages table
         ];
     }
 }

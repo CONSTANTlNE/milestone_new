@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => env('SCOUT_DRIVER', 'algolia'),
+    'driver' => env('SCOUT_DRIVER', 'null'),
 
     /*
     |--------------------------------------------------------------------------
@@ -103,28 +103,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Algolia Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Here you may configure your Algolia settings. Algolia is a cloud hosted
-    | search engine which works great with Scout out of the box. Just plug
-    | in your application ID and admin API key to get started searching.
-    |
-    */
-
-    'algolia' => [
-        'id' => env('ALGOLIA_APP_ID', ''),
-        'secret' => env('ALGOLIA_SECRET', ''),
-        'index-settings' => [
-            // 'users' => [
-            //     'searchableAttributes' => ['id', 'name', 'email'],
-            //     'attributesForFaceting'=> ['filterOnly(email)'],
-            // ],
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Meilisearch Configuration
     |--------------------------------------------------------------------------
     |
@@ -143,6 +121,10 @@ return [
             // 'users' => [
             //     'filterableAttributes'=> ['id', 'name', 'email'],
             // ],
+            'permissions' => [
+                'filterableAttributes' => ['id', 'name', 'status'],
+                'searchableAttributes' => ['id', 'name', 'title_en', 'title_ka', 'title_current', 'searchable_text'],
+            ],
         ],
     ],
 

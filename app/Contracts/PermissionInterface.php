@@ -1,32 +1,31 @@
 <?php
 namespace App\Contracts;
 
-use App\Http\Requests\ChangeStatusRequest;
+use App\Http\Requests\Permission\PermissionChangeStatusRequest;
 use App\Http\Requests\Permission\PermissionCreateRequest;
-use App\Http\Requests\MassDestroyRequest;
-use App\Http\Requests\MassRemoveRequest;
+use App\Http\Requests\Permission\PermissionDestroyRequest;
+use App\Http\Requests\Permission\PermissionIndexRequest;
+use App\Http\Requests\Permission\PermissionMassDestroyRequest;
+use App\Http\Requests\Permission\PermissionMassRemoveRequest;
+use App\Http\Requests\Permission\PermissionRemoveRequest;
+use App\Http\Requests\Permission\PermissionRestoreRequest;
+use App\Http\Requests\Permission\PermissionTrashRequest;
 use App\Http\Requests\Permission\PermissionUpdateRequest;
-use App\Http\Requests\RemoveRequest;
 use App\Models\Permission;
 
 interface PermissionInterface
 {
+    public function index(PermissionIndexRequest $request);
     public function getAllRoutes();
+    public function changeStatus(PermissionChangeStatusRequest $request);
     public function store(PermissionCreateRequest $request);
-
     public function show(Permission $permission);
-
     public function edit(Permission $permission);
-
     public function update(PermissionUpdateRequest $request, Permission $permission);
-
-    public function destroy(Permission $permission);
-
-    public function massDestroy(MassDestroyRequest $request);
-
-    public function restore(Permission $permission);
-
-    public function remove(RemoveRequest $permission);
-
-    public function massRemove(MassRemoveRequest $request);
+    public function destroy(PermissionDestroyRequest $request);
+    public function massDestroy(PermissionMassDestroyRequest $request);
+    public function trash(PermissionTrashRequest $request);
+    public function restore(PermissionRestoreRequest $request);
+    public function remove(PermissionRemoveRequest $request);
+    public function massRemove(PermissionMassRemoveRequest $request);
 }

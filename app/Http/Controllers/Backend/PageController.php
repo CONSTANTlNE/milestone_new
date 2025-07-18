@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\DataTables\PagesDataTable;
-use App\DataTables\PagesDataTableTrash;
-use App\Http\Requests\ChangeStatusRequest;
-use App\Http\Requests\MassDestroyRequest;
+use App\Http\Requests\Page\PageChangeStatusRequest;
 use App\Http\Requests\Page\PageCreateRequest;
+use App\Http\Requests\Page\PageDestroyRequest;
+use App\Http\Requests\Page\PageIndexRequest;
+use App\Http\Requests\Page\PageMassDestroyRequest;
+use App\Http\Requests\Page\PageMassRemoveRequest;
+use App\Http\Requests\Page\PageRemoveRequest;
+use App\Http\Requests\Page\PageRestoreRequest;
+use App\Http\Requests\Page\PageTrashRequest;
 use App\Http\Requests\Page\PageUpdateRequest;
-use App\Http\Requests\RemoveRequest;
 use App\Services\PageService;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Page;
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
-use JetBrains\PhpStorm\NoReturn;
 
 class PageController extends Controller
 {
@@ -30,29 +33,28 @@ class PageController extends Controller
     public function __construct(PageService $pageService)
     {
         $this->pageService = $pageService;
-        $this->authorizeResource(Page::class, 'page');
     }
     /**
-     * View all Pages.
-     *
-     * @param PagesDataTable $dataTable
-     * @return View
+     * Display a listing of the Pages.
+     * @throws AuthorizationException
      */
-    #[NoReturn] public function index(PagesDataTable $dataTable)
+    public function index(PageIndexRequest $request): View
     {
         $this->authorize('viewAny', Page::class);
-        return $dataTable->render('backend.pages.index');
+
+        return view('backend.pages.index', [
+            'pages' => $this->pageService->index($request)
+        ]);
     }
 
     /**
      * Change Status.
      *
-     * @param ChangeStatusRequest $request
+     * @param PageChangeStatusRequest $request
      * @return JsonResponse
      */
-    public function status(ChangeStatusRequest $request): JsonResponse
+    public function status(PageChangeStatusRequest $request): JsonResponse
     {
-        $this->authorize('status',Page::class);
         try {
             return $this->pageService->changeStatus($request);
         } catch (Exception $e) {
@@ -66,6 +68,7 @@ class PageController extends Controller
      * Create view the specified resource.
      *
      * @return View
+     * @throws AuthorizationException
      */
     public function create(): View
     {
@@ -78,13 +81,15 @@ class PageController extends Controller
      *
      * @param PageCreateRequest $request
      * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
      */
     public function store(PageCreateRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('create', Page::class);
+
         try {
             $this->pageService->store($request);
-            return redirect()->route('backend.pages.index', app()->getLocale())
+            return redirect()->route('backend.pages.index')
                 ->with('success', __('strings.Added Successfully'));
         } catch (\Exception $e) {
             return response()->json([
@@ -96,13 +101,14 @@ class PageController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param $lang
      * @param Page $page
      * @return JsonResponse|View
+     * @throws AuthorizationException
      */
-    public function show($lang, Page $page): JsonResponse|View
+    public function show(Page $page): JsonResponse|View
     {
         $this->authorize('view', $page);
+
         try {
             return view('backend.pages.show', [
                 'page' => $this->pageService->show($page)
@@ -117,13 +123,14 @@ class PageController extends Controller
     /**
      * Edit the specified resource.
      *
-     * @param $lang
      * @param Page $page
      * @return JsonResponse|View
+     * @throws AuthorizationException
      */
-    public function edit($lang, Page $page): JsonResponse|View
+    public function edit(Page $page): JsonResponse|View
     {
         $this->authorize('update', $page);
+
         try {
             return view('backend.pages.edit', [
                 'page' => $this->pageService->edit($page),
@@ -135,101 +142,117 @@ class PageController extends Controller
             ], 500);
         }
     }
+
     /**
      * Update the specified resource.
      *
-     * @param $lang
+     * @param PageUpdateRequest $request
      * @param Page $page
-     * @return JsonResponse|View
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
      */
-    public function update($lang, PageUpdateRequest $request, Page $page): JsonResponse|RedirectResponse
+    public function update(PageUpdateRequest $request, Page $page): JsonResponse|RedirectResponse
     {
         $this->authorize('update', $page);
+
         try {
             $this->pageService->update($request, $page);
-            return redirect()->route('backend.pages.index', app()->getLocale())
+            return redirect()->route('backend.pages.index')
                 ->with('success', __('strings.Updated Successfully'));
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while updating user: ' . $e->getMessage()
+                'message' => 'Failed while updating page: ' . $e->getMessage()
             ], 500);
         }
     }
+
     /**
      * Soft Delete Page.
-     * @param $lang
-     * @param Page $page
-     * @return JsonResponse|RedirectResponse
+     * @param PageDestroyRequest $request
+     * @return JsonResponse
      */
-    public function destroy($lang, Page $page): JsonResponse|RedirectResponse
+    public function destroy(PageDestroyRequest $request): JsonResponse
     {
-        $this->authorize('delete', $page);
         try {
-            $this->pageService->destroy($page);
-            return redirect()->route('backend.pages.index', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully'));
+            return $this->pageService->destroy($request);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Failed while deleting page: ' . $e->getMessage()
             ], 500);
         }
+
     }
 
     /**
-     * Mass Soft Delete Page.
-     * @param MassDestroyRequest $request
-     * @return JsonResponse|RedirectResponse
+     * Mass delete pages.
      */
-    public function massDestroy(MassDestroyRequest $request)
+    public function massDestroy(PageMassDestroyRequest $request): RedirectResponse|JsonResponse
     {
-        $this->authorize('delete', Page::class);
-        try {
+        $this->authorize('viewAny', Page::class);
+
+        return $this->executeOperation(function () use ($request) {
             $this->pageService->massDestroy($request);
-            return redirect()->route('backend.pages.index', app()->getLocale())
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('strings.Deleted Successfully')
+                ], 200);
+            }
+
+            return redirect()->route('backend.pages.index')
                 ->with('success', __('strings.Deleted Successfully'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while mass deleting page: ' . $e->getMessage()
-            ], 500);
-        }
+        }, 'Page Mass Deletion');
     }
 
     // Archive
-
     /**
      * View all Pages in Trash.
      *
-     * @param PagesDataTableTrash $dataTable
+     * @param PageTrashRequest $request
      * @return mixed
+     * @throws AuthorizationException
      */
-    #[NoReturn] public function trash(PagesDataTableTrash $dataTable)
+    public function trash(PageTrashRequest $request): View
     {
         $this->authorize('trash', Page::class);
-        return $dataTable->render('backend.pages.trash');
+
+        return view('backend.pages.trash', [
+            'pages' => $this->pageService->trash($request)
+        ]);
     }
 
-    public function restore($lang, $id)
+    /**
+     * Restore the specified resource from trash.
+     *
+     * @param PageRestoreRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function restore(PageRestoreRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('restore', Page::class);
+
         try {
-            $this->pageService->restore($id);
-            return redirect()->route('backend.pages.trash', app()->getLocale())
-                ->with('success', __('strings.Restored Successfully'));
+            return $this->pageService->restore($request);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Failed while restoring page: ' . $e->getMessage()
             ], 500);
         }
-
     }
 
-    public function remove(RemoveRequest $request): JsonResponse|RedirectResponse
+    /**
+     * Remove the specified resource permanently.
+     *
+     * @param PageRemoveRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function remove(PageRemoveRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('remove', Page::class);
         try {
-            $this->pageService->remove($request);
-            return redirect()->route('backend.pages.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
+            return $this->pageService->remove($request);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Failed while removing page: ' . $e->getMessage()
@@ -237,16 +260,21 @@ class PageController extends Controller
         }
     }
 
-    public function massRemove(MassDestroyRequest $request): JsonResponse|RedirectResponse
+    /**
+     * Mass remove the specified resources permanently.
+     *
+     * @param PageMassRemoveRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function massRemove(PageMassRemoveRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('remove', Page::class);
         try {
-            $this->pageService->massRemove($request);
-            return redirect()->route('backend.pages.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
+            return $this->pageService->massRemove($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while mass Removing page: ' . $e->getMessage()
+                'message' => 'Failed while mass removing page: ' . $e->getMessage()
             ], 500);
         }
     }

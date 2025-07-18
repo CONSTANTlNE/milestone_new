@@ -26,6 +26,7 @@ class PageUpdateRequest extends FormRequest
         return [
             'status' => ['required', 'string'],
             'parent_id' => ['nullable', 'exists:pages,id'],
+            'published_at' => ['nullable'],
             'title' => ['array', new NonEmptyTitleArray],
             'slogan' => ['array'],
             'content' => ['array'],

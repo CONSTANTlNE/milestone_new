@@ -23,8 +23,7 @@ class PageMassDestroyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer',
-            'status' => 'required|string',
+            'ids' => ['required', 'array']
         ];
     }
 }

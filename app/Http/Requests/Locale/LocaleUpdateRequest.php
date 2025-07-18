@@ -25,7 +25,7 @@ class LocaleUpdateRequest extends FormRequest
   {
       return [
         'status' => ['required', 'string'],
-        'name' => ['required', 'string'],
+        'title' => ['required', 'string'],
         'code' => ['required', 'string', 'min:2', 'max:2', Rule::unique('locales', 'code')->ignore($this->route('locale')->id)],
         'images' => ['array'],
         'mainImage_id' => ['integer'],

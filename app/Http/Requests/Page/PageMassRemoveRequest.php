@@ -22,9 +22,9 @@ class PageMassRemoveRequest extends FormRequest
    */
   public function rules(): array
   {
-    return [
-
-    ];
+      return [
+          'ids' => ['required', 'array'],
+          'ids.*' => ['exists:pages,id'], // Validate that all ids exist in the pages table
+      ];
   }
 }
-

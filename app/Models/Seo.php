@@ -13,28 +13,32 @@ class Seo extends Model
 
     public $table = 'seos';
 
-    protected $dates = [
+    protected array $dates = [
         'created_at',
         'updated_at',
     ];
-
+    protected $casts = [
+        'seoTitles' => 'array',
+        'seoKeywords' => 'array',
+        'seoDescriptions' => 'array',
+    ];
     protected $fillable = [
         'seoTitles',
         'seoKeywords',
         'seoDescriptions',
-        'seoble_id',
-        'seoble_type',
+        'model_id',
+        'model_type',
         'created_at',
         'updated_at',
     ];
 
-    public $translatable = [
+    public array $translatable = [
         'seoTitles',
         'seoKeywords',
         'seoDescriptions',
     ];
 
-    protected static $logFillable = true;
+    protected static bool $logFillable = true;
 
     public function seoble(): MorphTo
     {

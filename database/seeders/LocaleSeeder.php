@@ -50,5 +50,32 @@ class LocaleSeeder extends Seeder
             saveJSONFile($locale['code'], $data);
 
         }, $this->locales);
+        // Seed the database
+    foreach ($this->locales as $locale) {
+        Locale::firstOrCreate([
+            'name' => $locale['name'],
+            'native' => $locale['native'],
+            'status' => $locale['status'],
+            'code' => $locale['code'],
+            'default' => $locale['default'],
+            'position' => $locale['position']
+        ]);
+    }
+
+    // Prepare data for locales.json
+    $localesData = [];
+    foreach ($this->locales as $locale) {
+        $localesData[$locale['code']] = $locale['name'];
+    }
+
+    // Save to resources/lang/config_locales.json (or wherever you want)
+    $jsonPath = resource_path('lang/config_locales.json');
+    File::put($jsonPath, json_encode($localesData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+
+    // Optionally, create a separate file for each locale code
+    foreach ($this->locales as $locale) {
+        $localePath = resource_path("lang/{$locale['code']}.json");
+        File::put($localePath, json_encode([$locale['code'] => $locale['name']], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
     }
 }

@@ -20,31 +20,33 @@ class Setting extends Model
 
     protected $fillable = [
         'title',
-        'content',
-        'status',
+        'working_hours',
+        'address',
+        'phone',
+        'email',
+        'send_email',
         'lat',
         'lng',
-        'email',
-        'mobile',
-        'send_email',
         'g_map',
         'g_analytics',
+        'fb_id',
+        'status',
         'created_at',
         'updated_at',
     ];
 
     public array $translatable = [
         'title',
-        'content',
+        'working_hours',
+        'address',
     ];
 
-    protected static $logFillable = true;
+    protected static bool $logFillable = true;
 
     public function updateSettings($data): void
     {
         $this->setMultiTranslations($data);
         $this->fill($data);
-        $this->status = 1; // Assuming you always want to set status to 1
         $this->save();
     }
 }

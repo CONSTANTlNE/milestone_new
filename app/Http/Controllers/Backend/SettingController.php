@@ -3,26 +3,29 @@ namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
 use App\Traits\MultiTranslatableTrait;
-use Illuminate\Http\Request;
+use App\Http\Requests\Setting\SettingUpdateRequest;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Cache;
 
 class SettingController extends Controller
 {
     use MultiTranslatableTrait;
 
-    public function edit($lang, $id)
+    public function edit()
     {
         return view('backend.settings.edit', [
             'setting' => Setting::first()
         ]);
     }
 
-    public function update(Request $request, $lang, Setting $setting)
+    public function update(SettingUpdateRequest $request, Setting $setting): \Illuminate\Http\RedirectResponse
     {
-        $setting->updateSettings($request->all());
-        return redirect()->back();
+        $data = $request->validated();
+        Cache::forget('settings');
+        $setting->updateSettings($data);
+        return redirect()->back()->with('success', __('strings.Updated Successfully'));
     }
 
     public function clearCache(): JsonResponse

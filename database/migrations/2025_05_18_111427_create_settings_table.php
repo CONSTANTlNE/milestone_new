@@ -25,6 +25,7 @@ return new class extends Migration
             $table->text('g_map')->nullable()->index();
             $table->text('g_analytics')->nullable()->index();
             $table->string('fb_id')->nullable()->index();
+            $table->boolean('status')->default(false)->index();
             $table->timestamps();
         });
     }

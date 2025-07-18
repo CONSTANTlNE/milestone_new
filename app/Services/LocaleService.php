@@ -3,91 +3,109 @@
 namespace App\Services;
 
 use App\Contracts\LocaleInterface;
-use App\Http\Requests\ChangeStatusRequest;
-use App\Http\Requests\MassDestroyRequest;
-use App\Http\Requests\MassRemoveRequest;
-use App\Http\Requests\RemoveRequest;
+use App\Http\Requests\Locale\LocaleChangeStatusRequest;
 use App\Http\Requests\Locale\LocaleCreateRequest;
+use App\Http\Requests\Locale\LocaleDestroyRequest;
+use App\Http\Requests\Locale\LocaleMassDestroyRequest;
+use App\Http\Requests\Locale\LocaleMassRemoveRequest;
+use App\Http\Requests\Locale\LocaleRemoveRequest;
+use App\Http\Requests\Locale\LocaleRestoreRequest;
+use App\Http\Requests\Locale\LocaleTrashRequest;
 use App\Http\Requests\Locale\LocaleUpdateRequest;
+use App\Http\Requests\Social\SocialCreateRequest;
 use App\Http\Resources\Locale\LocaleResource;
-use App\Models\Locale;
+use App\Http\Resources\Social\SocialResource;
+use App\Models\Social;
 use App\Traits\ImageUploadTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Collection;
+use App\Models\Locale;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Redis;
-use App\Traits\CacheableTrait;
+use App\Http\Requests\Locale\LocaleIndexRequest;
+use App\Traits\LocaleJsonSyncTrait;
 
 class LocaleService implements LocaleInterface
 {
-    use CacheableTrait, ImageUploadTrait;
+    use ImageUploadTrait, LocaleJsonSyncTrait;
     const CACHE_TTL = 86400; // 1 day
 
-    public function getLocales()
+    public function index(LocaleIndexRequest $request): LengthAwarePaginator
     {
-        if (!Cache::has('locales')){
-            Cache::remember('locales', self::CACHE_TTL, function (){
-                return Locale::select('id', 'name', 'native', 'code', 'status', 'default')
-                    ->where('status', '1')
-                    ->with('generalImage')
-                    ->orderBy('position', 'asc')
-                    ->get();
-            });
-        }
-
-        return Cache::get('locales');
+        return Locale::query()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title ILIKE ?", ['%' . $search . '%']);
+                });
+            })
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->when(
+                $request->filled('sort_column'),
+                function ($q) use ($request) {
+                    $q->orderBy(
+                        $request->input('sort_column'),
+                        $request->input('sort_direction', 'asc')
+                    );
+                },
+                function ($q) {
+                    $q->orderBy('position', 'asc');
+                }
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
     }
 
-    public function changeStatus(Locale $locale): JsonResponse
+    public function changeStatus(LocaleChangeStatusRequest $request): JsonResponse
     {
-        $status = $locale->status == 0 ? 1 : 0;
-        $locale->update(['status' => $status]);
-        $locale->load('generalImage');
-        $this->updateCachedCollection('locales', $locale, self::CACHE_TTL);
+        $data = $request->validated();
+        Cache::forget('locales');
 
-        return  response()->json([
+        $locale = Locale::find($data['id']);
+
+        if (!$locale) {
+            return response()->json([
+                'message' => 'Social not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
+
+        $locale->update(['status' => $data['status']]);
+        $locale->save();
+        $this->updateLocalesJsonFile();
+
+        return response()->json([
             'message' => __('strings.Status changed successfully'),
             'alert-type' => 'success'
         ]);
     }
 
-    public function general(Locale $locale): Locale
-    {
-        Cache::forget('locales');
-        $localeGeneral = Locale::where('default', 1)->first();
-        $localeGeneral->default = 0;
-        $localeGeneral->save();
-        $locale->default = $locale->default == 0 ? 1 : 0;
-        $locale->status = 1;
-        $locale->save();
-        return $locale;
-    }
 
     public function store(LocaleCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
+        Cache::forget('locales');
+        $this->createLanguageJsonFile($data['code']);
         $locale = Locale::create([
-            'name' => $data['name'],
+            'title' => $data['title'],
             'code' => $data['code'],
             'status' => $data['status'],
-            'default' => 0,
             'position' => Locale::getNextPosition(),
         ]);
-        $this->processAndSaveImages($data, $locale);
+        $this->processAndSaveImages($data, $locale, true);
         $locale->load('generalImage');
-        $this->addToCacheCollection('locales', $locale, self::CACHE_TTL);
-
+        $this->updateLocalesJsonFile();
         return response()->json([
             'locale' => LocaleResource::make($locale),
             'message' => __('strings.Added Successfully')
         ], 201);
     }
-
     public function show(Locale $locale): JsonResponse|Locale
     {
         return $locale;
     }
-
     public function edit(Locale $locale): Locale
     {
         return $locale;
@@ -96,41 +114,50 @@ class LocaleService implements LocaleInterface
     public function update(LocaleUpdateRequest $request, Locale $locale): JsonResponse
     {
         $data = $request->validated();
+        Cache::forget('locales');
         $locale->update([
-            'name' => $data['name'],
+            'title' => $data['title'],
             'code' => $data['code'],
-            'status' => $data['status'],
-            'default' => 0,
-            'position' => Locale::getNextPosition(),
+            'status' => $data['status']
         ]);
-        $this->processAndSaveImages($data, $locale);
+        $this->processAndSaveImages($data, $locale, true);
         $locale->load('generalImage');
-        $this->updateCachedCollection('locales', $locale, self::CACHE_TTL);
+        $this->updateLocalesJsonFile();
         return response()->json([
             'locale' => LocaleResource::make($locale),
             'message' => __('strings.Updated Successfully')
         ], 201);
     }
 
-    public function destroy(Locale $locale): JsonResponse
+    public function destroy(LocaleDestroyRequest $request): JsonResponse
     {
-        $this->deleteCachedCollection('locales', $locale->id, self::CACHE_TTL);
+        Cache::forget('locales');
+        $locale = Locale::find($request->id);
+        if (!$locale) {
+            return response()->json([
+                'message' => 'Locale not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
         $locale->delete();
+        $this->updateLocalesJsonFile();
+
 
         return response()->json([
             'message' => __('strings.Deleted Successfully'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massDestroy(MassDestroyRequest $request): JsonResponse
+    public function massDestroy(LocaleMassDestroyRequest $request): JsonResponse
     {
         Cache::forget('locales');
         Locale::whereIn('id', $request->ids)->delete();
+        $this->updateLocalesJsonFile();
         return response()->json([
             'message' => __('strings.massDestroy Successfully'),
         ], 204);
     }
-
     public function reorder($request): JsonResponse
     {
         Cache::forget('locales');
@@ -140,44 +167,95 @@ class LocaleService implements LocaleInterface
                 'position' => $index
             ]);
         }
+        $this->updateLocalesJsonFile();
         return  response()->json([
             'message' =>  __('strings.Position changed successfully'),
             'alert-type' => 'success'
         ]);
     }
 
+
     // Archive Function Method
-    public function getLocaleTrash(): array|Collection
+    public function trash(LocaleTrashRequest $request): LengthAwarePaginator
     {
-         return Locale::onlyTrashed()
-              ->with('generalImage')
-              ->get();
+        return Locale::onlyTrashed()
+            ->with('generalImage')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title ILIKE ?", ['%' . $search . '%']);
+                });
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                $request->input('sort_direction', 'desc')
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
     }
 
-    public function restore($id): void
+    public function restore(LocaleRestoreRequest $request): JsonResponse
     {
         Cache::forget('locales');
-        $locale = Locale::where('id', $id)->withTrashed()->first();
+        $locale = Locale::where('id', $request->id)->withTrashed()->first();
         $locale->restore();
         $locale->fresh();
+        $this->updateLocalesJsonFile();
+        return response()->json([
+            'message' => __('strings.Restored Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
     }
-
-    public function remove($id): JsonResponse
+    public function remove(LocaleRemoveRequest $request): JsonResponse
     {
-        $locale = Locale::where('id', $id)->withTrashed()->first();
-        $locale->forceDelete();
-        $locale->fresh();
-
+        Cache::forget('locales');
+        $data = Locale::where('id', $request->id)->withTrashed()->first();
+        $this->deleteLanguageJsonFile($data->code);
+        $data->forceDelete();
+        $data->fresh();
+        $this->updateLocalesJsonFile();
         return response()->json([
             'message' => __('strings.Deleted Successfully from Archive'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
-
-    public function massRemove(MassRemoveRequest $request): JsonResponse
+    public function massRemove(LocaleMassRemoveRequest $request): JsonResponse
     {
+        Cache::forget('locales');
+        $locales = Locale::withTrashed()->whereIn('id', $request->ids)->get();
+
+        foreach ($locales as $locale) {
+            $this->deleteLanguageJsonFile($locale->code);
+        }
+
         Locale::whereIn('id', $request->ids)->withTrashed()->forceDelete();
+        $this->updateLocalesJsonFile();
         return response()->json([
-            'message' => __('strings.Deleted Successfully from Archive'),
-        ], 200);
+            'message' => __('strings.Mass Deleted Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
+    }
+
+    /**
+     * Create a language JSON file in the lang directory for the given code and title.
+     */
+    private function createLanguageJsonFile(string $code): void
+    {
+        $langPath = base_path('lang/' . $code . '.json');
+        if (!file_exists($langPath)) {
+            file_put_contents($langPath, json_encode(new \stdClass(), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        }
+    }
+
+    /**
+     * Delete a language JSON file in the lang directory for the given code.
+     */
+    private function deleteLanguageJsonFile(string $code): void
+    {
+        $langPath = base_path('lang/' . $code . '.json');
+        if (file_exists($langPath)) {
+            unlink($langPath);
+        }
     }
 }

@@ -2,21 +2,27 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\DataTables\PermissionsDataTable;
 use App\DataTables\PermissionsDataTableTrash;
-use App\Http\Requests\ChangeStatusRequest;
 use App\Http\Requests\MassDestroyRequest;
+use App\Http\Requests\Page\PageChangeStatusRequest;
+use App\Http\Requests\Permission\PermissionChangeStatusRequest;
 use App\Http\Requests\Permission\PermissionCreateRequest;
+use App\Http\Requests\Permission\PermissionDestroyRequest;
+use App\Http\Requests\Permission\PermissionIndexRequest;
+use App\Http\Requests\Permission\PermissionMassDestroyRequest;
+use App\Http\Requests\Permission\PermissionMassRemoveRequest;
+use App\Http\Requests\Permission\PermissionRemoveRequest;
+use App\Http\Requests\Permission\PermissionRestoreRequest;
+use App\Http\Requests\Permission\PermissionTrashRequest;
 use App\Http\Requests\Permission\PermissionUpdateRequest;
-use App\Http\Requests\RemoveRequest;
 use App\Services\PermissionService;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Permission;
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
-use JetBrains\PhpStorm\NoReturn;
 
 class PermissionController extends Controller
 {
@@ -24,35 +30,32 @@ class PermissionController extends Controller
 
     /**
      * Create the controller instance.
-     *
-     * @return void
      */
     public function __construct(PermissionService $permissionService)
     {
         $this->permissionService = $permissionService;
-        $this->authorizeResource(Permission::class, 'permission');
     }
+
     /**
-     * View all Permissions.
-     *
-     * @param PermissionsDataTable $dataTable
-     * @return View
+     * Display a listing of the permissions.
      */
-    #[NoReturn] public function index(PermissionsDataTable $dataTable)
+    public function index(PermissionIndexRequest $request): View
     {
         $this->authorize('viewAny', Permission::class);
-        return $dataTable->render('backend.permissions.index');
+
+        return view('backend.permissions.index', [
+            'permissions' => $this->permissionService->index($request)
+        ]);
     }
 
     /**
      * Change Status.
      *
-     * @param ChangeStatusRequest $request
+     * @param PermissionChangeStatusRequest $request
      * @return JsonResponse
      */
-    public function status(ChangeStatusRequest $request): JsonResponse
+    public function status(PermissionChangeStatusRequest $request): JsonResponse
     {
-        $this->authorize('status',Permission::class);
         try {
             return $this->permissionService->changeStatus($request);
         } catch (Exception $e) {
@@ -61,11 +64,8 @@ class PermissionController extends Controller
             ], 500);
         }
     }
-
     /**
-     * Create view the specified resource.
-     *
-     * @return View
+     * Show the form for creating a new permission.
      */
     public function create(): View
     {
@@ -74,44 +74,44 @@ class PermissionController extends Controller
             'routes' => $this->permissionService->getAllRoutes()
         ]);
     }
-
     /**
      * Store a newly created resource in storage.
      *
      * @param PermissionCreateRequest $request
      * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
      */
-    public function store(PermissionCreateRequest $request): JsonResponse|RedirectResponse
+    public function store(PermissionCreateRequest $request): RedirectResponse|JsonResponse
     {
         $this->authorize('create', Permission::class);
         try {
             $this->permissionService->store($request);
-            return redirect()->route('backend.permissions.index', app()->getLocale())
+            return redirect()->route('backend.permissions.index')
                 ->with('success', __('strings.Added Successfully'));
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed while creating Permission: ' . $e->getMessage()
+                'message' => 'Failed while creating permission: ' . $e->getMessage()
             ], 500);
         }
     }
-
     /**
      * Display the specified resource.
      *
-     * @param $lang
      * @param Permission $permission
      * @return JsonResponse|View
+     * @throws AuthorizationException
      */
-    public function show($lang, Permission $permission): JsonResponse|View
+    public function show(Permission $permission): JsonResponse|View
     {
         $this->authorize('view', $permission);
+
         try {
             return view('backend.permissions.show', [
                 'permission' => $this->permissionService->show($permission)
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve the Permission: ' . $e->getMessage()
+                'message' => 'Failed to retrieve the permission: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -119,13 +119,14 @@ class PermissionController extends Controller
     /**
      * Edit the specified resource.
      *
-     * @param $lang
      * @param Permission $permission
      * @return JsonResponse|View
+     * @throws AuthorizationException
      */
-    public function edit($lang, Permission $permission): JsonResponse|View
+    public function edit(Permission $permission): JsonResponse|View
     {
         $this->authorize('update', $permission);
+
         try {
             return view('backend.permissions.edit', [
                 'permission' => $this->permissionService->edit($permission),
@@ -133,7 +134,7 @@ class PermissionController extends Controller
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to editing the Permission: ' . $e->getMessage()
+                'message' => 'Failed to editing the permission: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -141,37 +142,35 @@ class PermissionController extends Controller
     /**
      * Update the specified resource.
      *
-     * @param $lang
      * @param PermissionUpdateRequest $request
      * @param Permission $permission
-     * @return JsonResponse|View
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
      */
-    public function update($lang, PermissionUpdateRequest $request, Permission $permission): JsonResponse|RedirectResponse
+    public function update(PermissionUpdateRequest $request, Permission $permission): JsonResponse|RedirectResponse
     {
         $this->authorize('update', $permission);
+
         try {
             $this->permissionService->update($request, $permission);
-            return redirect()->route('backend.permissions.index', app()->getLocale())
+            return redirect()->route('backend.permissions.index')
                 ->with('success', __('strings.Updated Successfully'));
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while updating permission: ' . $e->getMessage()
+                'message' => 'Failed while updating Permission: ' . $e->getMessage()
             ], 500);
         }
     }
+
     /**
      * Soft Delete Permission.
-     * @param $lang
-     * @param Permission $permission
-     * @return JsonResponse|RedirectResponse
+     * @param PermissionDestroyRequest $request
+     * @return JsonResponse
      */
-    public function destroy($lang, Permission $permission): JsonResponse|RedirectResponse
+    public function destroy(PermissionDestroyRequest $request): JsonResponse
     {
-        $this->authorize('delete', $permission);
         try {
-            $this->permissionService->destroy($permission);
-            return redirect()->route('backend.permissions.index', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully'));
+            return $this->permissionService->destroy($request);
         } catch (Exception $e) {
             return response()->json([
                 'message' => 'Failed while deleting permission: ' . $e->getMessage()
@@ -180,77 +179,101 @@ class PermissionController extends Controller
     }
 
     /**
-     * Mass Soft Delete Permission.
-     * @param MassDestroyRequest $request
-     * @return JsonResponse|RedirectResponse
+     * Mass delete permissions.
      */
-    public function massDestroy(MassDestroyRequest $request)
+
+    public function massDestroy(PermissionMassDestroyRequest $request): RedirectResponse|JsonResponse
     {
-        $this->authorize('delete', Permission::class);
-        try {
+        $this->authorize('viewAny', Permission::class);
+
+
+        return $this->executeOperation(function () use ($request) {
             $this->permissionService->massDestroy($request);
-            return redirect()->route('backend.permissions.index', app()->getLocale())
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('strings.Deleted Successfully')
+                ], 200);
+            }
+
+            return redirect()->route('backend.permissions.index')
                 ->with('success', __('strings.Deleted Successfully'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while mass deleting permission: ' . $e->getMessage()
-            ], 500);
-        }
+        }, 'Permission Mass Deletion');
     }
 
     // Archive
-
     /**
      * View all Permissions in Trash.
      *
-     * @param PermissionsDataTableTrash $dataTable
+     * @param PermissionTrashRequest $request
      * @return mixed
+     * @throws AuthorizationException
      */
-    #[NoReturn] public function trash(PermissionsDataTableTrash $dataTable)
+    public function trash(PermissionTrashRequest $request): View
     {
         $this->authorize('trash', Permission::class);
-        return $dataTable->render('backend.permissions.trash');
+
+        return view('backend.permissions.trash', [
+            'permissions' => $this->permissionService->trash($request)
+        ]);
     }
 
-    public function restore($lang, $id)
+    /**
+     * Restore a soft deleted permission.
+     *
+     * @param PermissionRestoreRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function restore(PermissionRestoreRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('restore', Permission::class);
+
         try {
-            $this->permissionService->restore($id);
-            return redirect()->route('backend.permissions.trash', app()->getLocale())
-                ->with('success', __('strings.Restored Successfully'));
+            return $this->permissionService->restore($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while restoring permission: ' . $e->getMessage()
-            ], 500);
-        }
-
-    }
-
-    public function remove($lang, $id): JsonResponse|RedirectResponse
-    {
-        $this->authorize('remove', Permission::class);
-        try {
-            $this->permissionService->remove($id);
-            return redirect()->route('backend.permissions.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while removing permission: ' . $e->getMessage()
+                'message' => 'Failed while restoring Permission: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    public function massRemove(MassDestroyRequest $request): JsonResponse|RedirectResponse
+    /**
+     * Remove the specified resource permanently.
+     *
+     * @param PermissionRemoveRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function remove(PermissionRemoveRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('remove', Permission::class);
         try {
-            $this->permissionService->massRemove($request);
-            return redirect()->route('backend.permissions.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
+            return $this->permissionService->remove($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while mass Removing permission: ' . $e->getMessage()
+                'message' => 'Failed while removing Permission: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    /**
+     * Mass permanently delete permissions from trash.
+     */
+    /**
+     * Mass remove the specified resources permanently.
+     *
+     * @param PermissionMassRemoveRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function massRemove(PermissionMassRemoveRequest $request): JsonResponse|RedirectResponse
+    {
+        $this->authorize('remove', Permission::class);
+        try {
+            return $this->permissionService->massRemove($request);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed while mass removing permission: ' . $e->getMessage()
             ], 500);
         }
     }

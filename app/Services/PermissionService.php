@@ -3,30 +3,61 @@
 namespace App\Services;
 
 use App\Contracts\PermissionInterface;
-use App\Http\Requests\ChangeStatusRequest;
+use App\Http\Requests\Permission\PermissionChangeStatusRequest;
 use App\Http\Requests\Permission\PermissionCreateRequest;
-use App\Http\Requests\MassDestroyRequest;
-use App\Http\Requests\MassRemoveRequest;
+use App\Http\Requests\Permission\PermissionDestroyRequest;
+use App\Http\Requests\Permission\PermissionIndexRequest;
+use App\Http\Requests\Permission\PermissionMassDestroyRequest;
+use App\Http\Requests\Permission\PermissionMassRemoveRequest;
+use App\Http\Requests\Permission\PermissionRemoveRequest;
+use App\Http\Requests\Permission\PermissionRestoreRequest;
+use App\Http\Requests\Permission\PermissionTrashRequest;
 use App\Http\Requests\Permission\PermissionUpdateRequest;
-use App\Http\Requests\RemoveRequest;
 use App\Http\Resources\Permission\PermissionResource;
-use App\Http\Resources\Permission\PermissionsResource;
-use App\Traits\ImageUploadTrait;
-use App\Traits\MenuTrait;
 use App\Traits\MultiTranslatableTrait;
 use Illuminate\Http\JsonResponse;
 use App\Models\Permission;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
-use Route;
 
 class PermissionService implements PermissionInterface
 {
-    use MenuTrait, ImageUploadTrait, MultiTranslatableTrait;
+    use MultiTranslatableTrait;
     const CACHE_TTL = 86400; // 1 day
+
+    public function index(PermissionIndexRequest $request): LengthAwarePaginator
+    {
+        $locale = app()->getLocale();
+
+        return Permission::query()
+            ->when($request->filled('search'), function ($query) use ($request, $locale) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search, $locale) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%'])
+                        ->orWhereRaw("name ILIKE ?", ['%' . $search . '%']);
+                });
+            })
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                $request->input('sort_direction', 'desc')
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
+    }
 
     public function getAllRoutes(): array
     {
-        $routeCollection = Route::getRoutes()->getIterator();
+        $routeCollection = collect(Route::getRoutes())
+            ->filter(function ($route) {
+                $name = $route->getName();
+                return str_starts_with($name, 'backend.') && $name !== 'backend.';
+            });
+//        $routeCollection = Route::getRoutes()->getIterator();
         $arr = [];
         foreach ($routeCollection as $value) {
             $arr[] = $value->getName();
@@ -34,20 +65,44 @@ class PermissionService implements PermissionInterface
         return array_unique($arr);
     }
 
+    public function changeStatus(PermissionChangeStatusRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        Cache::forget('permissions');
+
+        $permission = Permission::find($data['id']);
+
+        if (!$permission) {
+            return response()->json([
+                'message' => 'Permission not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
+
+        $permission->update(['status' => $data['status']]);
+        $permission->save();
+
+        return response()->json([
+            'message' => __('strings.Status changed successfully'),
+            'alert-type' => 'success'
+        ]);
+    }
+
     public function store(PermissionCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('Permission');
+        Cache::forget('permissions');
 
         $permission = new Permission();
         $permission->setMultiTranslations($data);
         $permission->name = $data['name'];
-        $permission->position = Permission::getNextPosition();
+        $permission->status = $data['status'];
+        $permission->created_at = $data['published_at'] ?? now();
         $permission->save();
         $permission->fresh();
 
         return response()->json([
-            'permission' => PermissionResource::make($permission),
+            'page' => PermissionResource::make($permission),
             'message' => __('strings.Added Successfully')
         ], 201);
     }
@@ -57,7 +112,7 @@ class PermissionService implements PermissionInterface
         return $permission;
     }
 
-    public function edit(Permission $permission): Permission
+    public function edit(Permission $permission): JsonResponse|Permission
     {
         return $permission;
     }
@@ -65,65 +120,102 @@ class PermissionService implements PermissionInterface
     public function update(PermissionUpdateRequest $request, Permission $permission): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('Permission');
+
+        Cache::forget('permissions');
         $permission->setMultiTranslations($data);
         $permission->name = $data['name'];
-        $permission->position = Permission::getNextPosition();
+        $permission->status = $data['status'];
+        $permission->created_at = $data['published_at'] ?? now();
         $permission->save();
         $permission->fresh();
 
         return response()->json([
-            'permission' => PermissionResource::make($permission),
+            'page' => PermissionResource::make($permission),
             'message' => __('strings.Updated Successfully')
         ], 201);
     }
-
-    public function destroy(Permission $permission): JsonResponse
+    public function destroy(PermissionDestroyRequest $request): JsonResponse
     {
+        Cache::forget('permissions');
+        $permission = Permission::find($request->id);
+        if (!$permission) {
+            return response()->json([
+                'message' => 'Permission not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
         $permission->delete();
+
         return response()->json([
             'message' => __('strings.Deleted Successfully'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massDestroy(MassDestroyRequest $request): JsonResponse
+    public function massDestroy(PermissionMassDestroyRequest $request): JsonResponse
     {
-        Cache::forget('Permission');
-        $permissions = Permission::whereIn('id', $request->ids);
-        $permissions->delete();
+        Cache::forget('permissions');
+        Permission::whereIn('id', $request->ids)->delete();
+
         return response()->json([
             'message' => __('strings.massDestroy Successfully'),
         ], 204);
     }
 
     // Archive Function Method
-    public function restore($id): void
+    public function trash(PermissionTrashRequest $request): LengthAwarePaginator
     {
-        Cache::forget('Page');
-        $permission = Permission::where('id', $id)->withTrashed()->first();
-        $permission->restore();
-        $permission->fresh();
+        $locale = app()->getLocale();
+
+        return Permission::onlyTrashed()
+            ->when($request->filled('search'), function ($query) use ($request, $locale) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search, $locale) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
+                });
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                $request->input('sort_direction', 'desc')
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
     }
 
-    public function remove($id): JsonResponse
+    public function restore(PermissionRestoreRequest $request): JsonResponse
     {
-        Cache::forget('Permission');
-        $data = Permission::where('id', $id)->withTrashed()->first();
+        Cache::forget('permissions');
+        $permission = Permission::where('id', $request->id)->withTrashed()->first();
+        $permission->restore();
+        $permission->fresh();
+
+        return response()->json([
+            'message' => __('strings.Restored Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
+    }
+
+    public function remove(PermissionRemoveRequest $request): JsonResponse
+    {
+        Cache::forget('permissions');
+        $data = Permission::withTrashed()->where('id', $request->id)->first();
         $data->forceDelete();
-        $data->fresh();
 
         return response()->json([
             'message' => __('strings.Deleted Successfully from Archive'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massRemove(MassRemoveRequest $request): JsonResponse
+    public function massRemove(PermissionMassRemoveRequest $request): JsonResponse
     {
-        Cache::forget('Permission');
+        Cache::forget('permissions');
         Permission::whereIn('id', $request->ids)->withTrashed()->forceDelete();
 
         return response()->json([
-            'message' => __('strings.Deleted Successfully from Archive'),
-        ], 200);
+            'message' => __('strings.Mass Deleted Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
     }
 }

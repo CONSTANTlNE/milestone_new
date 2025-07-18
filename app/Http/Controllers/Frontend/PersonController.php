@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Article;
+use App\Models\Blog;
 use App\Models\Person;
 use App\Models\Verdict;
 use DB;
@@ -45,7 +45,7 @@ class PersonController extends Controller
             ->where('type', 1)
             ->with('images')
             ->orderByDesc(
-                Article::select('created_at')
+                Blog::select('created_at')
                     ->join('article_persons', 'articles.id', '==', 'article_persons.article_id') // Explicit join to the pivot table
                     ->whereColumn('article_persons.person_id', 'persons.id') // Ensure the pivot table correctly matches the person
                     ->latest('created_at') // Use the latest article's updated_at field

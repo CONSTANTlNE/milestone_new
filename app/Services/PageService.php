@@ -3,42 +3,75 @@
 namespace App\Services;
 
 use App\Contracts\PageInterface;
-use App\Http\Requests\ChangeStatusRequest;
+use App\Http\Requests\Page\PageChangeStatusRequest;
 use App\Http\Requests\Page\PageCreateRequest;
-use App\Http\Requests\MassDestroyRequest;
-use App\Http\Requests\MassRemoveRequest;
+use App\Http\Requests\Page\PageDestroyRequest;
+use App\Http\Requests\Page\PageMassDestroyRequest;
+use App\Http\Requests\Page\PageMassRemoveRequest;
 use App\Http\Requests\Page\PageRemoveRequest;
 use App\Http\Requests\Page\PageRestoreRequest;
+use App\Http\Requests\Page\PageTrashRequest;
 use App\Http\Requests\Page\PageUpdateRequest;
-use App\Http\Requests\RemoveRequest;
 use App\Http\Resources\Page\PageResource;
-use App\Http\Resources\Page\PagesResource;
 use App\Traits\ImageUploadTrait;
 use App\Traits\MenuTrait;
 use App\Traits\MultiTranslatableTrait;
 use Illuminate\Http\JsonResponse;
 use App\Models\Page;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\Page\PageIndexRequest;
 
 class PageService implements PageInterface
 {
     use MenuTrait, ImageUploadTrait, MultiTranslatableTrait;
 
+    public function index(PageIndexRequest $request): LengthAwarePaginator
+    {
+        $locale = app()->getLocale();
+
+        return Page::query()
+            ->when($request->filled('search'), function ($query) use ($request, $locale) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search, $locale) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                      ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
+                });
+            })
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                $request->input('sort_direction', 'desc')
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
+    }
+
     public function getSeoFirst(Page $page)
     {
         return $page->seo()->first();
     }
-    public function changeStatus(ChangeStatusRequest $request): JsonResponse
+
+    public function changeStatus(PageChangeStatusRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('Page');
+        Cache::forget('pages');
 
         $page = Page::find($data['id']);
-        $page->update(['status' => $data['status']]);
 
+        if (!$page) {
+            return response()->json([
+                'message' => 'Page not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
+
+        $page->update(['status' => $data['status']]);
         $page->setActive($data['status']);
 
-        return  response()->json([
+        return response()->json([
             'message' => __('strings.Status changed successfully'),
             'alert-type' => 'success'
         ]);
@@ -47,23 +80,23 @@ class PageService implements PageInterface
     public function store(PageCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('Page');
+        Cache::forget('pages');
 
         $page = new Page();
         $page->setMultiTranslations($data);
         $page->status = $data['status'];
-//        if($data['parent_id']){
-//            $page->parent_id = $data['parent_id'];
-//        }
-        $page->position = Page::getNextPosition();
+        if(!empty($data['parent_id'])){
+            $page->parent_id = $data['parent_id'];
+        }
+        $page->created_at = $data['published_at'] ?? now();
         $page->save();
-        // Set SEO translations if available
+
         $page->setSeoTranslations($data);
-        $this->processAndSaveImages($data, $page);
+        $this->processAndSaveImages($data, $page, true);
         $page->fresh();
 
         return response()->json([
-            'page' => PageResource::make($page),
+            'page' => FaqResource::make($page),
             'message' => __('strings.Added Successfully')
         ], 201);
     }
@@ -81,13 +114,13 @@ class PageService implements PageInterface
     public function update(PageUpdateRequest $request, Page $page): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('Page');
+        Cache::forget('pages');
         $page->setMultiTranslations($data);
         $page->status = $data['status'];
-//      if($data['parent_id']){
-//            $page->parent_id = $data['parent_id'];
-//      }
-        $page->position = Page::getNextPosition();
+        if(!empty($data['parent_id'])){
+            $page->parent_id = $data['parent_id'];
+        }
+        $page->created_at = $data['published_at'] ?? now();
         $page->save();
         // Set Menu translations if available
         $page->setMenuTranslations(
@@ -97,56 +130,88 @@ class PageService implements PageInterface
         $page->setActive($data['status']);
         // Set SEO translations if available
         $page->setSeoTranslations($data);
-        $this->processAndSaveImages($data, $page);
+        $this->processAndSaveImages($data, $page, true);
         $page->fresh();
 
         return response()->json([
-            'page' => PageResource::make($page),
+            'page' => FaqResource::make($page),
             'message' => __('strings.Updated Successfully')
         ], 201);
     }
 
-    public function destroy(Page $page): JsonResponse
+    public function destroy(PageDestroyRequest $request): JsonResponse
     {
+        Cache::forget('pages');
+        $page = Page::find($request->id);
+        if (!$page) {
+            return response()->json([
+                'message' => 'Page not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
         $page->setActive(false);
         $page->delete();
 
         return response()->json([
             'message' => __('strings.Deleted Successfully'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massDestroy(MassDestroyRequest $request): JsonResponse
+    public function massDestroy(PageMassDestroyRequest $request): JsonResponse
     {
-        Cache::forget('Page');
-        $pages = Page::whereIn('id', $request->ids);
+        Cache::forget('pages');
+        $pages = Page::whereIn('id', $request->ids)->get();
         foreach ($pages as $page) {
             $page->setActive(false);
         }
-        $pages->delete();
+        Page::whereIn('id', $request->ids)->delete();
+
         return response()->json([
             'message' => __('strings.massDestroy Successfully'),
         ], 204);
     }
 
     // Archive Function Method
-    public function restore($id): void
+    public function trash(PageTrashRequest $request): LengthAwarePaginator
     {
-        Cache::forget('Page');
-        $page = Page::where('id', $id)->withTrashed()->first();
+        $locale = app()->getLocale();
+
+        return Page::onlyTrashed()
+            ->when($request->filled('search'), function ($query) use ($request, $locale) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search, $locale) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
+                });
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                $request->input('sort_direction', 'desc')
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
+    }
+
+    public function restore(PageRestoreRequest $request): JsonResponse
+    {
+        Cache::forget('pages');
+        $page = Page::where('id', $request->id)->withTrashed()->first();
         $page->restore();
         $page->setActive(false);
         $page->fresh();
+
+        return response()->json([
+            'message' => __('strings.Restored Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function remove(RemoveRequest $page): JsonResponse
+    public function remove(PageRemoveRequest $request): JsonResponse
     {
-        Cache::forget('Page');
-        Cache::forget('generalPage'.$page->id);
-        Cache::forget('statusImageShowPage'.$page->id);
-        Cache::forget('mainPdfShowPage'.$page->id);
-        Cache::forget('defaultImageShowPage'.$page->id);
-        $data = Page::where('id', $page->id)->withTrashed()->first();
+        Cache::forget('pages');
+        $pageId = $request->id;
+        $data = Page::where('id', $pageId)->withTrashed()->first();
         $data->seo()->forceDelete();
         $data->images()->detach();
         $data->setForceDelete(true);
@@ -155,18 +220,16 @@ class PageService implements PageInterface
 
         return response()->json([
             'message' => __('strings.Deleted Successfully from Archive'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massRemove(MassRemoveRequest $request): JsonResponse
+    public function massRemove(PageMassRemoveRequest $request): JsonResponse
     {
-        Cache::forget('Page');
-        $pages = Page::whereIn('id', $request->ids)->get();
+        Cache::forget('pages');
+        $pages = Page::withTrashed()->whereIn('id', $request->ids)->get();
+
         foreach ($pages as $page) {
-            Cache::forget('generalPage'.$page->id);
-            Cache::forget('statusImageShowPage'.$page->id);
-            Cache::forget('mainPdfShowPage'.$page->id);
-            Cache::forget('defaultImageShowPage'.$page->id);
             $page->seo()->forceDelete();
             $page->setForceDelete(true);
             $page->images()->detach();
@@ -175,7 +238,8 @@ class PageService implements PageInterface
         Page::whereIn('id', $request->ids)->withTrashed()->forceDelete();
 
         return response()->json([
-            'message' => __('strings.Deleted Successfully from Archive'),
-        ], 200);
+            'message' => __('strings.Mass Deleted Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
     }
 }

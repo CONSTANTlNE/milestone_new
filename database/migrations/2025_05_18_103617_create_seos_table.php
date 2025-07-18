@@ -16,7 +16,7 @@ return new class extends Migration
             $table->jsonb('seoTitles')->nullable();
             $table->jsonb('seoKeywords')->nullable();
             $table->jsonb('seoDescriptions')->nullable();
-            $table->morphs('model'); // Adds model_id, model_type, and index
+            $table->morphs('seoble'); // Adds model_id, model_type, and index
             $table->timestamps();
         });
     }

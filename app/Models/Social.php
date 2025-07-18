@@ -23,7 +23,7 @@ class Social extends Model
     protected $fillable = [
         'title',
         'icon',
-        'link',
+        'url',
         'status',
         'position',
         'created_at',

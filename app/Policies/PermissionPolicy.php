@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Models\Permission;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class PermissionPolicy
@@ -24,20 +25,10 @@ class PermissionPolicy
      * Determine whether the user can view the model.
      *
      * @param User $user
+     * @param Permission $permission
      * @return bool
      */
-    public function status(User $user): bool
-    {
-        return $user->can('backend.permissions.status');
-    }
-
-    /**
-     * Determine whether the user can view the model.
-     *
-     * @param User $user
-     * @return bool
-     */
-    public function view(User $user): bool
+    public function view(User $user, Permission $permission): bool
     {
         return $user->can('backend.permissions.show');
     }
@@ -57,9 +48,10 @@ class PermissionPolicy
      * Determine whether the user can update the model.
      *
      * @param User $user
+     * @param Permission $permission
      * @return bool
      */
-    public function update(User $user): bool
+    public function update(User $user, Permission $permission): bool
     {
         return $user->can('backend.permissions.edit');
     }
@@ -68,15 +60,28 @@ class PermissionPolicy
      * Determine whether the user can delete the model.
      *
      * @param User $user
+     * @param Permission $permission
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Permission $permission): bool
     {
         return $user->can('backend.permissions.destroy');
     }
 
     /**
-     * Determine whether the user can remove the model, this is fast remove.
+     * Determine whether the user can change status.
+     *
+     * @param User $user
+     * @param Permission $permission
+     * @return bool
+     */
+    public function status(User $user, Permission $permission): bool
+    {
+        return $user->can('backend.permissions.status');
+    }
+
+    /**
+     * Determine whether the user can view trash.
      *
      * @param User $user
      * @return bool
@@ -85,6 +90,7 @@ class PermissionPolicy
     {
         return $user->can('backend.permissions.trash');
     }
+
     /**
      * Determine whether the user can restore the model.
      *
@@ -95,8 +101,9 @@ class PermissionPolicy
     {
         return $user->can('backend.permissions.restore');
     }
+
     /**
-     * Determine whether the user can remove the model, this is fast remove.
+     * Determine whether the user can permanently remove the model.
      *
      * @param User $user
      * @return bool
@@ -105,5 +112,4 @@ class PermissionPolicy
     {
         return $user->can('backend.permissions.remove');
     }
-
 }

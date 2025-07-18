@@ -6,6 +6,6 @@
                 <strong>Error!</strong> {{ $error }}
             </div>
         @endforeach
-        <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close"><span><i class="flaticon-381-close"></i></span></button>
+        <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close"><span><i class="ri ri-close-line"></i></span></button>
     </div>
 @endif

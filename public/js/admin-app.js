@@ -1,10 +1,13 @@
 import 'preline';
 import Choices from 'choices.js';
+import Sortable from 'sortablejs';
 window.addEventListener('load', () => {
     window.HSStaticMethods?.autoInit();
     // Example: initialize Choices.js on a select element
     const elements = document.querySelectorAll('.js-choices');
     elements.forEach((el) => new Choices(el));
+
+    window.Sortable = Sortable;
 });
 window.Modal = {
     show({ title, text, yes = 'Yes', no = 'Cancel', yesClass, callback }) {
@@ -60,6 +63,7 @@ window.Modal = {
         Modal.hide();
     }
 };
+
 import "../backend/assets/js/defaultmenu.js";
 import "../backend/assets/js/switch.js";
 import "../backend/assets/js/custom.js";
