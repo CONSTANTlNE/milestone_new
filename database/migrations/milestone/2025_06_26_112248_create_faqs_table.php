@@ -14,9 +14,13 @@ return new class extends Migration
         Schema::create('faqs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('service_id')->nullable()->constrained('services')->cascadeOnDelete();
-            $table->jsonb('question');
-            $table->jsonb('answer');
+            $table->jsonb('title');
+            $table->jsonb('slug');
+            $table->jsonb('content')->nullable();
+            $table->boolean('status')->default(true)->index();
             $table->timestamps();
+            $table->softDeletes();
+            $table->index('deleted_at');
         });
     }
 

@@ -85,15 +85,15 @@ class UserService implements UserInterface
     public function store(UserCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('User');
-
+        Cache::forget('users');
         $user = new User();
         $user->setMultiTranslations($data);
         $user->status = $data['status'];
         $user->email = $data['email'];
-        $user->mobile = $data['mobile'];
+        $user->name = $data['email'];
+        $user->phone = $data['phone'];
         $user->password = Hash::make($data['password']);
-        $user->password_confirmation = $data['password_confirmation'];
+        //$user->password_confirmation = $data['password_confirmation'];
         $user->save();
         if ($data['role'] != 0){
             $user->assignRole((int) $data['role']);
@@ -120,21 +120,20 @@ class UserService implements UserInterface
     public function update(UserUpdateRequest $request, User $user): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('User');
-        if(!empty($data['password'])){
-            $data['confirmPassword'] = $data['password'];
-            $data['password'] = Hash::make($data['password']);
-        }else{
-            $data['password'] = Auth::user()->password;
-            $data['confirmPassword'] = Auth::user()->password;
-        }
+        Cache::forget('users');
         $user->setMultiTranslations($data);
         $user->status = $data['status'];
         $user->email = $data['email'];
-        $user->mobile = $data['mobile'];
-        $user->update($data);
+        $user->phone = $data['phone'];
+        $user->created_at = $data['published_at'] ?? now();
+
+        if(!empty($data['password'])){
+            $user->password = Hash::make($data['password']);
+        }
+
+        $user->save();
         if ($data['role'] != 0){
-            DB::table('model_has_roles')->where('model_id',$user->id)->delete();
+            DB::table('model_has_roles')->where('model_id', $user->id)->delete();
             $user->assignRole((int) $data['role']);
         }
         $this->processAndSaveImages($data, $user, true);

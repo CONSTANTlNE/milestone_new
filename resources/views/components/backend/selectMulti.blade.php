@@ -10,7 +10,8 @@
     'width' => 12,
     'choose' => '',
     'chooseOption' => '',
-    'firstSelect' => 'select'
+    'firstSelect' => 'select',
+    'staticData' => false
 ])
 <div class="md:col-span-{{$width}} sm:col-span-12 col-span-12 space-input mb-3">
     <div class="select-static {{$hidden}} font-second-geo">
@@ -18,6 +19,9 @@
                class="block text-sm text-gray-600 font-medium dark:text-white font-second-geo mb-1"
                @if($disabled) disabled @endif>
             {{ __('admin.'.$label) }}
+            @if ($required)
+                <span class="text-danger">*</span>
+            @endif
         </label>
         <select class="form-control w-full !rounded-md js-choices"
                 name="{{ $column }}"
@@ -29,11 +33,19 @@
         @else
             <option value="">{{ __('admin.'.$firstSelect) }}</option>
         @endif
-        @foreach($data as $route)
-            <option value="{{ $route }}">
-                {{ str_replace('.', '/', $route) }}
-            </option>
-        @endforeach
+            @if($staticData)
+                @foreach($data as $item)
+                    <option value="{{ $item->id }}">
+                        {{ $item->title  }}
+                    </option>
+                @endforeach
+            @else
+                @foreach($data as $route)
+                    <option value="{{ $route }}">
+                        {{ str_replace('.', '/', $route) }}
+                    </option>
+                @endforeach
+            @endif
         </select>
     </div>
 </div>

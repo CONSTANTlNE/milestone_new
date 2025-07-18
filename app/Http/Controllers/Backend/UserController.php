@@ -116,7 +116,7 @@ class UserController extends Controller
         $this->authorize('update', $user);
 
         try {
-            return view('backend.pages.edit', [
+            return view('backend.users.edit', [
                 'user' => $this->userService->edit($user),
                 'roles' => $this->userService->getRole()
             ]);

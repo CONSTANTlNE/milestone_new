@@ -18,7 +18,7 @@ export default defineConfig({
                 'public/js/admin-table.js',
                 'public/css/admin-table.css',
             ],
-            refresh: true,
+            //refresh: true,
         }),
     ],
     build: {

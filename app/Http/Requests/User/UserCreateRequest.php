@@ -26,10 +26,10 @@ class UserCreateRequest extends FormRequest
         return [
             'status' => ['required', 'string'],
             'title' => ['array', new NonEmptyTitleArray],
-            'about' => ['array', new NonEmptyTitleArray],
+            'content' => ['array'],
             'published_at' => ['nullable'],
             'email' => ['required', 'string', 'unique:users,email'],
-            'mobile' => ['nullable', 'string'],
+            'phone' => ['nullable', 'string'],
             'password' => ['required', 'string', 'min:5', 'confirmed'],
             'password_confirmation' => ['required', 'string', 'min:5'],
             'role' => ['required', 'integer', 'exists:roles,id'],

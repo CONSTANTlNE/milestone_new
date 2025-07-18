@@ -17,7 +17,7 @@ use Spatie\Translatable\HasTranslations;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles, EscapeUniCodeJson, HasTranslations, SoftDeletes;
+    use HasFactory, Notifiable, HasRoles, EscapeUniCodeJson, HasTranslations, SoftDeletes, MultiTranslatableTrait;
 
     protected $table = 'users';
     const CACHE_TTL = 86400; // 1 day
@@ -28,8 +28,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'title',
+        'slug',
+        'content',
         'name',
         'status',
+        'phone',
         'email',
         'password',
         'confirmation',
@@ -41,7 +45,7 @@ class User extends Authenticatable
     public array $translatable = [
         'title',
         'slug',
-        'about',
+        'content',
     ];
 
     /**
@@ -81,32 +85,32 @@ class User extends Authenticatable
     {
         return $this->morphToMany(File::class, 'fileable')
             ->withPivot('cover')
-            ->orderBy('ord');
+            ->orderBy('position');
     }
 
     public function generalImages(): MorphToMany
     {
         return $this->morphToMany(File::class, 'fileable')
             ->withPivot('cover')
-            ->where('ord', '<', 1)
-            ->orderBy('ord');
+            ->where('position', '<', 1)
+            ->orderBy('position');
     }
 
     public function generalImage(): MorphToMany
     {
         return $this->morphToMany(File::class, 'fileable')
             ->withPivot('cover')
-            ->where('ord', '<', 1)
+            ->where('position', '<', 1)
             ->where('cover', 'general')
-            ->orderBy('ord');
+            ->orderBy('position');
     }
 
     public function allImages(): MorphToMany
     {
         return $this->morphToMany(File::class, 'fileable')
             ->withPivot('cover')
-            ->where('ord', '>', 0)
-            ->orderBy('ord');
+            ->where('position', '>', 0)
+            ->orderBy('position');
     }
 
     public function folders()

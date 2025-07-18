@@ -109,7 +109,7 @@
                                         </tr>
                                     @empty
                                         <tr class="empty-state">
-                                            <td colspan="7" class="text-center py-8">
+                                            <td colspan="8" class="text-center py-8">
                                                 <x-backend.table.empty-state
                                                     :actionText="__('admin.create_first_user')"
                                                     permission="backend.users.create"

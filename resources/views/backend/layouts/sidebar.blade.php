@@ -125,9 +125,9 @@
                         <i class="ri ri-arrow-right-s-line side-menu__angle"></i>
                     </a>
                     <ul class="slide-menu child1">
-                        @can('backend.customers.index')
-                        <li class="slide"><a href="{{ route('backend.customers.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.customers.*') ? 'active' : '' }}">{{ __('admin.sidebar_customers') }}</a></li>
-                        @endcan
+{{--                        @can('backend.customers.index')--}}
+{{--                        <li class="slide"><a href="{{ route('backend.customers.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.customers.*') ? 'active' : '' }}">{{ __('admin.sidebar_customers') }}</a></li>--}}
+{{--                        @endcan--}}
                         <li class="slide"><a href="{{ route('backend.users.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.users.*') ? 'active' : '' }}">{{ __('admin.sidebar_administrators') }}</a></li>
                         @can('backend.subscribers.index')
                         <li class="slide"><a href="{{ route('backend.subscribers.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.subscribers.*') ? 'active' : '' }}">{{ __('admin.sidebar_subscribers') }}</a></li>

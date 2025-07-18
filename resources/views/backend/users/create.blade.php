@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.create_users') }} @endsection
+@section('title') {{ __('admin.create_users') }} @endsection
 @section('styles')
     @vite('public/css/quill-editor.css')
 @endsection
@@ -56,31 +56,34 @@
                                                  role="tabpanel"
                                                  aria-labelledby="content-locale-item-{{$lang->code}}">
                                                 <div class="p-5 border rounded-ss-none rounded-sm dark:border-white/10 border-gray-200 content-section">
+                                                    <div class="mt-1">
                                                     <x-backend.input
                                                         type="text"
                                                         :lang="$lang"
                                                         :data="null"
-                                                        label="title"
+                                                        label="fullName"
                                                         column="title"
-                                                        place-holder="holder_title"
+                                                        place-holder="holder_fullName"
                                                         success-text="success_field"
                                                         help-text="error_field"
                                                         :required="true"
                                                         :disabled="false"
                                                     />
-
+                                                    </div>
+                                                    <div class="mt-3">
                                                     <x-backend.input
                                                         type="text"
                                                         :lang="$lang"
                                                         :data="null"
-                                                        label="short_description"
-                                                        column="slogan"
-                                                        place-holder="holder_short_description"
+                                                        label="about"
+                                                        column="content"
+                                                        place-holder="holder_about"
                                                         success-text="success_field"
                                                         help-text="error_field"
                                                         :required="false"
                                                         :disabled="false"
                                                     />
+                                                    </div>
 
                                                 </div>
                                             </div>
@@ -88,12 +91,13 @@
                                         </div>
                                     @endforeach
                                 </div>
+                                <div class="mt-3">
                                 <x-backend.input
                                     type="email"
                                     :lang="null"
                                     :data="null"
                                     column="email"
-                                    label="Email"
+                                    label="email"
                                     place-holder=""
                                     success-text="Success Field"
                                     help-text="Error Field"
@@ -101,41 +105,45 @@
                                     :disabled="false"
                                     width="6"
                                 />
-
+                                </div>
+                                <div class="mt-3">
                                 <x-backend.input
                                     type="mobile"
                                     :lang="null"
                                     :data="null"
-                                    column="mobile"
-                                    label="mobile"
+                                    column="phone"
+                                    label="phone"
                                     place-holder=""
                                     success-text="Success Field"
                                     help-text="Error Field"
-                                    :required="true"
+                                    :required="false"
                                     :disabled="false"
                                     width="6"
                                 />
-
-{{--                                <x-select--}}
-{{--                                    :lang="null"--}}
-{{--                                    :data="$roles"--}}
-{{--                                    column="role"--}}
-{{--                                    label="Role"--}}
-{{--                                    place-holder="Choose Role Title"--}}
-{{--                                    success-text="Success Field"--}}
-{{--                                    help-text="Error Field"--}}
-{{--                                    :required="true"--}}
-{{--                                    :disabled="false"--}}
-{{--                                    :staticData="true"--}}
-{{--                                    width="6"--}}
-{{--                                />--}}
-
+                                </div>
+                                <div class="mt-3">
+                                    <x-backend.selectMulti
+                                        :data="$roles"
+                                        column="role"
+                                        label="role"
+                                        place-holder=""
+                                        success-text="success_field"
+                                        help-text="error_field"
+                                        :required="true"
+                                        :disabled="false"
+                                        :staticData="true"
+                                        hidden="show-search"
+                                        firstSelect="select_role"
+                                        width="12"
+                                    />
+                                </div>
+                                <div class="mt-3">
                                 <x-backend.input
                                     type="password"
                                     :lang="null"
                                     :data="null"
                                     column="password"
-                                    label="Password"
+                                    label="password"
                                     place-holder=""
                                     success-text="Success Field"
                                     help-text="Error Field"
@@ -143,19 +151,22 @@
                                     :disabled="false"
                                     width="6"
                                 />
-                                <x-backend.input
-                                    type="password"
-                                    :lang="null"
-                                    :data="null"
-                                    column="password_confirmation"
-                                    label="Confirm Password"
-                                    place-holder=""
-                                    success-text="Success Field"
-                                    help-text="Error Field"
-                                    :required="true"
-                                    :disabled="false"
-                                    width="6"
-                                />
+                                </div>
+                                <div class="mt-3">
+                                    <x-backend.input
+                                        type="password"
+                                        :lang="null"
+                                        :data="null"
+                                        column="password_confirmation"
+                                        label="password_confirmation"
+                                        place-holder=""
+                                        success-text="Success Field"
+                                        help-text="Error Field"
+                                        :required="true"
+                                        :disabled="false"
+                                        width="6"
+                                    />
+                                </div>
                             </div>
                             <div class="box-footer text-end">
                                 <button type="submit" class="ti-btn bg-primary text-white font-second-geo">
