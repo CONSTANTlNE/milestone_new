@@ -37,6 +37,7 @@ class Page extends Model
         'content',
         'status',
         'src',
+        'template',
         'created_at',
         'updated_at',
         'deleted_at',

@@ -85,6 +85,7 @@ class PageService implements PageInterface
         $page = new Page();
         $page->setMultiTranslations($data);
         $page->status = $data['status'];
+        $page->template = $data['template'];
         if(!empty($data['parent_id'])){
             $page->parent_id = $data['parent_id'];
         }
@@ -96,7 +97,7 @@ class PageService implements PageInterface
         $page->fresh();
 
         return response()->json([
-            'page' => FaqResource::make($page),
+            'page' => PageResource::make($page),
             'message' => __('strings.Added Successfully')
         ], 201);
     }
@@ -134,7 +135,7 @@ class PageService implements PageInterface
         $page->fresh();
 
         return response()->json([
-            'page' => FaqResource::make($page),
+            'page' => PageResource::make($page),
             'message' => __('strings.Updated Successfully')
         ], 201);
     }

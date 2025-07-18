@@ -24,4 +24,14 @@ return [
         ['id' => 'telegram', 'title' => 'Telegram - disabled'],
         ['id' => 'snapchat', 'title' => 'Snapchat - disabled'],
     ],
+
+    'templates' => [
+        ['id' => 'frontend.page.show', 'title' => 'admin.default_page'],
+        ['id' => 'frontend.index', 'title' => 'admin.home_page'],
+        ['id' => 'frontend.blogs.index', 'title' => 'admin.blogs_page'],
+        ['id' => 'frontend.services.index', 'title' => 'admin.services_page'],
+        ['id' => 'frontend.portfolios.index', 'title' => 'admin.portfolios_page'],
+        ['id' => 'frontend.page.contact', 'title' => 'admin.contact_page'],
+        ['id' => 'frontend.page.about', 'title' => 'admin.about_page'],
+    ]
 ];

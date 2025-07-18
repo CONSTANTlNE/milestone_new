@@ -62,6 +62,7 @@
                                         @endcan
                                         <th scope="col" class="id text-start sortable" data-sort="id">{{ __('admin.id') }}</th>
                                         <th scope="col" class="title text-start">{{ __('admin.title') }}</th>
+                                        <th scope="col" class="template-page text-start">{{ __('admin.template') }}</th>
                                         <th scope="col" class="image text-start">{{ __('admin.image') }}</th>
                                         <th scope="col" class="created-time text-start sortable" data-sort="created_at">{{ __('admin.created_at') }}</th>
                                         <th scope="col" class="status text-start">{{ __('admin.status') }}</th>
@@ -81,6 +82,9 @@
                                             </td>
                                             <td>
                                                 <x-backend.translation-text :model="$page" field="title" :limit="40" />
+                                            </td>
+                                            <td>
+                                                {{$page->template}}
                                             </td>
                                             <td class="flex justify-center">
                                                 <x-backend.image :src="$page->src" />
@@ -105,7 +109,7 @@
                                         </tr>
                                     @empty
                                         <tr class="empty-state">
-                                            <td colspan="7" class="text-center py-8">
+                                            <td colspan="8" class="text-center py-8">
                                                 <x-backend.table.empty-state
                                                     :actionText="__('admin.create_first_page')"
                                                     permission="backend.pages.create"

@@ -78,7 +78,7 @@
                     <div class="box">
                         <div class="box-body">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <h6 class="font-medium text-gray-900 dark:text-white mb-2">
                                         <i class="ri-image-line me-2"></i>
                                         {{ __('admin.image') }}

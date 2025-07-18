@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.create_pages') }} @endsection
+@section('title') {{ __('admin.create_pages') }} @endsection
 @section('styles')
 @vite('public/css/quill-editor.css')
 @endsection
@@ -92,20 +92,35 @@
                                         width="12"
                                     />
 
-                                    <x-backend.selectStatic
-                                        :data="config('crm.status')"
-                                        column="status"
-                                        label="status_type"
-                                        place-holder=""
-                                        success-text="success_field"
-                                        help-text="error_field"
-                                        :required="true"
-                                        :disabled="false"
-                                        :staticData="false"
-                                        hidden="show-search-hidden"
-                                        width="12"
-                                    />
+                                <x-backend.selectStatic
+                                    :data="config('crm.status')"
+                                    column="status"
+                                    label="status_type"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="true"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    hidden="show-search-hidden"
+                                    width="12"
+                                />
 
+                                <div class="mt-3">
+                                <x-backend.selectStatic
+                                    :data="config('crm.templates')"
+                                    column="template"
+                                    label="templates"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="true"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    hidden="show-search-hidden"
+                                    width="12"
+                                />
+                                </div>
                             </div>
                         </div>
                     </div>

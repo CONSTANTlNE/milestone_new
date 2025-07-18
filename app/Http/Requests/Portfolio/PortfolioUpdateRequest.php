@@ -25,6 +25,7 @@ class PortfolioUpdateRequest extends FormRequest
     {
         return [
             'status' => ['required', 'string'],
+            'published_at' => ['nullable'],
             'title' => ['array', new NonEmptyTitleArray],
             'slogan' => ['array'],
             'content' => ['array'],

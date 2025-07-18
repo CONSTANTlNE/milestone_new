@@ -72,7 +72,7 @@
                                 </p>
                             </div>
 
-                            <div class="flex items-center space-x-4 p-4 bg-primary/5 rounded-lg mt-4 text-sm text-gray-500 font-second-geo">
+                            <div class="items-center space-x-4 p-4 bg-primary/5 rounded-lg mt-4 text-sm text-gray-500 font-second-geo">
                                 <p>
                                     {{ __('admin.content') }}: {!! $slider->content !!}
                                 </p>
@@ -84,7 +84,7 @@
                     <div class="box">
                         <div class="box-body">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                                <div class="bg-gray-50 dark:bg-gray-800 rounded-lg">
                                     <h6 class="font-medium text-gray-900 dark:text-white mb-2">
                                         <i class="ri-image-line me-2"></i>
                                         {{ __('admin.image') }}

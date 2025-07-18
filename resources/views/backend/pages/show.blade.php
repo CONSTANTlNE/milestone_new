@@ -44,7 +44,7 @@
                         <div class="box-body">
                             <div class="flex items-center space-x-4 p-4 bg-primary/5 rounded-lg">
                                 <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                                    <i class="ri ri-equalizer-line text-2xl text-primary"></i>
+                                    <i class="ri ri-pages-line text-2xl text-primary"></i>
                                 </div>
                                 <div class="mx-3">
                                     <h4 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -69,6 +69,12 @@
                             <div class="items-center space-x-4 p-4 bg-primary/5 rounded-lg mt-4 text-sm text-gray-500 font-second-geo">
                                 <p>
                                     {{ __('admin.content') }}: {!! $page->content !!}
+                                </p>
+                            </div>
+
+                            <div class="items-center space-x-4 p-4 bg-primary/5 rounded-lg mt-4 text-sm text-gray-500 font-second-geo">
+                                <p>
+                                    {{ __('admin.template') }}: {{ $page->template }}
                                 </p>
                             </div>
                         </div>
