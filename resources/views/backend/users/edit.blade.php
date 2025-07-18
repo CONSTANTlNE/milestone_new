@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.edit_users') }} @endsection
+@section('title') {{ __('admin.edit_users') }} @endsection
 @section('styles')
     @vite('public/css/quill-editor.css')
 @endsection

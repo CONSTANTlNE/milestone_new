@@ -92,6 +92,7 @@ class LocaleService implements LocaleInterface
             'title' => $data['title'],
             'code' => $data['code'],
             'status' => $data['status'],
+            'created_at' => $data['published_at'] ?? now(),
             'position' => Locale::getNextPosition(),
         ]);
         $this->processAndSaveImages($data, $locale, true);
@@ -117,8 +118,8 @@ class LocaleService implements LocaleInterface
         Cache::forget('locales');
         $locale->update([
             'title' => $data['title'],
-            'code' => $data['code'],
-            'status' => $data['status']
+            'status' => $data['status'],
+            'created_at' => $data['published_at'] ?? now()
         ]);
         $this->processAndSaveImages($data, $locale, true);
         $locale->load('generalImage');

@@ -98,8 +98,8 @@
                                     <div class="block text-sm text-gray-600 font-medium dark:text-white font-second-geo">
                                         <div class="py-1">
                                             <input type="checkbox" id="select-all-global">
-                                            <label for="select-all-global" style="font-weight: normal;">
-                                                მონიშნეთ ყველა უფლება ან {{ __('admin.choose_permissions') }}</label>
+                                            <label for="select-all-global">
+                                                {{ __('admin.choose_or_select_all_permissions') }}</label>
                                         </div>
                                     </div>
 

@@ -81,6 +81,22 @@
                             <div class="box-body">
                                 @include('backend.fileManager.layers.both', ['item' => $blog])
 
+                                @if(count($blogCategories))
+                                    <div class="mb-3">
+                                        <label for="choices-multiple-remove-button" class="px-3 block text-sm text-gray-600 font-medium dark:text-white font-second-geo">{{ __('admin.choose_blog_category') }}:</label>
+                                        <select class="form-control ti-form-select rounded-sm !py-2 !px-3" name="category[]" id="choices-multiple-remove-button" multiple>
+                                            @if(isset($blog->categories))
+                                                @foreach($blog->categories as $category)
+                                                    <option value="{{$category->id}}" selected>{{$category->getTranslation('title', app()->getLocale())}}</option>
+                                                @endforeach
+                                            @endif
+                                            @foreach($blogCategories as $key => $articleCategory)
+                                                <option value="{{$key}}">{{$articleCategory}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+
                                 <x-backend.publishDate
                                     :data="$blog->created_at"
                                     column="published_at"

@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.edit_blogCategories') }} @endsection
+@section('title') {{ __('admin.edit_blogCategories') }} @endsection
 @section('styles')
     @vite('public/css/quill-editor.css')
 @endsection
@@ -53,12 +53,40 @@
                                             aria-labelledby="locale-item-{{$lang->code}}"
                                         >
                                             @include('backend.layouts.includes.seoLangTabComponent', ['code' => $lang->code])
-                                            @include('backend.layouts.includes.contentComponent', [
-                                                'lang' => $lang,
-                                                'code' => $lang->code,
-                                                'data' => $blogCategory,
-                                                'slogan' => true
-                                            ])
+                                            <div class=""
+                                                 id="content-locale-{{$lang->code}}"
+                                                 role="tabpanel"
+                                                 aria-labelledby="content-locale-item-{{$lang->code}}">
+                                                <div class="p-5 border rounded-ss-none rounded-sm dark:border-white/10 border-gray-200 content-section">
+                                                    <div class="mb-5">
+                                                    <x-backend.input
+                                                        type="text"
+                                                        :lang="$lang"
+                                                        :data="$blogCategory"
+                                                        label="title"
+                                                        column="title"
+                                                        place-holder="holder_title"
+                                                        success-text="success_field"
+                                                        help-text="error_field"
+                                                        :required="true"
+                                                        :disabled="false"
+                                                    />
+                                                    </div>
+                                                    <x-backend.textareaQuill
+                                                        :lang="$lang"
+                                                        :data="$blogCategory"
+                                                        :code="$lang->code"
+                                                        title="content"
+                                                        column="content"
+                                                        label="content"
+                                                        place-holder="start_writing"
+                                                        :required="false"
+                                                        :disabled="false"
+                                                    />
+
+                                                </div>
+                                            </div>
+
 
                                             @include('backend.layouts.includes.seoComponent', [
                                                 'lang' => $lang,

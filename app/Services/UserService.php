@@ -93,6 +93,7 @@ class UserService implements UserInterface
         $user->name = $data['email'];
         $user->phone = $data['phone'];
         $user->password = Hash::make($data['password']);
+        $user->created_at = $data['published_at'] ?? now();
         //$user->password_confirmation = $data['password_confirmation'];
         $user->save();
         if ($data['role'] != 0){

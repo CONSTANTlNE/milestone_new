@@ -12,6 +12,8 @@ use App\Http\Requests\Blog\BlogRemoveRequest;
 use App\Http\Requests\Blog\BlogRestoreRequest;
 use App\Http\Requests\Blog\BlogTrashRequest;
 use App\Http\Requests\Blog\BlogUpdateRequest;
+use App\Models\BlogCategory;
+use App\Models\User;
 use App\Services\BlogService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -73,7 +75,9 @@ class BlogController extends Controller
     public function create(): View
     {
         $this->authorize('create', Blog::class);
-        return view('backend.blogs.create');
+        $reporters = User::where("status", 1)->pluck('title', 'id');
+        $blogCategories = BlogCategory::where("status", 1)->pluck('title', 'id');
+        return view('backend.blogs.create', compact('reporters', 'blogCategories'));
     }
 
     /**
@@ -132,9 +136,13 @@ class BlogController extends Controller
         $this->authorize('update', $blog);
 
         try {
+            $reporters = User::where("status", 1)->pluck('title', 'id');
+            $blogCategories = BlogCategory::where("status", 1)->pluck('title', 'id');
             return view('backend.blogs.edit', [
                 'blog' => $this->blogService->edit($blog),
-                'seo' => $this->blogService->getSeoFirst($blog)
+                'seo' => $this->blogService->getSeoFirst($blog),
+                'reporters' => $reporters,
+                'blogCategories' => $blogCategories
             ]);
         } catch (Exception $e) {
             return response()->json([

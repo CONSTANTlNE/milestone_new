@@ -77,9 +77,20 @@
                     <div class="xl:col-span-3 col-span-12">
                         <div class="box">
                             <div class="box-body">
-                                    @include('backend.fileManager.layers.both')
+                                @include('backend.fileManager.layers.both')
 
-                                    <x-backend.publishDate
+                                @if(count($blogCategories))
+                                    <div class="mb-3">
+                                        <label for="choices-multiple-remove-button" class="px-3 block text-sm text-gray-600 font-medium dark:text-white font-second-geo">{{ __('admin.choose_blog_category') }}:</label>
+                                        <select class="form-control ti-form-select rounded-sm !py-2 !px-3" name="category[]" id="choices-multiple-remove-button" multiple>
+                                            @foreach($blogCategories as $key => $blogCategory)
+                                                <option value="{{$key}}">{{$blogCategory}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+
+                                <x-backend.publishDate
                                         :data="null"
                                         column="published_at"
                                         label="published_at"

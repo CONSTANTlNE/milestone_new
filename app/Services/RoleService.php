@@ -101,6 +101,7 @@ class RoleService implements RoleInterface
         $role->setMultiTranslations($data);
         $role->name = $data['name'];
         $role->has_backend_access = $data['has_backend_access'];
+        $role->created_at = $data['published_at'] ?? now();
         $role->save();
         if (!empty($data['permission'])) {
             $role->syncPermissions(array_map(fn($val)=>(int)$val, $data['permission']));
@@ -127,6 +128,7 @@ class RoleService implements RoleInterface
         Cache::forget('roles');
         $role->setMultiTranslations($data);
         $role->has_backend_access = $data['has_backend_access'];
+        $role->created_at = $data['published_at'] ?? now();
         $role->save();
         $role->syncPermissions(array_map(fn($val)=>(int)$val, $data['permission']));
         $role->fresh();

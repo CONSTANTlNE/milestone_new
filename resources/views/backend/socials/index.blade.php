@@ -86,7 +86,7 @@
                                         <td class="drag-handle-cell text-center hidden">
                                             <span class="drag-handle" style="display:none;">&#9776;</span>
                                         </td>
-                                        @can('backend.permissions.massDestroy')
+                                        @can('backend.socials.massDestroy')
                                             <td class="text-center">
                                                 <input class="form-check-input list-checkbox-item cursor-pointer" type="checkbox" value="{{$social->id}}">
                                             </td>

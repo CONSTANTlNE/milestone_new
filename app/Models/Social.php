@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
 
 class Social extends Model
 {
@@ -14,7 +13,7 @@ class Social extends Model
     public $table = 'socials';
     const CACHE_TTL = 86400; // 1 day
 
-    protected $dates = [
+    protected array $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
@@ -31,7 +30,7 @@ class Social extends Model
         'deleted_at',
     ];
 
-    protected static $logFillable = true;
+    protected static bool $logFillable = true;
 
     public static function getNextPosition()
     {

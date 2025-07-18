@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Requests\Page\PageRestoreRequest;
 use App\Http\Requests\User\UserChangeStatusRequest;
 use App\Http\Requests\User\UserCreateRequest;
 use App\Http\Requests\User\UserDestroyRequest;
@@ -13,7 +12,6 @@ use App\Http\Requests\User\UserRemoveRequest;
 use App\Http\Requests\User\UserRestoreRequest;
 use App\Http\Requests\User\UserTrashRequest;
 use App\Http\Requests\User\UserUpdateRequest;
-use App\Models\Page;
 use App\Services\UserService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -85,7 +83,7 @@ class UserController extends Controller
                 ->with('success', __('strings.Added Successfully'));
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed while creating page: ' . $e->getMessage()
+                'message' => 'Failed while creating User: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -177,7 +175,7 @@ class UserController extends Controller
 
             return redirect()->route('backend.users.index')
                 ->with('success', __('strings.Deleted Successfully'));
-        }, 'Page Mass Deletion');
+        }, 'User Mass Deletion');
     }
 
     // Archive Methods

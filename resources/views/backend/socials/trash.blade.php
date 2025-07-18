@@ -69,7 +69,7 @@
                                     <tbody>
                                     @forelse($socials as $social)
                                         <tr class="product-list border-b border-primary/10" data-id="{{$social->id}}">
-                                            @can('backend.permissions.massRemove')
+                                            @can('backend.socials.massRemove')
                                                 <td class="text-center">
                                                     <input class="form-check-input list-checkbox-item cursor-pointer" type="checkbox" value="{{$social->id}}">
                                                 </td>

@@ -64,6 +64,17 @@ window.Modal = {
     }
 };
 
+(function () {
+    "use strict";
+    const el = document.querySelector('#choices-multiple-remove-button');
+    if (el) {
+        new Choices(el, {
+            allowHTML: true,
+            removeItemButton: true,
+        });
+    }
+})();
+
 import "../backend/assets/js/defaultmenu.js";
 import "../backend/assets/js/switch.js";
 import "../backend/assets/js/custom.js";

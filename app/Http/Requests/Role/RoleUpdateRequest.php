@@ -29,6 +29,7 @@ class RoleUpdateRequest extends FormRequest
             'permission' => ['required', 'array', 'min:1', 'not_in:0'],
             'permission.*' => ['integer'],
             'has_backend_access' => ['required', 'string'],
+            'published_at' => ['nullable'],
         ];
     }
 
