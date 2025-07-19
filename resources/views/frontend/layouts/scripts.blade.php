@@ -29,7 +29,6 @@
 <script src="{{asset('assets/js/swiper.min.js')}}"></script>
 <script src="{{asset('assets/js/jquery.magnific-popup.min.js')}}"></script>
 <script src="{{asset('assets/js/circle-progress.js')}}"></script>
-<script src="{{asset('assets/js/query.countdown.min.js')}}j"></script>
 <script src="{{asset('assets/js/aos.js')}}"></script>
 <script src="{{asset('assets/js/gsap.js')}}"></script>
 <script src="{{asset('assets/js/ScrollTrigger.js')}}"></script>

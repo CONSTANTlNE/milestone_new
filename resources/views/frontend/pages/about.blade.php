@@ -124,7 +124,7 @@
     <!-- About End -->
 
     <!-- Static Box Start -->
-    <section class="pbmit-element-static-box-style-1">
+    <section class="pbmit-element-static-box-style-1 section-md" style="padding-top: 0px;">
         <div class="container">
             <div class="pbmit-heading-subheading text-center">
                 <h4 class="pbmit-subtitle">
@@ -137,9 +137,9 @@
             <div class="row">
                 <article class="pbmit-static-box-style-1">
                     <div class="pbmit-staticbox-wrapper">
-                        <div class="pbmit-bg-imgbox col-md-6" style="background-image: url(images/homepage-1/static-box/static-box-01.jpg);">
+                        <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset('assets/images/homepage-1/static-box/static-box-01.jpg')}});">
                             <div class="pbmit-img">
-                                <img src="images/homepage-1/static-box/static-box-01.jpg" class="img-fluid" alt="Receive packages">
+                                <img src="{{asset('assets/images/homepage-1/static-box/static-box-01.jpg')}}" class="img-fluid" alt="Receive packages">
                             </div>
                             <div class="pbmit-box-number">01</div>
                             <h4 class="pbmit-static-box-title">Receive packages</h4>
@@ -150,7 +150,7 @@
                                 <h4 class="pbmit-static-box-title">Receive packages</h4>
                                 <div class="pbmit-static-box-desc">Sed ut perspiciatis unde omnis iste natus ut perspic iatis unde omnis iste perspiciatis ut perspiciatis unde omnis iste natus Perspiciatis unde omnis iste natus. sed do euism od tempor incidunt ut nsectetur </div>
                                 <div class="pbmit-static-btn">
-                                    <a class="pbmit-btn pbmit-btn-outline" href="about-us.html">
+                                    <a class="pbmit-btn pbmit-btn-outline" href="#">
 											<span class="pbmit-button-content-wrapper">
 												<span class="pbmit-button-text">View Detail</span>
 											</span>
@@ -162,9 +162,9 @@
                 </article>
                 <article class="pbmit-static-box-style-1">
                     <div class="pbmit-staticbox-wrapper">
-                        <div class="pbmit-bg-imgbox col-md-6" style="background-image: url(images/homepage-1/static-box/static-box-02.jpg);">
+                        <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset('assets/images/homepage-1/static-box/static-box-02.jpg')}});">
                             <div class="pbmit-img">
-                                <img src="images/homepage-1/static-box/static-box-03.jpg" class="img-fluid" alt="Deliver packages">
+                                <img src="{{asset('assets/images/homepage-1/static-box/static-box-02.jpg')}}" class="img-fluid" alt="Deliver packages">
                             </div>
                             <div class="pbmit-box-number">02</div>
                             <h4 class="pbmit-static-box-title">Deliver packages</h4>
@@ -175,7 +175,7 @@
                                 <h4 class="pbmit-static-box-title">Deliver packages</h4>
                                 <div class="pbmit-static-box-desc">Sed ut perspiciatis unde omnis iste natus ut perspic iatis unde omnis iste perspiciatis ut perspiciatis unde omnis iste natus Perspiciatis unde omnis iste natus. sed do euism od tempor incidunt ut nsectetur </div>
                                 <div class="pbmit-static-btn">
-                                    <a class="pbmit-btn pbmit-btn-outline" href="about-us.html">
+                                    <a class="pbmit-btn pbmit-btn-outline" href="#">
 											<span class="pbmit-button-content-wrapper">
 												<span class="pbmit-button-text">View Detail</span>
 											</span>
@@ -187,9 +187,9 @@
                 </article>
                 <article class="pbmit-static-box-style-1">
                     <div class="pbmit-staticbox-wrapper">
-                        <div class="pbmit-bg-imgbox col-md-6" style="background-image: url(images/homepage-1/static-box/static-box-03.jpg);">
+                        <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset('assets/images/homepage-1/static-box/static-box-03.jpg')}});">
                             <div class="pbmit-img">
-                                <img src="images/homepage-1/static-box/static-box-04.jpg" class="img-fluid" alt="Transport packages">
+                                <img src="{{asset('assets/images/homepage-1/static-box/static-box-03.jpg')}}" class="img-fluid" alt="Transport packages">
                             </div>
                             <div class="pbmit-box-number">03</div>
                             <h4 class="pbmit-static-box-title">Transport packages</h4>
@@ -200,7 +200,7 @@
                                 <h4 class="pbmit-static-box-title">Transport packages</h4>
                                 <div class="pbmit-static-box-desc">Sed ut perspiciatis unde omnis iste natus ut perspic iatis unde omnis iste perspiciatis ut perspiciatis unde omnis iste natus Perspiciatis unde omnis iste natus. sed do euism od tempor incidunt ut nsectetur </div>
                                 <div class="pbmit-static-btn">
-                                    <a class="pbmit-btn pbmit-btn-outline" href="about-us.html">
+                                    <a class="pbmit-btn pbmit-btn-outline" href="#">
 											<span class="pbmit-button-content-wrapper">
 												<span class="pbmit-button-text">View Detail</span>
 											</span>
@@ -212,9 +212,9 @@
                 </article>
                 <article class="pbmit-static-box-style-1">
                     <div class="pbmit-staticbox-wrapper">
-                        <div class="pbmit-bg-imgbox col-md-6" style="background-image: url(images/homepage-1/static-box/static-box-04.jpg);">
+                        <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset('assets/images/homepage-1/static-box/static-box-04.jpg')}});">
                             <div class="pbmit-img">
-                                <img src="images/homepage-1/static-box/static-box-02.jpg" class="img-fluid" alt="Warehousing Operation">
+                                <img src="{{asset('assets/images/homepage-1/static-box/static-box-04.jpg')}}" class="img-fluid" alt="Warehousing Operation">
                             </div>
                             <div class="pbmit-box-number">04</div>
                             <h4 class="pbmit-static-box-title">Warehousing Operation</h4>
@@ -225,7 +225,7 @@
                                 <h4 class="pbmit-static-box-title">Warehousing Operation</h4>
                                 <div class="pbmit-static-box-desc">Sed ut perspiciatis unde omnis iste natus ut perspic iatis unde omnis iste perspiciatis ut perspiciatis unde omnis iste natus Perspiciatis unde omnis iste natus. sed do euism od tempor incidunt ut nsectetur </div>
                                 <div class="pbmit-static-btn">
-                                    <a class="pbmit-btn pbmit-btn-outline" href="about-us.html">
+                                    <a class="pbmit-btn pbmit-btn-outline" href="#">
 											<span class="pbmit-button-content-wrapper">
 												<span class="pbmit-button-text">View Detail</span>
 											</span>
@@ -238,5 +238,4 @@
             </div>
         </div>
     </section>
-    <!-- Static Box End -->
 @endsection

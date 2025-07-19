@@ -41,8 +41,8 @@
                                     <h2 class="pbmit-element-title">
                                         Mail Us 24/7
                                     </h2>
-                                    <div class="pbmit-heading-desc"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4333212e2a2d252c3726202b03242e222a2f6d202c2e">{{$setting->email}}</a> <br>
-                                        <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e18f8ecc9384918d98a191838c888f878e95848289cf828e8c">{{$setting->email1}}</a>
+                                    <div class="pbmit-heading-desc"><a href="#" class="__cf_email__" data-cfemail="4333212e2a2d252c3726202b03242e222a2f6d202c2e">{{$setting->email}}</a> <br>
+                                        <a href="#" class="__cf_email__" data-cfemail="e18f8ecc9384918d98a191838c888f878e95848289cf828e8c">{{$setting->email1}}</a>
                                     </div>
                                 </div>
                                 <div class="pbmit-ihbox-icon">
@@ -53,7 +53,7 @@
                             </div>
                             <div class="pbmit-btn-wrap">
                                 <div class="pbmit-ihbox-btn">
-                                    <a class="pbmit-button-inner" href="about-us.html">
+                                    <a class="pbmit-button-inner" href="#">
                                         <span class="pbmit-button-icon"></span>
                                     </a>
                                 </div>
@@ -80,7 +80,7 @@
                             </div>
                             <div class="pbmit-btn-wrap">
                                 <div class="pbmit-ihbox-btn">
-                                    <a class="pbmit-button-inner" href="about-us.html">
+                                    <a class="pbmit-button-inner" href="#">
                                         <span class="pbmit-button-icon"></span>
                                     </a>
                                 </div>
@@ -108,7 +108,7 @@
                             </div>
                             <div class="pbmit-btn-wrap">
                                 <div class="pbmit-ihbox-btn">
-                                    <a class="pbmit-button-inner" href="about-us.html">
+                                    <a class="pbmit-button-inner" href="#">
                                         <span class="pbmit-button-icon"></span>
                                     </a>
                                 </div>
@@ -135,7 +135,7 @@
                             </div>
                             <div class="pbmit-btn-wrap">
                                 <div class="pbmit-ihbox-btn">
-                                    <a class="pbmit-button-inner" href="about-us.html">
+                                    <a class="pbmit-button-inner" href="#">
                                         <span class="pbmit-button-icon"></span>
                                     </a>
                                 </div>
@@ -149,7 +149,7 @@
     <!-- Ihbox End -->
 
     <!-- Contact Form -->
-    <section>
+    <section style="padding-bottom: 100px;">
         <div class="container">
             <div class="row g-0">
                 <div class="col-md-12 col-xl-6">
@@ -162,7 +162,7 @@
                             </div>
                         </div>
                         <div class="contact-bg-img">
-                            <img src="{{asset('assets/images/img.png')}}" alt="">
+                            <img src="{{asset('assets/images/img.png')}}"  alt="">
                         </div>
                     </div>
                 </div>
@@ -215,110 +215,11 @@
     </section>
     <!-- Contact Form End -->
 
-    <!-- Client Start -->
-    <section class="section-xl border-bottom">
-        <div class="container-fluid">
-            <div class="row pbmit-element-posts-wrapper">
-                <article class="pbmit-client-style-1 col-md-4 col-lg-3 col-xl-2">
-                    <div class="pbmit-border-wrapper">
-                        <div class="pbmit-client-wrapper pbmit-client-with-hover-img">
-                            <h4 class="pbmit-hide">Client-01</h4>
-                            <div class="pbmit-client-hover-img">
-                                <img src="images/client/client-global-01.png" class="img-fluid" alt="">
-                            </div>
-                            <div class="pbmit-featured-img-wrapper">
-                                <div class="pbmit-featured-wrapper">
-                                    <img src="images/client/client-dark-01.png" class="img-fluid" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article class="pbmit-client-style-1 col-md-4 col-lg-3 col-xl-2">
-                    <div class="pbmit-border-wrapper">
-                        <div class="pbmit-client-wrapper pbmit-client-with-hover-img">
-                            <h4 class="pbmit-hide">Client-01</h4>
-                            <div class="pbmit-client-hover-img">
-                                <img src="images/client/client-global-02.png" class="img-fluid" alt="">
-                            </div>
-                            <div class="pbmit-featured-img-wrapper">
-                                <div class="pbmit-featured-wrapper">
-                                    <img src="images/client/client-dark-02.png" class="img-fluid" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article class="pbmit-client-style-1 col-md-4 col-lg-3 col-xl-2">
-                    <div class="pbmit-border-wrapper">
-                        <div class="pbmit-client-wrapper pbmit-client-with-hover-img">
-                            <h4 class="pbmit-hide">Client-01</h4>
-                            <div class="pbmit-client-hover-img">
-                                <img src="images/client/client-global-03.png" class="img-fluid" alt="">
-                            </div>
-                            <div class="pbmit-featured-img-wrapper">
-                                <div class="pbmit-featured-wrapper">
-                                    <img src="images/client/client-dark-03.png" class="img-fluid" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article class="pbmit-client-style-1 col-md-4 col-lg-3 col-xl-2">
-                    <div class="pbmit-border-wrapper">
-                        <div class="pbmit-client-wrapper pbmit-client-with-hover-img">
-                            <h4 class="pbmit-hide">Client-01</h4>
-                            <div class="pbmit-client-hover-img">
-                                <img src="images/client/client-global-04.png" class="img-fluid" alt="">
-                            </div>
-                            <div class="pbmit-featured-img-wrapper">
-                                <div class="pbmit-featured-wrapper">
-                                    <img src="images/client/client-dark-04.png" class="img-fluid" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article class="pbmit-client-style-1 col-md-4 col-lg-3 col-xl-2">
-                    <div class="pbmit-border-wrapper">
-                        <div class="pbmit-client-wrapper pbmit-client-with-hover-img">
-                            <h4 class="pbmit-hide">Client-01</h4>
-                            <div class="pbmit-client-hover-img">
-                                <img src="images/client/client-global-05.png" class="img-fluid" alt="">
-                            </div>
-                            <div class="pbmit-featured-img-wrapper">
-                                <div class="pbmit-featured-wrapper">
-                                    <img src="images/client/client-dark-05.png" class="img-fluid" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                <article class="pbmit-client-style-1 col-md-4 col-lg-3 col-xl-2">
-                    <div class="pbmit-border-wrapper">
-                        <div class="pbmit-client-wrapper pbmit-client-with-hover-img">
-                            <h4 class="pbmit-hide">Client-01</h4>
-                            <div class="pbmit-client-hover-img">
-                                <img src="images/client/client-global-06.png" class="img-fluid" alt="">
-                            </div>
-                            <div class="pbmit-featured-img-wrapper">
-                                <div class="pbmit-featured-wrapper">
-                                    <img src="images/client/client-dark-06.png" class="img-fluid" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-    <!-- Client End -->
-
-    <!-- Iframe -->
+    @if(!empty($setting->g_map))
     <section class="contact-iframe-section">
         <div class="container-fluid p-0">
             <iframe src="https://maps.google.com/maps?q=London%20Eye%2C%20London%2C%20United%20Kingdom&t=m&z=10&output=embed&iwloc=near" title="London Eye, London, United Kingdom" aria-label="London Eye, London, United Kingdom"></iframe>
         </div>
     </section>
-    <!-- Iframe End-->
+    @endif
 @endsection

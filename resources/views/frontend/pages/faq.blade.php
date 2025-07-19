@@ -30,15 +30,12 @@
 
 @section('content')
     <!-- Faq Start -->
-    <section class="section-lgb">
+    <section class="section-md">
         <div class="container">
             <div class="pbmit-heading-subheading text-center animation-style2">
-                <h2 class="pbmit-title">Frequently Asked <br />Questions</h2>
-                <div class="pbmit-heading-desc">
-                    You will find answers to about our various transport work and
-                    transport s service and more. Please feel <br />
-                    free to contact us if you don't get your question's answer in
-                    below.
+                <h2 class="pbmit-title">{{$page->slogan}}</h2>
+                <div class="pbmit-heading-desc" style="width: 50%; margin:auto">
+                    {!! $page->content !!}
                 </div>
             </div>
             <div class="accordion style-3" id="accordionExample2">
@@ -54,7 +51,7 @@
                             aria-controls="collapse{{$key}}"
                         >
                     <span class="pbmit-accordion-title">
-                      <span class="pbmit-number">{{$key}}</span>
+                      <span class="pbmit-number">{{$key < 10 ? '0'.$key+1 : $key+1}}</span>
                       {{$faq->title}}
                     </span>
                             <span class="pbmit-accordion-icon">

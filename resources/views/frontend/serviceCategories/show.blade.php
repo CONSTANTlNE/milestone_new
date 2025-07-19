@@ -2,13 +2,13 @@
 @section('title') {{ __('strings.Home') }} @endsection
 
 @section('header_background')
-    <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($page->src ?: config('filemanager.default_backend_image'))}});">
+    <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($category->src ?: config('filemanager.default_backend_image'))}});">
         <div class="container">
             <div class="pbmit-title-bar-content">
                 <div class="pbmit-title-bar-content-inner">
                     <div class="pbmit-tbar">
                         <div class="pbmit-tbar-inner container">
-                            <h1 class="pbmit-tbar-title">{{$page->title}}</h1>
+                            <h1 class="pbmit-tbar-title">{{$category->title}}</h1>
                         </div>
                     </div>
                     <div class="pbmit-breadcrumb">
@@ -19,7 +19,7 @@
                             <span class="sep">
 									<i class="pbmit-base-icon-angle-right"></i>
 								</span>
-                            <span><span class="post-root post post-post current-item"> {{$page->title}}</span></span>
+                            <span><span class="post-root post post-post current-item"> {{$category->title}}</span></span>
                         </div>
                     </div>
                 </div>
