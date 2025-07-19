@@ -26,13 +26,13 @@ return [
     ],
 
     'templates' => [
-        ['id' => 'frontend.page.show', 'title' => 'admin.default_page'],
+        ['id' => 'frontend.pages.show', 'title' => 'admin.default_page'],
         ['id' => 'frontend.index', 'title' => 'admin.home_page'],
         ['id' => 'frontend.blogs.index', 'title' => 'admin.blogs_page'],
         ['id' => 'frontend.services.index', 'title' => 'admin.services_page'],
         ['id' => 'frontend.portfolios.index', 'title' => 'admin.portfolios_page'],
-        ['id' => 'frontend.page.contact', 'title' => 'admin.contact_page'],
-        ['id' => 'frontend.page.about', 'title' => 'admin.about_page'],
-        ['id' => 'frontend.page.faq', 'title' => 'admin.faq_page'],
+        ['id' => 'frontend.pages.contact', 'title' => 'admin.contact_page'],
+        ['id' => 'frontend.pages.about', 'title' => 'admin.about_page'],
+        ['id' => 'frontend.pages.faq', 'title' => 'admin.faq_page'],
     ]
 ];

@@ -48,9 +48,9 @@ class MenuItem extends Model
         return $this->morphTo();
     }
 
-    public function parent(): Collection
+    public function parent(): BelongsTo
     {
-        return $this->hasMany('App\Models\MenuItem','parent_id','id')->orderBy('sort','desc')->get();
+        return $this->belongsTo('App\Models\MenuItem','parent_id');
     }
 
     public function rowParent(): BelongsTo
@@ -58,11 +58,29 @@ class MenuItem extends Model
         return  $this->belongsTo('App\Models\MenuItem','parent_id');
     }
 
+    // Helper method to get parent ID
+    public function getParentId()
+    {
+        return $this->parent_id;
+    }
+
+    // Debug method to check relationships
+    public function debugRelationships()
+    {
+        return [
+            'id' => $this->id,
+            'parent_id' => $this->parent_id,
+            'title' => $this->title,
+            'has_parent' => $this->parent()->exists(),
+            'has_children' => $this->children()->count(),
+            'depth' => $this->depth
+        ];
+    }
+
     public function children()
     {
         return $this->hasMany(MenuItem::class, 'parent_id')
             ->where('status', 1)
-            ->with('children') // Recursive loading
             ->orderBy('sort', 'asc');
     }
 
@@ -87,7 +105,7 @@ class MenuItem extends Model
 
     public function child()
     {
-        return $this->hasMany('App\Models\MenuItems', 'parent_id')->orderBy('sort', 'ASC');
+        return $this->hasMany('App\Models\MenuItem', 'parent_id')->orderBy('sort', 'ASC');
     }
 
 }

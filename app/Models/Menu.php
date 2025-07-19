@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Menu extends Model
 {
-    use SoftDeletes, EscapeUniCodeJson;
+    use EscapeUniCodeJson;
 
     public $table = 'menus';
 
@@ -18,7 +18,6 @@ class Menu extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
     ];
 
     protected $fillable = [
@@ -26,11 +25,10 @@ class Menu extends Model
         'status',
         'position',
         'created_at',
-        'updated_at',
-        'deleted_at',
+        'updated_at'
     ];
 
-    protected static $logFillable = true;
+    protected static bool $logFillable = true;
 
     public static function byName($name)
     {

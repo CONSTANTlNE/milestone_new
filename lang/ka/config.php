@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'admin_title' => 'დეფაუტ ადმინ პანელის სათაური',
-    'admin_description' => 'დეფაუტ ადმინ პანელის აღწერა',
-    'admin_keywords' => 'დეფაუტ ადმინ პანელის საკვანძო სიტყვები',
+    'admin_title' => 'ადმინ პანელი',
+    'admin_description' => 'ადმინ პანელი',
+    'admin_keywords' => 'ადმინ პანელის საკვანძო სიტყვები',
     'admin_author' => 'პროექტის ავტორი',
     'login_to_the_system' => 'სისტემაში შესვლა',
     'you_have_account' => 'გაქვთ თქვენ ექაუნთი?',

@@ -7,8 +7,8 @@
                         <div class="mb-[3rem]">
                             <img src="{{ asset(config('filemanager.default_auth_company_image')) }}" class="authentication-image" alt="{{ __('config.company_title') }}">
                         </div>
-                        <h6 class="font-semibold text-[1rem] font-first-geo">{{ __('config.company_title') }}</h6>
-                        <p class="font-normal text-[.875rem] opacity-[0.7] font-second-geo"> {{ __('config.company_text') }} </p>
+{{--                        <h6 class="font-semibold text-[1rem] font-first-geo">{{ __('config.company_title') }}</h6>--}}
+{{--                        <p class="font-normal text-[.875rem] opacity-[0.7] font-second-geo"> {{ __('config.company_text') }} </p>--}}
                         <p class="text-[0.75rem] mt-4 font-second-geo">© {{ now()->format('Y') }}</p>
                     </div>
                 </div>

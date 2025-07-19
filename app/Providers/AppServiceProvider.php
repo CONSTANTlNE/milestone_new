@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\MenuItem;
+use App\Rules\Validator\UniqueTranslationValidator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
@@ -10,7 +13,7 @@ use App\Http\Responses\LogoutResponse as CustomLogoutResponse;
 use Illuminate\Support\Facades\Blade;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
-
+use Illuminate\Support\Facades\Cache;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -31,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('fortifyFeature', function ($feature) {
             return Features::enabled($feature);
         });
-
+        Validator::extend('unique_translation', UniqueTranslationValidator::class.'@validate');
         // Custom blade directive for alerts
         Blade::directive('alert', function ($expression) {
             return "<?php echo view('components.backend.alert', ['type' => 'info', 'message' => $expression])->render(); ?>";
@@ -51,6 +54,32 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::directive('alertInfo', function ($expression) {
             return "<?php echo view('components.backend.alert', ['type' => 'info', 'message' => $expression])->render(); ?>";
+        });
+
+//        view()->composer('frontend.layouts.mainMenu', function($view){
+//            if (!Cache::has('menuItem_3')){
+//                $mainMenus = Cache::remember('menuItem_3', now()->addHours(1), function () {
+//                    return MenuItem::where('menu_id', 3)
+//                        ->where('parent_id', 0)
+//                        ->where('status', 1)
+//                        ->with('children') // Ensure 'children' is cached too
+//                        ->orderBy('sort', 'asc')
+//                        ->get();
+//                });
+//            }else{
+//                $mainMenus = Cache::get('menuItem_3')->where('parent_id', 0);
+//            }
+//            return $view->with(compact('mainMenus'));
+//        });
+
+        view()->composer('frontend.layouts.mainMenu', function($view){
+            $mainMenus = MenuItem::where('menu_id', 3)
+                    ->where('parent_id', 0)
+                    ->where('status', 1)
+                    ->with('children') // Ensure 'children' is cached too
+                    ->orderBy('sort', 'asc')
+                    ->get();
+            return $view->with(compact('mainMenus'));
         });
     }
 }

@@ -3,29 +3,13 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Models\Media;
+use App\Models\Faq;
 use App\Models\Page;
 use App\Models\Setting;
-use Illuminate\Http\Response;
 
 class PageController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return Response
-     */
-    public function show($lang, $id)
+    public function show($id)
     {
         $page = Page::findOrFail($id);
 
@@ -37,21 +21,23 @@ class PageController extends Controller
             abort(404);
         }
 
-        if ($page->id == 268){
-            $contact = Setting::first();
-            return view('frontend.page.contact', compact('contact'));
-        }else if($page->id == 285){
-            return view('frontend.page.check_fact', compact('page'));
-        }else{
-            return view('frontend.page.show', compact('page'));
-        }
+        return view('frontend.pages.show', compact('page'));
     }
 
-    public function factInMedia($lang){
-        $factInMedias = Media::where('title->'.$lang, "!=", '')
-            ->where('status', 1)
-            ->orderBy('id', 'DESC')
-            ->paginate(24);
-        return view('frontend.articles.fact_in_media', compact('factInMedias'));
+    public function about(){
+        $page = Page::where('template', 'frontend.pages.about')->first();
+        return view('frontend.pages.about', compact('page'));
+    }
+
+    public function faq(){
+        $page = Page::where('template', 'frontend.pages.faq')->first();
+        $faqs = Faq::where('service_id', null)->where('status', true)->get();
+        return view('frontend.pages.faq', compact('page', 'faqs'));
+    }
+
+    public function contact(){
+        $page = Page::where('template', 'frontend.pages.contact')->first();
+        $setting = Setting::first();
+        return view('frontend.pages.contact', compact('page', 'setting'));
     }
 }
