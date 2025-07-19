@@ -22,7 +22,7 @@ trait MenuTrait
                 $menuItem->status = $status;
                 $menuItem->save();
 
-                $menuItem->parent()->each(function (MenuItem $child) use ($status) {
+                $menuItem->children()->each(function (MenuItem $child) use ($status) {
                     $child->parent_id = 0;
                     $child->depth = 0;
                     $child->save();
@@ -40,7 +40,7 @@ trait MenuTrait
     {
         $this->menu()->each(function (MenuItem $menuItem) use ($status) {
             $menuItem->forceDelete();
-            $menuItem->parent()->each(function (MenuItem $child) use ($status) {
+            $menuItem->children()->each(function (MenuItem $child) use ($status) {
                 $child->parent_id = 0;
                 $child->depth = 0;
                 $child->save();

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Backend;
 
+use App\Http\Controllers\Backend\Projects\ServiceCategoryController;
 use App\Models\BlogCategory;
 use App\Models\MenuItem;
 use App\Models\Page;
 use App\Models\Person;
 use App\Models\Region;
+use App\Models\ServiceCategory;
 use App\Models\Verdict;
 use Gate;
 use Illuminate\Http\Request;
@@ -19,7 +21,7 @@ class MenuController extends Controller
 {
     public function index()
     {
-        $menus = Menu::where('status', 1)->latest()->get();
+        $menus = Menu::all();
         return view('backend.menus.index', compact('menus'));
     }
 
@@ -27,40 +29,65 @@ class MenuController extends Controller
     {
         $request->validate([
             'menuValue' => 'required',
+            'block' => 'required',
         ]);
         $menu = new Menu();
         $menu->name = $request->menuValue;
+        $menu->block = $request->block;
         $menu->save();
-        return redirect()->route('backend.menus.index', app()->getLocale());
+        return redirect()->route('backend.menus.index');
     }
     const CACHE_TTL = 86400; // 1 day
 
-    public function edit($lang, $id)
+    public function edit($id)
     {
         $menu = Menu::find($id);
 
-        $menuItems = MenuItem::select('id', 'parent_id', 'depth', 'sort', 'title',  'slug', 'model_id', 'prefix', 'is_prefix', 'status')
+        $menuItems = MenuItem::select('id', 'parent_id', 'depth', 'sort', 'title',  'slug', 'model_id', 'route', 'is_prefix', 'status')
                     ->where('menu_id', $id)
                     ->where('status', 1)
                     ->with('children')
                     ->orderBy('sort', 'asc')
                     ->get();
 
+        // Additional debugging to check for duplicates
+        $itemIds = $menuItems->pluck('id')->toArray();
+        $duplicateIds = array_diff_assoc($itemIds, array_unique($itemIds));
+
+        if (!empty($duplicateIds)) {
+            \Log::warning('Duplicate menu items detected', [
+                'duplicate_ids' => $duplicateIds,
+                'menu_id' => $id
+            ]);
+        }
+
+        // Debug: Log menu items structure
+        \Log::info('Menu Items Structure', [
+            'menu_id' => $id,
+            'items_count' => $menuItems->count(),
+            'items' => $menuItems->map(function($item) {
+                return [
+                    'id' => $item->id,
+                    'parent_id' => $item->parent_id,
+                    'depth' => $item->depth,
+                    'title' => $item->title
+                ];
+            })->toArray()
+        ]);
+
         $pages = Page::all();
-        $persons = Person::all();
-        $articleCategories = BlogCategory::all();
-        $verdicts = Verdict::all();
-        $regions = Region::all();
-        return view('backend.menus.edit', compact('menu', 'menuItems', 'pages', 'persons', 'articleCategories', 'verdicts', 'regions'));
+        $serviceCategories = ServiceCategory::all();
+        $blogCategories = BlogCategory::all();
+        return view('backend.menus.edit', compact('menu', 'menuItems', 'pages', 'serviceCategories', 'blogCategories'));
     }
 
-    public function destroy($lang, $id)
+    public function destroy($id)
     {
-        Gate::authorize('backend.locales.destroy');
         Menu::find($id)->delete();
+        MenuItem::where('menu_id', $id)->delete();
         Cache::forget('menuItem_'.$id);
-        return redirect()->route('backend.menus.index', app()->getLocale())
-            ->with('success','წარმატებით წაიშალა!');
+        return redirect()->route('backend.menus.index')
+            ->with('success', __('strings.Delete Successfully'));
     }
     public function deleteMenu()
     {
@@ -100,6 +127,38 @@ class MenuController extends Controller
         $menuItem->delete();
     }
 
+    public function deleteAllMenuItems()
+    {
+        $menuId = request()->input("menu_id");
+
+        if ($menuId) {
+            // Delete all menu items for a specific menu
+            $deletedCount = MenuItem::where('menu_id', $menuId)->delete();
+            Cache::forget('menuItem_'.$menuId);
+
+            return response()->json([
+                'success' => true,
+                'message' => __('strings.All menu items deleted successfully'),
+                'deleted_count' => $deletedCount
+            ]);
+        } else {
+            // Delete all menu items from all menus
+            $deletedCount = MenuItem::truncate();
+
+            // Clear all menu caches
+            $menus = Menu::all();
+            foreach ($menus as $menu) {
+                Cache::forget('menuItem_'.$menu->id);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => __('strings.All menu items deleted successfully'),
+                'deleted_count' => 'all'
+            ]);
+        }
+    }
+
     public function updateMenuItem()
     {
         Cache::forget('menuItem_'.request()->input("idmenu"));
@@ -125,7 +184,7 @@ class MenuController extends Controller
         $menuItem = new MenuItem();
         $menuItem->setTranslations('title', json_decode($menuTitle[1], true, JSON_UNESCAPED_UNICODE));
         $menuItem->setTranslations('slug', json_decode($menuTitle[2], true, JSON_UNESCAPED_UNICODE));
-        $menuItem->prefix = $menuPrefix;
+        $menuItem->route = $menuTitle[3] ?? $menuPrefix;
         $menuItem->is_prefix = $menuTitle[0] == 0 ? 0 : 1;
         $menuItem->model_id = int_value($menuTitle[0]);
         $menuItem->model_type = request()->menuModel;

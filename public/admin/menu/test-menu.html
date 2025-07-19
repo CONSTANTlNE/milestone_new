@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Management Test</title>
+    <link href="menu-vanilla.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f1f1f1;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: #0073aa;
+            color: #fff;
+            padding: 20px;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            display: flex;
+            min-height: 600px;
+        }
+        .sidebar {
+            width: 300px;
+            background: #f9f9f9;
+            border-right: 1px solid #ddd;
+            padding: 20px;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        .test-info {
+            background: #e7f7ff;
+            border: 1px solid #0073aa;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Menu Management System Test</h1>
+            <p>Vanilla JavaScript Implementation</p>
+        </div>
+        
+        <div class="content">
+            <div class="sidebar">
+                <div class="test-info">
+                    <h3>Test Instructions</h3>
+                    <ul>
+                        <li><strong>Drag & Drop:</strong> Drag menu items to reorder them</li>
+                        <li><strong>Create Submenus:</strong> Drag an item to the right of another item to make it a submenu</li>
+                        <li><strong>Visual Feedback:</strong> Watch for colored borders and arrows during drag operations</li>
+                        <li><strong>Edit Items:</strong> Click edit icons to expand/collapse settings</li>
+                        <li><strong>Accordion:</strong> Test collapsible sidebar sections</li>
+                        <li><strong>Responsive:</strong> Check behavior on mobile devices</li>
+                    </ul>
+                    <h4>Submenu Features:</h4>
+                    <ul>
+                        <li>Drag items to the right edge of another item to nest them</li>
+                        <li>Each nesting level has a different colored left border</li>
+                        <li>Submenu items show "Subelement" indicator</li>
+                        <li>Maximum nesting depth is 11 levels</li>
+                    </ul>
+                    <h4>Debug Tools:</h4>
+                    <button onclick="window.menuManager.debugMenuStructure()" class="button">Debug Structure</button>
+                    <button onclick="console.log('Menu config:', window.menuConfig)" class="button">Show Config</button>
+                    <button onclick="window.menuManager.deleteMenuItem(1)" class="button">Test Delete Item 1</button>
+                    
+                    <h4>Submenu Creation Tools:</h4>
+                    <button onclick="window.menuManager.createSubmenuWithItems(1, [
+                        {title: 'Submenu Item 1', type: 'page', prefix: 'page-show'},
+                        {title: 'Submenu Item 2', type: 'page', prefix: 'page-show'}
+                    ])" class="button">Create 2-Item Submenu under Home</button>
+                    
+                    <button onclick="window.menuManager.createSubmenuWithItems(2, [
+                        {title: 'About Team', type: 'page', prefix: 'page-show'},
+                        {title: 'About Company', type: 'page', prefix: 'page-show'},
+                        {title: 'About Mission', type: 'page', prefix: 'page-show'}
+                    ])" class="button">Create 3-Item Submenu under About</button>
+                    
+                    <button onclick="window.menuManager.addItemToSubmenu(1, 'Additional Submenu Item', 'page', 'page-show')" class="button">Add Single Item to Home Submenu</button>
+                    
+                    <h4>Manual Submenu Creation:</h4>
+                    <p><strong>Step 1:</strong> Drag any menu item to the right edge of another item</p>
+                    <p><strong>Step 2:</strong> Watch for the blue border and arrow indicating "child" position</p>
+                    <p><strong>Step 3:</strong> Drop to create the submenu</p>
+                    <p><strong>Step 4:</strong> Repeat to add more items to the same submenu</p>
+                </div>
+                
+                <div class="accordion-container">
+                    <ul class="outer-border">
+                        <li class="control-section accordion-section mb-3 add-page" id="add-page">
+                            <h3 class="accordion-section-title hndle" tabindex="0">
+                                Test Pages
+                                <span class="screen-reader-text">Press Enter</span>
+                            </h3>
+                            <div class="accordion-section-content">
+                                <div class="inside">
+                                    <div class="customlinkdiv" id="customlinkdiv">
+                                        <div class="form-group position-relative select-access">
+                                            <label for="custom-menu-item-title-page-show" class="control-label howto" style="display:none;"></label>
+                                            <input type="hidden" id="custom-menu-item-prefix" value="page-show">
+                                            <input type="hidden" id="custom-menu-item-model" value="App\Models\Page">
+                                            <select id="custom-menu-item-title-page-show" class="select2 form-control select2 page-dropdown-groups" name="title">
+                                                <option value="0">-- Select Page --</option>
+                                                <option value="1|Home|home">Home</option>
+                                                <option value="2|About|about">About</option>
+                                                <option value="3|Contact|contact">Contact</option>
+                                            </select>
+                                        </div>
+                                        <p class="button-controls">
+                                            <a href="#" onclick="addcustommenu(this)" class="button-secondary submit-add-to-menu right">Add Menu Item</a>
+                                            <span class="spinner" id="spincustomu"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        
+                        <li class="control-section accordion-section mb-3 add-page" id="add-category">
+                            <h3 class="accordion-section-title hndle" tabindex="0">
+                                Test Categories
+                                <span class="screen-reader-text">Press Enter</span>
+                            </h3>
+                            <div class="accordion-section-content">
+                                <div class="inside">
+                                    <div class="customlinkdiv" id="customlinkdiv">
+                                        <div class="form-group position-relative select-access">
+                                            <label for="custom-menu-item-title-category" class="control-label howto" style="display:none;"></label>
+                                            <input type="hidden" id="custom-menu-item-prefix" value="frontent.category.show">
+                                            <input type="hidden" id="custom-menu-item-model" value="App\Models\BlogCategory">
+                                            <select id="custom-menu-item-title-category" class="select2 form-control select2 category-dropdown-groups" name="title">
+                                                <option value="0">-- Select Category --</option>
+                                                <option value="1|News|news">News</option>
+                                                <option value="2|Blog|blog">Blog</option>
+                                                <option value="3|Events|events">Events</option>
+                                            </select>
+                                        </div>
+                                        <p class="button-controls">
+                                            <a href="#" onclick="addcustommenu(this)" class="button-secondary submit-add-to-menu right">Add Menu Item</a>
+                                            <span class="spinner" id="spincustomu"></span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <div class="menu-edit">
+                    <div id="nav-menu-header">
+                        <div class="major-publishing-actions">
+                            <label class="menu-name-label howto open-label" for="menu-name">
+                                <span>Menu Name</span>
+                                <input name="menu-name" id="menu-name" type="text" class="menu-name regular-text menu-item-textbox" title="Enter menu name" value="Test Menu">
+                                <input type="hidden" id="idmenu" value="1"/>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div id="post-body">
+                        <div id="post-body-content">
+                            <h3>Menu Structure</h3>
+                            <ul class="menu ui-sortable" id="menu-to-edit" style="display: block;">
+                                <li id="menu-item-1" class="menu-item menu-item-depth-0 menu-item-page menu-item-edit-inactive pending" style="display: list-item;">
+                                    <dl class="menu-item-bar">
+                                        <dt class="menu-item-handle">
+                                            <span class="item-title">
+                                                <span class="menu-item-title">
+                                                    <span id="menutitletemp_1">Home</span>
+                                                    <span style="color: transparent;">|1|</span>
+                                                </span>
+                                                <span class="is-submenu" style="display: none;">Subelement</span>
+                                            </span>
+                                            <span class="item-controls">
+                                                <span class="item-type">page-show</span>
+                                                <span class="item-order hide-if-js">
+                                                    <a href="#" class="item-move-up" title="Move Up">↑</a> |
+                                                    <a href="#" class="item-move-down" title="Move Down">↓</a>
+                                                </span>
+                                                <a class="item-edit" id="edit-1" title="Edit" href="#"></a>
+                                            </span>
+                                        </dt>
+                                    </dl>
+                                    <div class="menu-item-settings" id="menu-item-settings-1">
+                                        <input type="hidden" class="edit-menu-item-id" name="menuid_1" value="1"/>
+                                        <p class="field-css-classes description description-thin">
+                                            <label for="edit-menu-item-classes-1">CSS Classes<br>
+                                                <input type="text" id="clases_menu_1" class="widefat code edit-menu-item-classes" name="clases_menu_1" value="">
+                                            </label>
+                                        </p>
+                                        <p class="field-css-url description description-wide">
+                                            <label for="edit-menu-item-url-1">Prefix<br>
+                                                <input type="text" id="url_menu_1" name="url_menu_1" class="widefat code edit-menu-item-url" value="page-show" disabled>
+                                            </label>
+                                        </p>
+                                        <div class="menu-item-actions description-wide submitbox">
+                                            <a class="item-delete submitdelete deletion" id="delete-1" href="#">Delete</a>
+                                            <span class="meta-sep hide-if-no-js"> | </span>
+                                            <a class="item-cancel submitcancel hide-if-no-js button-secondary" id="cancel-1" href="#">Cancel</a>
+                                            <span class="meta-sep hide-if-no-js"> | </span>
+                                            <a onclick="getmenus()" class="button button-primary updatemenu" id="update-1" href="javascript:void(0)">Update Item</a>
+                                        </div>
+                                    </div>
+                                    <ul class="menu-item-transport"></ul>
+                                </li>
+                                
+                                <li id="menu-item-2" class="menu-item menu-item-depth-0 menu-item-page menu-item-edit-inactive pending" style="display: list-item;">
+                                    <dl class="menu-item-bar">
+                                        <dt class="menu-item-handle">
+                                            <span class="item-title">
+                                                <span class="menu-item-title">
+                                                    <span id="menutitletemp_2">About</span>
+                                                    <span style="color: transparent;">|2|</span>
+                                                </span>
+                                                <span class="is-submenu" style="display: none;">Subelement</span>
+                                            </span>
+                                            <span class="item-controls">
+                                                <span class="item-type">page-show</span>
+                                                <span class="item-order hide-if-js">
+                                                    <a href="#" class="item-move-up" title="Move Up">↑</a> |
+                                                    <a href="#" class="item-move-down" title="Move Down">↓</a>
+                                                </span>
+                                                <a class="item-edit" id="edit-2" title="Edit" href="#"></a>
+                                            </span>
+                                        </dt>
+                                    </dl>
+                                    <div class="menu-item-settings" id="menu-item-settings-2">
+                                        <input type="hidden" class="edit-menu-item-id" name="menuid_2" value="2"/>
+                                        <p class="field-css-classes description description-thin">
+                                            <label for="edit-menu-item-classes-2">CSS Classes<br>
+                                                <input type="text" id="clases_menu_2" class="widefat code edit-menu-item-classes" name="clases_menu_2" value="">
+                                            </label>
+                                        </p>
+                                        <p class="field-css-url description description-wide">
+                                            <label for="edit-menu-item-url-2">Prefix<br>
+                                                <input type="text" id="url_menu_2" name="url_menu_2" class="widefat code edit-menu-item-url" value="page-show" disabled>
+                                            </label>
+                                        </p>
+                                        <div class="menu-item-actions description-wide submitbox">
+                                            <a class="item-delete submitdelete deletion" id="delete-2" href="#">Delete</a>
+                                            <span class="meta-sep hide-if-no-js"> | </span>
+                                            <a class="item-cancel submitcancel hide-if-no-js button-secondary" id="cancel-2" href="#">Cancel</a>
+                                            <span class="meta-sep hide-if-no-js"> | </span>
+                                            <a onclick="getmenus()" class="button button-primary updatemenu" id="update-2" href="javascript:void(0)">Update Item</a>
+                                        </div>
+                                    </div>
+                                    <ul class="menu submenu">
+                                        <li id="menu-item-3" class="menu-item menu-item-depth-1 menu-item-page menu-item-edit-inactive pending" style="display: list-item;">
+                                            <dl class="menu-item-bar">
+                                                <dt class="menu-item-handle">
+                                                    <span class="item-title">
+                                                        <span class="menu-item-title">
+                                                            <span id="menutitletemp_3">Our Team</span>
+                                                            <span style="color: transparent;">|3|</span>
+                                                        </span>
+                                                        <span class="is-submenu">Subelement</span>
+                                                    </span>
+                                                    <span class="item-controls">
+                                                        <span class="item-type">page-show</span>
+                                                        <span class="item-order hide-if-js">
+                                                            <a href="#" class="item-move-up" title="Move Up">↑</a> |
+                                                            <a href="#" class="item-move-down" title="Move Down">↓</a>
+                                                        </span>
+                                                        <a class="item-edit" id="edit-3" title="Edit" href="#"></a>
+                                                    </span>
+                                                </dt>
+                                            </dl>
+                                            <div class="menu-item-settings" id="menu-item-settings-3">
+                                                <input type="hidden" class="edit-menu-item-id" name="menuid_3" value="3"/>
+                                                <p class="field-css-classes description description-thin">
+                                                    <label for="edit-menu-item-classes-3">CSS Classes<br>
+                                                        <input type="text" id="clases_menu_3" class="widefat code edit-menu-item-classes" name="clases_menu_3" value="">
+                                                    </label>
+                                                </p>
+                                                <p class="field-css-url description description-wide">
+                                                    <label for="edit-menu-item-url-3">Prefix<br>
+                                                        <input type="text" id="url_menu_3" name="url_menu_3" class="widefat code edit-menu-item-url" value="page-show" disabled>
+                                                    </label>
+                                                </p>
+                                                <div class="menu-item-actions description-wide submitbox">
+                                                    <a class="item-delete submitdelete deletion" id="delete-3" href="#">Delete</a>
+                                                    <span class="meta-sep hide-if-no-js"> | </span>
+                                                    <a class="item-cancel submitcancel hide-if-no-js button-secondary" id="cancel-3" href="#">Cancel</a>
+                                                    <span class="meta-sep hide-if-no-js"> | </span>
+                                                    <a onclick="getmenus()" class="button button-primary updatemenu" id="update-3" href="javascript:void(0)">Update Item</a>
+                                                </div>
+                                            </div>
+                                            <ul class="menu-item-transport"></ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                
+                                <li id="menu-item-4" class="menu-item menu-item-depth-0 menu-item-page menu-item-edit-inactive pending" style="display: list-item;">
+                                    <dl class="menu-item-bar">
+                                        <dt class="menu-item-handle">
+                                            <span class="item-title">
+                                                <span class="menu-item-title">
+                                                    <span id="menutitletemp_4">Services</span>
+                                                    <span style="color: transparent;">|4|</span>
+                                                </span>
+                                                <span class="is-submenu" style="display: none;">Subelement</span>
+                                            </span>
+                                            <span class="item-controls">
+                                                <span class="item-type">page-show</span>
+                                                <span class="item-order hide-if-js">
+                                                    <a href="#" class="item-move-up" title="Move Up">↑</a> |
+                                                    <a href="#" class="item-move-down" title="Move Down">↓</a>
+                                                </span>
+                                                <a class="item-edit" id="edit-4" title="Edit" href="#"></a>
+                                            </span>
+                                        </dt>
+                                    </dl>
+                                    <div class="menu-item-settings" id="menu-item-settings-4">
+                                        <input type="hidden" class="edit-menu-item-id" name="menuid_4" value="4"/>
+                                        <p class="field-css-classes description description-thin">
+                                            <label for="edit-menu-item-classes-4">CSS Classes<br>
+                                                <input type="text" id="clases_menu_4" class="widefat code edit-menu-item-classes" name="clases_menu_4" value="">
+                                            </label>
+                                        </p>
+                                        <p class="field-css-url description description-wide">
+                                            <label for="edit-menu-item-url-4">Prefix<br>
+                                                <input type="text" id="url_menu_4" name="url_menu_4" class="widefat code edit-menu-item-url" value="page-show" disabled>
+                                            </label>
+                                        </p>
+                                        <div class="menu-item-actions description-wide submitbox">
+                                            <a class="item-delete submitdelete deletion" id="delete-4" href="#">Delete</a>
+                                            <span class="meta-sep hide-if-no-js"> | </span>
+                                            <a class="item-cancel submitcancel hide-if-no-js button-secondary" id="cancel-4" href="#">Cancel</a>
+                                            <span class="meta-sep hide-if-no-js"> | </span>
+                                            <a onclick="getmenus()" class="button button-primary updatemenu" id="update-4" href="javascript:void(0)">Update Item</a>
+                                        </div>
+                                    </div>
+                                    <ul class="menu-item-transport"></ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div id="nav-menu-footer">
+                        <div class="major-publishing-actions">
+                            <div class="publishing-action">
+                                <a onclick="getmenus()" name="save_menu" id="save_menu_header" class="button button-primary menu-save">Update Menu</a>
+                                <span class="spinner" id="spincustomu2"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Test configuration
+        window.menuConfig = {
+            menus: {
+                "oneThemeLocationNoMenus": "",
+                "moveUp": "Move Up",
+                "moveDown": "Move Down",
+                "moveToTop": "Move to Top",
+                "moveUnder": "Move Under",
+                "moveOutFrom": "Move Out From",
+                "under": "Under",
+                "outFrom": "Out From",
+                "menuFocus": "Menu Focus",
+                "deleteMenu": "Are you sure you want to delete this menu?",
+                "enterMenuName": "Enter menu name",
+                "subMenuFocus": "Submenu Focus"
+            },
+            routes: {
+                addCustomMenu: '/test/add-menu-item',
+                updateItem: '/test/update-item',
+                deleteItem: '/test/delete-item',
+                generateMenu: '/test/generate-menu',
+                deleteMenu: '/test/delete-menu',
+                createNewMenu: '/test/create-menu'
+            },
+            csrfToken: "test-token",
+            currentUrl: window.location.href
+        };
+    </script>
+    <script src="menu-vanilla.js"></script>
+    
+    <script>
+        // Test functions
+        function addcustommenu(element) {
+            console.log('Add custom menu called');
+            alert('Add menu item functionality would be called here');
+        }
+        
+        function getmenus() {
+            console.log('Get menus called');
+            alert('Update menu functionality would be called here');
+        }
+        
+        // Test the menu manager
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Menu Manager initialized:', window.menuManager);
+            
+            // Test drag and drop
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                console.log('Menu item draggable:', item.draggable);
+            });
+            
+            // Test accordion
+            const accordionTitles = document.querySelectorAll('.accordion-section-title');
+            accordionTitles.forEach(title => {
+                console.log('Accordion title found:', title.textContent.trim());
+            });
+        });
+    </script>
+</body>
+</html> 

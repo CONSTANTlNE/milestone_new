@@ -17,5 +17,6 @@ return [
     'Return Back' => 'Return Back',
     'All Page' => 'All Pages',
     'Add a new Page' => 'Add a new Page',
-    'Deleted Pages' => 'Deleted Pages'
+    'Deleted Pages' => 'Deleted Pages',
+    'All menu items deleted successfully' => 'All menu items deleted successfully'
 ]; 

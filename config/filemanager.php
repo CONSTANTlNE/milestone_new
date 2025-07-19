@@ -5,9 +5,9 @@ return [
     * URL path to admin panel.
     */
     'favicons' => [
-        '32' => 'storage/defaults/favicons/favicon-32x32.png',
-        '16' => 'storage/defaults/favicons/favicon-16x16.png',
-        'apple' => 'storage/defaults/favicons/apple-touch-icon.png',
+        '32' => 'storage/defaults/favicons/favicon-32x32.ico',
+        '16' => 'storage/defaults/favicons/favicon-16x16.ico',
+        'apple' => 'storage/defaults/favicons/apple-touch-icon.ico',
     ],
 
     'logos' => [

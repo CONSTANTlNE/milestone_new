@@ -406,6 +406,7 @@ Route::group(
         Route::post('/menu-items/create', [MenuController::class, 'addMenuItem'])->name('items.create');
         Route::post('/menu-items/update', [MenuController::class, 'updateMenuItem'])->name('items.update');
         Route::post('/menu-items/delete', [MenuController::class, 'deleteMenuItem'])->name('items.delete');
+        Route::post('/menu-items/delete-all', [MenuController::class, 'deleteAllMenuItems'])->name('items.deleteAll');
     });
 //blogs
     Route::prefix('blogs')->name('blogs.')->group(function () {

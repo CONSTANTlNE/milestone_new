@@ -12,12 +12,6 @@ return [
     'Mass Deleted Successfully from Archive' => 'არქივიდან ელემენტები წარმატებით წაიშალა',
     'massDestroy Successfully' => 'ელემენტები წარმატებით წაიშალა',
     'Position changed successfully' => 'პოზიცია შეიცვალა წარმატებით',
-    'Return Back' => 'უკან დაბრუნება',
-    'All Page' => 'ყველა გვერდი',
-    'Add a new Page' => 'ახალი გვერდის დამატება',
-    'Deleted Pages' => 'წაშლილი გვერდები',
-    'Return Back' => 'უკან დაბრუნება',
-    'All Page' => 'ყველა გვერდი',
-    'Add a new Page' => 'ახალი გვერდის დამატება',
-    'Deleted Pages' => 'წაშლილი გვერდები'
+    'You really want to delete it' => 'ნამდვილად გსურთ ამ მენიუს წაშლა!',
+    'Delete Successfully' => 'წარმატებით წაიშალა!'
 ];
