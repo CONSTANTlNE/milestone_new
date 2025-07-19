@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        config(['laravellocalization.supportedLocales' => json_decode(file_get_contents(lang_path('locales.json')), true)]);
+        config(['laravellocalization.supportedLocales' => json_decode(file_get_contents(lang_path('config_locales.json')), true)]);
         $this->app->singleton(LoginResponse::class, CustomLoginResponse::class);
         $this->app->singleton(LogoutResponse::class, CustomLogoutResponse::class);
     }
@@ -30,6 +30,27 @@ class AppServiceProvider extends ServiceProvider
     {
         Blade::if('fortifyFeature', function ($feature) {
             return Features::enabled($feature);
+        });
+
+        // Custom blade directive for alerts
+        Blade::directive('alert', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'info', 'message' => $expression])->render(); ?>";
+        });
+
+        Blade::directive('alertSuccess', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'success', 'message' => $expression])->render(); ?>";
+        });
+
+        Blade::directive('alertError', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'error', 'message' => $expression])->render(); ?>";
+        });
+
+        Blade::directive('alertWarning', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'warning', 'message' => $expression])->render(); ?>";
+        });
+
+        Blade::directive('alertInfo', function ($expression) {
+            return "<?php echo view('components.backend.alert', ['type' => 'info', 'message' => $expression])->render(); ?>";
         });
     }
 }

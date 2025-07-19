@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Fortify\Features;
 
+if (!function_exists('get_name_initials')) {
+    function get_name_initials(string $name): string
+    {
+        $parts = preg_split('/\s+/', trim($name));
+        return strtoupper(substr($parts[0] ?? '', 0, 1) . substr($parts[1] ?? $parts[0] ?? '', 0, 1));
+    }
+}
+
 if (! function_exists('feature_enabled_for_customer')) {
     function feature_enabled_for_customer($feature): bool
     {

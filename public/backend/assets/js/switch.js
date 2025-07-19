@@ -20,8 +20,8 @@ window.addEventListener("load", () => {
         html.style.removeProperty('--body-bg-rgb2');
         html.style.removeProperty("--light");
         html.style.removeProperty("--form-control-bg");
-        html.style.removeProperty("--input-border");  
-        if(localStorage.getItem("ynexlayout") == "horizontal"){
+        html.style.removeProperty("--input-border");
+        if(localStorage.getItem("ynexlayout") === "horizontal"){
           html.setAttribute('data-menu-styles', 'light');
         }
         if (document.querySelector("#hs-overlay-switcher")) {

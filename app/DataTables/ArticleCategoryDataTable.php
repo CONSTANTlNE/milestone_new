@@ -2,7 +2,7 @@
 
 namespace App\DataTables;
 
-use App\Models\ArticleCategory;
+use App\Models\BlogCategory;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Yajra\DataTables\EloquentDataTable;
@@ -57,7 +57,7 @@ class ArticleCategoryDataTable extends DataTable
         });
     }
 
-    public function query(ArticleCategory $model): QueryBuilder
+    public function query(BlogCategory $model): QueryBuilder
     {
         return $model->newQuery();
     }

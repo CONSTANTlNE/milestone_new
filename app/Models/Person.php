@@ -63,7 +63,7 @@ class Person extends Model
 
     public function articles(): BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Article','article_persons','person_id','article_id');
+        return $this->belongsToMany('App\Models\Blog','article_persons','person_id','article_id');
     }
 
     public function images()

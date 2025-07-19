@@ -1,79 +1,119 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.Deleted Languages') }} @endsection
+@section('title') {{ __('admin.deleted_locales') }} @endsection
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-table.css') }}">
+@endsection
 @section('content')
-    <div class="container-fluid">
-        <div class="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
-            <div class="mr-auto  d-lg-block">
-                <h2 class="text-black font-w600">{{ __('strings.Deleted Languages') }}</h2>
-                <p class="mb-0 font-w600">{{ __('strings.Welcome') }}</p>
+    <div class="content">
+        <div class="main-content">
+
+            <div class="block justify-between page-header md:flex">
+                <div>
+                    <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.375rem] font-semibold font-first-geo">{{ __('admin.deleted_locales') }}</h3>
+                    <p class="font-second-geo text-defaulttextcolor/70">{{ __('admin.welcome') }}</p>
+                </div>
+                <ol class="flex items-center whitespace-nowrap min-w-0 gap-3 header-nav-links">
+                    @can('backend.locales.index')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.locales.index') }}" class="ti-btn bg-secondary text-white !font-medium font-second-geo">
+                                <i class="ri-arrow-go-back-line text-[1.375rem]"></i>
+                                {{ __('admin.return_back') }} - {{ __('admin.all_locales') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('backend.locales.create')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.locales.create') }}" class="ti-btn bg-primary text-white !font-medium font-second-geo">
+                                <i class="ri-add-circle-line text-[1.375rem]"></i>
+                                {{__('admin.create_new_locale')}}
+                            </a>
+                        </li>
+                    @endcan
+                </ol>
             </div>
-            @can('backend.locales.index')
-                <a href="{{ route('backend.locales.index', app()->getLocale())}}" class="btn btn-info rounded"><i class="flaticon-381-repeat-1"></i> {{ __('strings.Return Back') }} - {{ __('strings.All Languages') }}</a>
-            @endcan
-            @can('backend.locales.create')
-                <a href="{{ route('backend.locales.create', app()->getLocale())}}" class="btn btn-primary rounded ml-3">{{ __('strings.Add a new Language') }}</a>
-            @endcan
-        </div>
-        @if(session('success'))
-            @include('backend.layouts.components.success',[
-              'success' => session('success'),
-            ])
-        @endif
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-responsive-md">
-                                <thead>
-                                <tr>
-                                    <th class="width80"><strong>#id</strong></th>
-                                    <th><strong>{{ __('strings.Title') }}</strong></th>
-                                    <th><strong>{{ __('strings.Code') }}</strong></th>
-                                    <th><strong>{{ __('strings.Images') }}</strong></th>
-                                    <th><strong>{{ __('strings.Actions') }}</strong></th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($locales as $locale)
-                                    <tr>
-                                        <td><strong>{{$locale->id}}</strong></td>
-                                        <td>{{$locale->name}}</td>
-                                        <td>{{$locale->code}}</td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img src="{{ asset($locale->generalImage[0]->src ?? config('filemanager.default_backend_image')) }}" class="rounded-lg mr-2" width="24" alt="">
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex">
-                                                @can('backend.locales.restore')
-                                                    <a href="{{ route('backend.locales.restore', [app()->getLocale(), 'id'=>$locale->id]) }}"
-                                                       class="btn btn-success shadow btn-xs sharp restore" style="color: #fff">
-                                                        <i class="flaticon-381-back-2"></i>
-                                                        <span>{{ __('strings.Restore') }}</span>
-                                                    </a>
-                                                @endcan
-                                                @can('backend.locales.remove')
-                                                    <form action="{{ route('backend.locales.remove', [app()->getLocale(), $locale->id]) }}" method="POST" class="action-list d-inline-block last-delete ml-2" onsubmit="return confirm('{{ __('strings.Really Final Deletion') }}');">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button class="btn btn-danger shadow btn-xs sharp">
-                                                            <i class="flaticon-381-trash-2"></i>
-                                                            <span>{{ __('strings.Final Deletion') }}</span>
-                                                        </button>
-                                                    </form>
-                                                @endcan
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+
+            <x-backend.alert-messages />
+
+            <div class="grid grid-cols-12 gap-6 index-table-page white-bg">
+                <div class="xl:col-span-12 col-span-12">
+                    <div class="box custom-box">
+                        <div class="box-header justify-between">
+                            <div class="box-title box-show-number gap-5">
+                                <x-backend.table.number />
+                                @can('backend.locales.massRemove')
+                                    <x-backend.table.massRemove
+                                        :url="route('backend.locales.massRemove')"
+                                    />
+                                @endcan
+                            </div>
+
+                            <x-backend.table.filter :status='false' />
                         </div>
+
+                        <div class="box-body">
+                            <div class="table-responsive">
+                                <table class="table whitespace-nowrap table-bordered min-w-full" id="datatablesTable">
+                                    <thead class="bg-primary/10">
+                                    <tr class="border-b border-primary/10">
+                                        @can('backend.locales.massRemove')
+                                            <th scope="col" class="select-number !text-start">
+                                                <input class="form-check-input cursor-pointer" type="checkbox" id="select-all">
+                                            </th>
+                                        @endcan
+                                        <th scope="col" class="id text-start sortable" data-sort="id">{{ __('admin.id') }}</th>
+                                        <th scope="col" class="title text-start">{{ __('admin.title') }}</th>
+                                        <th scope="col" class="created-time text-start sortable" data-sort="created_at">{{ __('admin.created_at') }}</th>
+                                        <th scope="col" class="actions text-start">{{ __('admin.actions') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @forelse($locales as $locale)
+                                        <tr class="product-list border-b border-primary/10" data-id="{{$locale->id}}">
+                                            @can('backend.locales.massRemove')
+                                                <td class="text-center">
+                                                    <input class="form-check-input list-checkbox-item cursor-pointer" type="checkbox" value="{{$locale->id}}">
+                                                </td>
+                                            @endcan
+                                            <td>
+                                                {{$locale->id}}
+                                            </td>
+                                            <td>
+                                                {{$locale->title}}
+                                            </td>
+                                            <td>
+                                                <x-backend.badge type="light" :text="$locale->created_at->format('d/m/Y H:i')" />
+                                            </td>
+                                            <td>
+                                                <x-backend.table.actions
+                                                    :model="$locale"
+                                                    show-remove="backend.locales.remove"
+                                                    show-restore="backend.locales.restore"
+                                                />
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="empty-state">
+                                            <td colspan="7" class="text-center py-8">
+                                                <x-backend.table.empty-state
+                                                    :actionText="__('admin.all_locales')"
+                                                    :trash="true"
+                                                    permission="backend.locales.index"
+                                                />
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <x-backend.pagination :paginator="$locales" />
                     </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('js/admin-table.js') }}"></script>
+@endpush
+

@@ -53,6 +53,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'url_footer' => env('APP_FOOTER_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------

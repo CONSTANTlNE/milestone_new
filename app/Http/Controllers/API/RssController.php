@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Models\Article;
+use App\Models\Blog;
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -18,7 +18,7 @@ class RssController extends Controller
      */
     public function rss(\Request $request)
     {
-        $content = Article::orderBy('id', 'DESC')->with('covers')->limit(20)->get();
+        $content = Blog::orderBy('id', 'DESC')->with('covers')->limit(20)->get();
         $view = \View::make('rss.feed')->with(['data' => $content]);
         return \Response::make($view, '200')->header('Content-Type', 'text/xml');
     }

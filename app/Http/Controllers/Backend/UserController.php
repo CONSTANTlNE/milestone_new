@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\DataTables\UsersDataTable;
-use App\DataTables\UsersDataTableTrash;
-use App\Http\Requests\ChangeStatusRequest;
-use App\Http\Requests\MassDestroyRequest;
+use App\Http\Requests\User\UserChangeStatusRequest;
 use App\Http\Requests\User\UserCreateRequest;
+use App\Http\Requests\User\UserDestroyRequest;
+use App\Http\Requests\User\UserIndexRequest;
+use App\Http\Requests\User\UserMassDestroyRequest;
+use App\Http\Requests\User\UserMassRemoveRequest;
+use App\Http\Requests\User\UserRemoveRequest;
+use App\Http\Requests\User\UserRestoreRequest;
+use App\Http\Requests\User\UserTrashRequest;
 use App\Http\Requests\User\UserUpdateRequest;
-use App\Http\Requests\RemoveRequest;
 use App\Services\UserService;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
-use JetBrains\PhpStorm\NoReturn;
 
 class UserController extends Controller
 {
@@ -24,48 +27,40 @@ class UserController extends Controller
 
     /**
      * Create the controller instance.
-     *
-     * @return void
      */
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
-        $this->authorizeResource(User::class, 'user');
-    }
-    /**
-     * View all Users.
-     *
-     * @param UsersDataTable $dataTable
-     * @return View
-     */
-    #[NoReturn] public function index(UsersDataTable $dataTable)
-    {
-        $this->authorize('viewAny', User::class);
-        return $dataTable->render('backend.users.index');
     }
 
     /**
-     * Change Status.
-     *
-     * @param ChangeStatusRequest $request
-     * @return JsonResponse
+     * Display a listing of the users.
      */
-    public function status(ChangeStatusRequest $request): JsonResponse
+    public function index(UserIndexRequest $request): View
     {
-        $this->authorize('status',User::class);
+        $this->authorize('viewAny', User::class);
+
+        return view('backend.users.index', [
+            'users' => $this->userService->index($request)
+        ]);
+    }
+
+    /**
+     * Change user status.
+     */
+    public function status(UserChangeStatusRequest $request): JsonResponse
+    {
         try {
             return $this->userService->changeStatus($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while change status user: ' . $e->getMessage()
+                'message' => 'Failed while change status User: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Create view the specified resource.
-     *
-     * @return View
+     * Show the form for creating a new user.
      */
     public function create(): View
     {
@@ -76,35 +71,30 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param UserCreateRequest $request
-     * @return JsonResponse|RedirectResponse
+     * Store a newly created user in storage.
      */
     public function store(UserCreateRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('create', User::class);
+
         try {
             $this->userService->store($request);
-            return redirect()->route('backend.users.index', app()->getLocale())
+            return redirect()->route('backend.users.index')
                 ->with('success', __('strings.Added Successfully'));
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed while creating user: ' . $e->getMessage()
+                'message' => 'Failed while creating User: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param $lang
-     * @param User $user
-     * @return JsonResponse|View
+     * Display the specified user.
      */
-    public function show($lang, User $user): JsonResponse|View
+    public function show(User $user): JsonResponse|View
     {
         $this->authorize('view', $user);
+
         try {
             return view('backend.users.show', [
                 'user' => $this->userService->show($user),
@@ -112,21 +102,17 @@ class UserController extends Controller
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve the user: ' . $e->getMessage()
+                'message' => 'Failed to retrieve the User: ' . $e->getMessage()
             ], 500);
         }
     }
-
     /**
-     * Edit the specified resource.
-     *
-     * @param $lang
-     * @param User $user
-     * @return JsonResponse|View
+     * Show the form for editing the specified user.
      */
-    public function edit($lang, User $user): JsonResponse|View
+    public function edit(User $user): JsonResponse|View
     {
         $this->authorize('update', $user);
+
         try {
             return view('backend.users.edit', [
                 'user' => $this->userService->edit($user),
@@ -134,123 +120,121 @@ class UserController extends Controller
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to editing the user: ' . $e->getMessage()
+                'message' => 'Failed to editing the User: ' . $e->getMessage()
             ], 500);
         }
     }
-
     /**
-     * Update the specified resource.
-     *
-     * @param $lang
-     * @param UserUpdateRequest $request
-     * @param User $user
-     * @return JsonResponse|View
+     * Update the specified user in storage.
      */
-    public function update($lang, UserUpdateRequest $request, User $user): JsonResponse|RedirectResponse
+    public function update(UserUpdateRequest $request, User $user): JsonResponse|RedirectResponse
     {
         $this->authorize('update', $user);
+
         try {
             $this->userService->update($request, $user);
-            return redirect()->route('backend.users.index', app()->getLocale())
+            return redirect()->route('backend.users.index')
                 ->with('success', __('strings.Updated Successfully'));
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while updating user: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    /**
-     * Soft Delete User.
-     * @param $lang
-     * @param User $user
-     * @return JsonResponse|RedirectResponse
-     */
-    public function destroy($lang, User $user): JsonResponse|RedirectResponse
-    {
-        $this->authorize('delete', $user);
-        try {
-            $this->userService->destroy($user);
-            return redirect()->route('backend.users.index', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while deleting user: ' . $e->getMessage()
+                'message' => 'Failed while updating User: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Mass Soft Delete User.
-     * @param MassDestroyRequest $request
-     * @return JsonResponse|RedirectResponse
+     * Remove the specified user from storage.
      */
-    public function massDestroy(MassDestroyRequest $request)
+    public function destroy(UserDestroyRequest $request): JsonResponse
     {
-        $this->authorize('delete', User::class);
         try {
+            return $this->userService->destroy($request);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed while deleting User: ' . $e->getMessage()
+            ], 500);
+        }
+
+    }
+
+    /**
+     * Mass delete users.
+     */
+    public function massDestroy(UserMassDestroyRequest $request): RedirectResponse|JsonResponse
+    {
+        $this->authorize('viewAny', User::class);
+
+        return $this->executeOperation(function () use ($request) {
             $this->userService->massDestroy($request);
-            return redirect()->route('backend.users.index', app()->getLocale())
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('strings.Deleted Successfully')
+                ], 200);
+            }
+
+            return redirect()->route('backend.users.index')
                 ->with('success', __('strings.Deleted Successfully'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while mass deleting user: ' . $e->getMessage()
-            ], 500);
-        }
+        }, 'User Mass Deletion');
     }
 
-    // Archive
+    // Archive Methods
     /**
      * View all Users in Trash.
      *
-     * @param UsersDataTableTrash $dataTable
+     * @param UserTrashRequest $request
      * @return mixed
+     * @throws AuthorizationException
      */
-    #[NoReturn] public function trash(UsersDataTableTrash $dataTable)
+    public function trash(UserTrashRequest $request): View
     {
         $this->authorize('trash', User::class);
-        return $dataTable->render('backend.users.trash');
+
+        return view('backend.users.trash', [
+            'users' => $this->userService->trash($request)
+        ]);
     }
 
-    public function restore($lang, $id)
+    /**
+     * Restore a soft deleted user.
+     */
+    public function restore(UserRestoreRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('restore', User::class);
+
         try {
-            $this->userService->restore($id);
-            return redirect()->route('backend.users.trash', app()->getLocale())
-                ->with('success', __('strings.Restored Successfully'));
+            return $this->userService->restore($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while restoring user: ' . $e->getMessage()
-            ], 500);
-        }
-
-    }
-
-    public function remove($lang, $id): JsonResponse|RedirectResponse
-    {
-        $this->authorize('remove', User::class);
-        try {
-            $this->userService->remove($id);
-            return redirect()->route('backend.users.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while removing user: ' . $e->getMessage()
+                'message' => 'Failed while restoring User: ' . $e->getMessage()
             ], 500);
         }
     }
-
-    public function massRemove(MassDestroyRequest $request): JsonResponse|RedirectResponse
+    /**
+     * Permanently delete a user from trash.
+     */
+    public function remove(UserRemoveRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('remove', User::class);
         try {
-            $this->userService->massRemove($request);
-            return redirect()->route('backend.users.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
+            return $this->userService->remove($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while mass Removing user: ' . $e->getMessage()
+                'message' => 'Failed while removing User: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    /**
+     * Mass permanently delete users from trash.
+     */
+    public function massRemove(UserMassRemoveRequest $request): JsonResponse|RedirectResponse
+    {
+        $this->authorize('remove', User::class);
+        try {
+            return $this->userService->massRemove($request);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed while mass removing User: ' . $e->getMessage()
             ], 500);
         }
     }

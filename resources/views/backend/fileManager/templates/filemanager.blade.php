@@ -1,135 +1,140 @@
 <script>
-    var imageGroup = null;
+    // Assuming you already have a fileManager function and Modal defined in vanilla JS.
+    let imageGroup = null;
 
-    $(function () {
-        var fileManager = createFileManager({
+    window.addEventListener('DOMContentLoaded', () => {
+        const fileManager = createFileManager({
             modal: true,
-            fileType: "{!! @$anyFileType ? 'undefined' : "" !!}",
-            folderId: "{{ @$folderId }}",
-            indexRoute: "{{ route('backend.files.index', app()->getLocale()) }}",
+            fileType: window.anyFileType ?? '',
+            folderId: window.folderId ?? '',
+            indexRoute: @json($indexRoute),
             uploadBehaviour: 'related',
-            onSelect: function (files) {
-                var data = imageGroup.data() || {};
-                var name = data.name || 'images[]';
-                var multi = !(data.multi === false);
-                var siteName = $(location).attr('origin');
+            onSelect: (files) => {
+                if (!imageGroup) return;
+
+                const name = imageGroup.dataset.name || 'images[]';
+                const multi = imageGroup.dataset.multi !== 'false';
+                const siteName = window.location.origin;
+                console.log(siteName);
 
                 if (files.length > 0) {
-                    imageGroup.find('.image-previews').parents('.form-group').show();
-                    imageGroup.find('.bxs-file-image').hide();
+                    imageGroup.querySelector('.image-previews').closest('.form-group').style.display = 'block';
+                    imageGroup.querySelector('.bxs-file-image').style.display = 'none';
                 }
 
-                if(!multi) {
-                    files = files.slice(0, 1);
-                }
+                const previews = imageGroup.querySelector('.image-previews');
+                const inputs = imageGroup.querySelector('.selected-image-inputs');
 
-                $.each(files, function (k, file) {
-                    if(!multi) {
-                        imageGroup.find('.selected-image-inputs input').remove();
-                        imageGroup.find('.image-previews li').remove();
+                if (!multi) files = files.slice(0, 1);
+
+                files.forEach(file => {
+                    if (!multi) {
+                        inputs.innerHTML = '';
+                        previews.innerHTML = '';
                     }
 
-                    imageGroup.find('.selected-image-inputs').append(
-                        $('<input>').attr({type: 'hidden', name: name, value: file.id})
-                    );
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = name;
+                    input.value = file.id;
+                    inputs.appendChild(input);
 
-                    var previewImage = file.type === 'image' ?
-                        $('<img>').attr({class: 'avatar-lg', src: siteName+'/'+file.src, alt: file.title, href: siteName+'/'+file.src, 'data-fancybox': 'gallery', 'data-holder-rendered':'true'}) :
-                        $('<img>').attr({class: 'avatar-lg', src: siteName+'/storage/defaults/files.svg', alt: file.title, href: siteName+'/'+file.src, 'data-fancybox': 'gallery', 'data-holder-rendered':'true'});
+                    const previewImage = document.createElement('img');
+                    previewImage.className = 'avatar-lg';
 
+                    previewImage.src = file.type === 'image' ? `${file.src}` : `${siteName}/storage/defaults/files.svg`;
+                    previewImage.alt = file.id;
+                    previewImage.dataset.fancybox = 'gallery';
 
-                    var sel = "";
-                    if(imageGroup.find('.image-previews').attr('data-type') == "multy" && file.type === 'image'){
-                        var sel =  "<select name='cover[]' id='covers' class='form-control covers' data-select2-id='covers' tabindex='-1' aria-hidden='true'><option value='default'>Default</option><option value='slider'>Slider</option><option value='cover'>Cover</option><option value='versus1'>Versus1</option><option value='versus2'>Versus2</option><option value='sent'>Sent</option><option value='received'>Received</option></select>";
-                    }else{
-                        var sel =  "<select name='cover[]' id='covers' class='form-control covers' data-select2-id='covers' tabindex='-1' aria-hidden='true' style='display:none;'><option value='general'>general</option></select>";
-                    }
+                    let sel = document.createElement('select');
+                    sel.name = 'cover[]';
+                    sel.className = 'form-control covers';
+                    sel.innerHTML = previews.dataset.type === 'multy' && file.type === 'image'
+                        ? '<option value="default">Default</option><option value="slider">Slider</option><option value="cover">Cover</option><option value="versus1">Versus1</option><option value="versus2">Versus2</option><option value="sent">Sent</option><option value="received">Received</option>'
+                        : '<option value="general">General</option>';
+                    if (previews.dataset.type !== 'multy') sel.style.display = 'none';
 
-                    imageGroup.find('.image-previews').append(
-                        $('<li>').attr({
-                            href: siteName+'/'+file.src,
-                            title: file.title,
-                            'data-id': file.id,
-                        }).addClass("image").append(sel).append(
-                            $('<button>').addClass('btn btn-danger btn-circle').attr({
-                                'data-id': file.id,
-                                type: 'button'
-                            }).append($('<i>').addClass('fa fa-times')),
-                            previewImage
-                        ));
+                    const li = document.createElement('li');
+                    li.className = 'image';
+                    li.dataset.id = file.id;
+                    li.title = file.id;
+                    li.setAttribute('href', `${file.src}`);
 
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn btn-danger btn-circle';
+                    btn.dataset.id = file.id;
+                    btn.innerHTML = '<i class="ri ri-close-line"></i>';
+                    btn.addEventListener('click', (e) => handleRemove(e, imageGroup));
+
+                    li.appendChild(sel);
+                    li.appendChild(btn);
+                    li.appendChild(previewImage);
+                    previews.appendChild(li);
                 });
 
-                bindEventsOnRemove();
-                // bindFancyboxEvenets();
-                bindSortableEvents(true);
+                bindSortable(previews, inputs, name);
             }
         });
 
-        $('.select-media-btn').click(function () {
-            imageGroup = $(this).closest('.image-group');
-            fileManager.show();
-        });
-
-        // function bindFancyboxEvenets() {
-        //   $('.image-previews li img').fancybox();
-        // }
-
-        function bindSortableEvents(rebind) {
-            if (rebind) $(".sortable-images").sortable('destroy');
-            $(".sortable-images").sortable({
-                handle: 'img',
-                cancel: '',
-                update: function (event, ui) {
-                    var scopeEl = $(this).closest('.image-group');
-                    var name = scopeEl.data().name || 'images[]';
-
-                    var imageInputs = scopeEl.find("input[name='" + name + "']");
-                    var imageInputsById = {};
-                    $.each(imageInputs, function (k, input) {
-                        imageInputsById[input.value] = input;
-                        $(input).remove();
-                    });
-
-                    var sortedIds = $(this).closest(".sortable-images").sortable("toArray", {attribute: 'data-id'});
-                    $.each(sortedIds, function (k, imageId) {
-                        scopeEl.find('.selected-image-inputs').append($(imageInputsById[imageId]));
-                    });
-                }
+        document.querySelectorAll('.select-media-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                imageGroup = btn.closest('.image-group');
+                fileManager.show();
             });
-        }
+        });
+    });
 
-        function bindEventsOnRemove() {
-            $('.image-previews .image button').click(function (e) {
-                var scopeEl = $(this).closest('.image-group');
+    function handleRemove(e, scopeEl) {
+        e.preventDefault();
 
-                e.stopPropagation();
-                e.preventDefault();
-                var id = $(this).data().id;
-                var parent = $(this).parent();
+        const id = e.currentTarget.dataset.id;
+        const parent = e.currentTarget.parentElement;
+        const deleteTextDiv = document.querySelector('.file-manager-modal-delete-text');
 
-                Modal.show({
-                    yesClass: 'btn-danger',
-                    body: 'Are you sure, you want to Remove file?',
-                    yes: 'Yes',
-                    callback: function (btn) {
-                        Modal.hide();
+        const title = deleteTextDiv.dataset.question || '';
+        const text = deleteTextDiv.dataset.text || '...';
+        const yes = deleteTextDiv.dataset.name || '';
+        const no = deleteTextDiv.dataset.cancel || '';
 
-                        if (btn === 'yes') {
-                            scopeEl.find('.selected-image-inputs input[value="' + id + '"]').remove();
-                            parent.remove();
-                            if (scopeEl.find('.image-previews li').length < 1) {
-                                scopeEl.find('.image-previews').parents('.form-group').hide();
-                                scopeEl.find('.bxs-file-image').show();
-                            }
-                        }
+        Modal.show({
+            title,
+            text,
+            yes,
+            no,
+            yesClass : 'bg-danger',
+            callback: (btn) => {
+                Modal.hide();
+                if (btn === 'yes') {
+                    scopeEl.querySelector(`.selected-image-inputs input[value='${id}']`)?.remove();
+                    parent.remove();
+
+                    if (!scopeEl.querySelector('.image-previews li')) {
+                        scopeEl.querySelector('.image-previews').closest('.form-group').style.display = 'none';
+                        scopeEl.querySelector('.bxs-file-image').style.display = 'block';
                     }
-                });
-            })
-        }
+                }
+            }
+        });
+    }
 
-        // bindFancyboxEvenets();
-        bindEventsOnRemove();
-        bindSortableEvents();
-    })
+    function bindSortable(previewContainer, inputContainer, inputName) {
+        new Sortable(previewContainer, {
+            handle: 'img',
+            onEnd: () => {
+                const sorted = Array.from(previewContainer.querySelectorAll('li'))
+                    .map(el => el.dataset.id);
+
+                const map = {};
+                inputContainer.querySelectorAll(`input[name='${inputName}']`).forEach(input => {
+                    map[input.value] = input;
+                });
+
+                inputContainer.innerHTML = '';
+                sorted.forEach(id => {
+                    if (map[id]) inputContainer.appendChild(map[id]);
+                });
+            }
+        });
+    }
 </script>

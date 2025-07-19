@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Models\ArticleCategory;
+use App\Models\BlogCategory;
 use App\Models\MenuItem;
 use App\Models\Page;
 use App\Models\Person;
@@ -48,7 +48,7 @@ class MenuController extends Controller
 
         $pages = Page::all();
         $persons = Person::all();
-        $articleCategories = ArticleCategory::all();
+        $articleCategories = BlogCategory::all();
         $verdicts = Verdict::all();
         $regions = Region::all();
         return view('backend.menus.edit', compact('menu', 'menuItems', 'pages', 'persons', 'articleCategories', 'verdicts', 'regions'));

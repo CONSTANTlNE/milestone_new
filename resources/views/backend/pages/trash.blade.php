@@ -1,31 +1,112 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.Deleted Pages') }} @endsection
+@section('title') {{ __('admin.deleted_pages') }} @endsection
+@section('styles')
+    <link rel="stylesheet" href="{{ asset('css/admin-table.css') }}">
+@endsection
 @section('content')
-    <div class="container-fluid">
-        <div class="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
-            <div class="mr-auto  d-lg-block">
-                <h2 class="text-black font-w600">{{ __('strings.Deleted Pages') }}</h2>
-                <p class="mb-0 font-w600">{{ __('strings.Welcome') }}</p>
+    <div class="content">
+        <div class="main-content">
+
+            <div class="block justify-between page-header md:flex">
+                <div>
+                    <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.375rem] font-semibold font-first-geo">{{ __('admin.deleted_pages') }}</h3>
+                    <p class="font-second-geo text-defaulttextcolor/70">{{ __('admin.welcome') }}</p>
+                </div>
+                <ol class="flex items-center whitespace-nowrap min-w-0 gap-3 header-nav-links">
+                    @can('backend.pages.index')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.pages.index') }}" class="ti-btn bg-secondary text-white !font-medium font-second-geo">
+                                <i class="ri-arrow-go-back-line text-[1.375rem]"></i>
+                                {{ __('admin.return_back') }} - {{ __('admin.all_pages') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('backend.pages.create')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.pages.create') }}" class="ti-btn bg-primary text-white !font-medium font-second-geo">
+                                <i class="ri-add-circle-line text-[1.375rem]"></i>
+                                {{__('admin.create_new_page')}}
+                            </a>
+                        </li>
+                    @endcan
+                </ol>
             </div>
-            @can('backend.pages.index')
-                <a href="{{ route('backend.pages.index', app()->getLocale())}}" class="btn btn-info rounded"><i class="flaticon-381-repeat-1"></i> {{ __('strings.Return Back') }} - {{ __('strings.All Page') }}</a>
-            @endcan
-            @can('backend.pages.create')
-                <a href="{{ route('backend.pages.create', app()->getLocale()) }}" class="btn btn-primary rounded ml-3"><i class="flaticon-381-add-2"></i> {{ __('strings.Add a new Page') }}</a>
-            @endcan
-        </div>
-        @if(session('success'))
-            @include('backend.layouts.components.success',[
-              'success' => session('success'),
-            ])
-        @endif
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            {{ $dataTable->table() }}
+
+            <x-backend.alert-messages />
+
+            <div class="grid grid-cols-12 gap-6 index-table-page white-bg">
+                <div class="xl:col-span-12 col-span-12">
+                    <div class="box custom-box">
+                        <div class="box-header justify-between">
+                            <div class="box-title box-show-number gap-5">
+                                <x-backend.table.number />
+                                @can('backend.pages.massRemove')
+                                    <x-backend.table.massRemove
+                                        :url="route('backend.pages.massRemove')"
+                                    />
+                                @endcan
+                            </div>
+
+                            <x-backend.table.filter :status='false' />
                         </div>
+
+                        <div class="box-body">
+                            <div class="table-responsive">
+                                <table class="table whitespace-nowrap table-bordered min-w-full" id="datatablesTable">
+                                    <thead class="bg-primary/10">
+                                    <tr class="border-b border-primary/10">
+                                        @can('backend.pages.massDestroy')
+                                            <th scope="col" class="select-number !text-start">
+                                                <input class="form-check-input cursor-pointer" type="checkbox" id="select-all">
+                                            </th>
+                                        @endcan
+                                        <th scope="col" class="id text-start sortable" data-sort="id">{{ __('admin.id') }}</th>
+                                        <th scope="col" class="title text-start">{{ __('admin.title') }}</th>
+                                        <th scope="col" class="created-time text-start sortable" data-sort="created_at">{{ __('admin.created_at') }}</th>
+                                        <th scope="col" class="actions text-start">{{ __('admin.actions') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @forelse($pages as $page)
+                                        <tr class="product-list border-b border-primary/10" data-id="{{$page->id}}">
+                                            @can('backend.pages.massRemove')
+                                                <td class="text-center">
+                                                    <input class="form-check-input list-checkbox-item cursor-pointer" type="checkbox" value="{{$page->id}}">
+                                                </td>
+                                            @endcan
+                                            <td>
+                                                {{$page->id}}
+                                            </td>
+                                            <td>
+                                                <x-backend.translation-text :model="$page" field="title" :limit="40" />
+                                            </td>
+                                            <td>
+                                                <x-backend.badge type="light" :text="$page->created_at->format('d/m/Y H:i')" />
+                                            </td>
+                                            <td>
+                                                <x-backend.table.actions
+                                                    :model="$page"
+                                                    show-remove="backend.pages.remove"
+                                                    show-restore="backend.pages.restore"
+                                                />
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="empty-state">
+                                            <td colspan="7" class="text-center py-8">
+                                                <x-backend.table.empty-state
+                                                    :actionText="__('admin.all_pages')"
+                                                    :trash="true"
+                                                    permission="backend.pages.index"
+                                                />
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <x-backend.pagination :paginator="$pages" />
                     </div>
                 </div>
             </div>
@@ -33,6 +114,5 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{asset('js/additional/datatables/jquery.dataTables.min.js')}}"></script>
-    {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
+    <script src="{{ asset('js/admin-table.js') }}"></script>
 @endpush

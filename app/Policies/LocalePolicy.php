@@ -69,9 +69,10 @@ class LocalePolicy
      * Determine whether the user can delete the model.
      *
      * @param User $user
+     * @param Locale $locale
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Locale $locale): bool
     {
         return $user->can('backend.locales.destroy');
     }

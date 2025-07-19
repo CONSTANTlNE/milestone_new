@@ -52,7 +52,7 @@ class Region extends Model
 
     public function articles(): BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Article','article_regions','region_id','article_id');
+        return $this->belongsToMany('App\Models\Blog','article_regions','region_id','article_id');
     }
 
     public function images()

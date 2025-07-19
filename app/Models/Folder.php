@@ -22,9 +22,9 @@ class Folder extends Model
   //   return $this->morphedByMany(Destination::class, 'folderable');
   // }
 
-  public function files()
+  public function files(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
   {
-    return $this->morphedByMany(File::class, 'folderable');
+    return $this->belongsToMany(File::class, 'file_folder');
   }
 
   public function delete()

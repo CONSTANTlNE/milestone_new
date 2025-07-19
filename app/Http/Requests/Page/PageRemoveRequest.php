@@ -1,30 +1,31 @@
 <?php
 
 namespace App\Http\Requests\Page;
+
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\IsTrashedRule;
 
 class PageRemoveRequest extends FormRequest
 {
-  /**
-   * Determine if the user is authorized to make this request.
-   *
-   * @return bool
-   */
-  public function authorize(): bool
-  {
-    return true;
-  }
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
 
-  /**
-   * Get the validation rules that apply to the request.
-   *
-   * @return array
-   */
-  public function rules(): array
-  {
-    return [
-
-    ];
-  }
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules(): array
+    {
+        return [
+            'id' => ['required', 'integer', 'exists:pages,id']
+        ];
+    }
 }
-

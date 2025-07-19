@@ -23,7 +23,7 @@ class Page extends Model
     public $table = 'pages';
     const CACHE_TTL = 86400; // 1 day
 
-    protected $dates = [
+    protected array $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
@@ -34,12 +34,10 @@ class Page extends Model
         'title',
         'slug',
         'slogan',
-        'links',
         'content',
-        'videos',
-        'icon',
         'status',
-        'position',
+        'src',
+        'template',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -48,7 +46,6 @@ class Page extends Model
     public array $translatable = [
         'title',
         'slug',
-        'links',
         'slogan',
         'content',
     ];
@@ -60,33 +57,44 @@ class Page extends Model
         return $this->morphMany('App\Models\Seo','seoble');
     }
 
-    public function images()
+    public function images(): MorphToMany
     {
-        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->orderBy('ord');
+        return $this->morphToMany(File::class, 'fileable')
+            ->withPivot('cover')
+            ->orderBy('position');
     }
 
-    public function generalImages()
+    public function generalImages(): MorphToMany
     {
-        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('ord', '<', 1)->orderBy('ord');
+        return $this->morphToMany(File::class, 'fileable')
+            ->withPivot('cover')
+            ->where('position', '<', 1)
+            ->orderBy('position');
     }
 
     public function generalImage(): MorphToMany
     {
         return $this->morphToMany(File::class, 'fileable')
             ->withPivot('cover')
-            ->where('ord', '<', 1)
+            ->where('position', '<', 1)
             ->where('cover', 'general')
-            ->orderBy('ord');
+            ->orderBy('position');
     }
 
-    public function coverStatusImages()
+    public function coverStatusImages(): MorphToMany
     {
-        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('ord', '>', 0)->orderBy('ord');
+        return $this->morphToMany(File::class, 'fileable')
+            ->withPivot('cover')
+            ->where('position', '>', 0)
+            ->orderBy('position');
     }
 
     public function allImages()
     {
-        return $this->morphToMany(File::class, 'fileable')->withPivot('cover')->where('ord', '>', 0)->orderBy('ord');
+        return $this->morphToMany(File::class, 'fileable')
+            ->withPivot('cover')
+            ->where('position', '>', 0)
+            ->orderBy('position');
     }
 
     public function folders()

@@ -3,30 +3,55 @@
 namespace App\Services;
 
 use App\Contracts\UserInterface;
-use App\Http\Requests\ChangeStatusRequest;
+use App\Http\Requests\User\UserChangeStatusRequest;
 use App\Http\Requests\User\UserCreateRequest;
-use App\Http\Requests\MassDestroyRequest;
-use App\Http\Requests\MassRemoveRequest;
+use App\Http\Requests\User\UserDestroyRequest;
+use App\Http\Requests\User\UserMassDestroyRequest;
+use App\Http\Requests\User\UserMassRemoveRequest;
+use App\Http\Requests\User\UserRemoveRequest;
+use App\Http\Requests\User\UserRestoreRequest;
+use App\Http\Requests\User\UserTrashRequest;
 use App\Http\Requests\User\UserUpdateRequest;
-use App\Http\Requests\RemoveRequest;
 use App\Http\Resources\User\UserResource;
-use App\Http\Resources\User\UsersResource;
+use App\Http\Requests\User\UserIndexRequest;
 use App\Models\Role;
 use App\Traits\ImageUploadTrait;
-use App\Traits\MenuTrait;
 use App\Traits\MultiTranslatableTrait;
-use DB;
-use Hash;
 use Illuminate\Http\JsonResponse;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 class UserService implements UserInterface
 {
-    use MenuTrait, ImageUploadTrait, MultiTranslatableTrait;
+    use ImageUploadTrait, MultiTranslatableTrait;
 
-    public function getRole()
+    public function index(UserIndexRequest $request): LengthAwarePaginator
+    {
+        $locale = app()->getLocale();
+
+        return User::query()
+            ->when($request->filled('search'), function ($query) use ($request, $locale) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search, $locale) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
+                });
+            })
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                $request->input('sort_direction', 'desc')
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
+    }
+
+    public function getRole(): \Illuminate\Database\Eloquent\Collection
     {
         return Role::all();
     }
@@ -35,15 +60,23 @@ class UserService implements UserInterface
     {
         return $user->seo()->first();
     }
-    public function changeStatus(ChangeStatusRequest $request): JsonResponse
+    public function changeStatus(UserChangeStatusRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('User');
+        Cache::forget('users');
 
         $user = User::find($data['id']);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
+
         $user->update(['status' => $data['status']]);
 
-        return  response()->json([
+        return response()->json([
             'message' => __('strings.Status changed successfully'),
             'alert-type' => 'success'
         ]);
@@ -52,19 +85,21 @@ class UserService implements UserInterface
     public function store(UserCreateRequest $request): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('User');
-
+        Cache::forget('users');
         $user = new User();
         $user->setMultiTranslations($data);
         $user->status = $data['status'];
         $user->email = $data['email'];
+        $user->name = $data['email'];
+        $user->phone = $data['phone'];
         $user->password = Hash::make($data['password']);
-        $user->password_confirmation = $data['password_confirmation'];
+        $user->created_at = $data['published_at'] ?? now();
+        //$user->password_confirmation = $data['password_confirmation'];
         $user->save();
         if ($data['role'] != 0){
             $user->assignRole((int) $data['role']);
         }
-        $this->processAndSaveImages($data, $user);
+        $this->processAndSaveImages($data, $user, true);
         $user->fresh();
 
         return response()->json([
@@ -86,23 +121,23 @@ class UserService implements UserInterface
     public function update(UserUpdateRequest $request, User $user): JsonResponse
     {
         $data = $request->validated();
-        Cache::forget('User');
-        if(!empty($data['password'])){
-            $data['confirmPassword'] = $data['password'];
-            $data['password'] = Hash::make($data['password']);
-        }else{
-            $data['password'] = Auth::user()->password;
-            $data['confirmPassword'] = Auth::user()->password;
-        }
+        Cache::forget('users');
         $user->setMultiTranslations($data);
         $user->status = $data['status'];
         $user->email = $data['email'];
-        $user->update($data);
+        $user->phone = $data['phone'];
+        $user->created_at = $data['published_at'] ?? now();
+
+        if(!empty($data['password'])){
+            $user->password = Hash::make($data['password']);
+        }
+
+        $user->save();
         if ($data['role'] != 0){
-            DB::table('model_has_roles')->where('model_id',$user->id)->delete();
+            DB::table('model_has_roles')->where('model_id', $user->id)->delete();
             $user->assignRole((int) $data['role']);
         }
-        $this->processAndSaveImages($data, $user);
+        $this->processAndSaveImages($data, $user, true);
         $user->fresh();
 
         return response()->json([
@@ -111,68 +146,96 @@ class UserService implements UserInterface
         ], 201);
     }
 
-    public function destroy(User $user): JsonResponse
+    public function destroy(UserDestroyRequest $request): JsonResponse
     {
+        Cache::forget('users');
+        $user = User::find($request->id);
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found',
+                'alert-type' => 'error'
+            ], 404);
+        }
         $user->delete();
 
         return response()->json([
             'message' => __('strings.Deleted Successfully'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massDestroy(MassDestroyRequest $request): JsonResponse
+    public function massDestroy(UserMassDestroyRequest $request): JsonResponse
     {
-        Cache::forget('User');
-        $users = User::whereIn('id', $request->ids);
-        $users->delete();
+        Cache::forget('users');
+        User::whereIn('id', $request->ids)->delete();
         return response()->json([
             'message' => __('strings.massDestroy Successfully'),
         ], 204);
     }
 
-    // Archive Function Method
-    public function restore($id): void
+// Archive Function Method
+    public function trash(UserTrashRequest $request): LengthAwarePaginator
     {
-        Cache::forget('User');
-        $user = User::where('id', $id)->withTrashed()->first();
-        $user->restore();
-        $user->fresh();
+        $locale = app()->getLocale();
+
+        return User::onlyTrashed()
+            ->when($request->filled('search'), function ($query) use ($request, $locale) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search, $locale) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
+                });
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                $request->input('sort_direction', 'desc')
+            )
+            ->paginate($request->input('per_page', 10))
+            ->appends($request->query());
     }
 
-    public function remove($id): JsonResponse
+    public function restore(UserRestoreRequest $request): JsonResponse
     {
-        Cache::forget('User');
-        Cache::forget('generalUser'.$id);
-        Cache::forget('statusImageShowUser'.$id);
-        Cache::forget('mainPdfShowUser'.$id);
-        Cache::forget('defaultImageShowUser'.$id);
-        $data = User::where('id', $id)->withTrashed()->first();
+        Cache::forget('users');
+        $user = User::where('id', $request->id)->withTrashed()->first();
+        $user->restore();
+        $user->fresh();
+
+        return response()->json([
+            'message' => __('strings.Restored Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
+    }
+
+    public function remove(UserRemoveRequest $request): JsonResponse
+    {
+        Cache::forget('users');
+        $pageId = $request->id;
+        $data = User::where('id', $pageId)->withTrashed()->first();
         $data->images()->detach();
         $data->forceDelete();
         $data->fresh();
 
         return response()->json([
             'message' => __('strings.Deleted Successfully from Archive'),
-        ], 204);
+            'alert-type' => 'success'
+        ]);
     }
 
-    public function massRemove(MassRemoveRequest $request): JsonResponse
+    public function massRemove(UserMassRemoveRequest $request): JsonResponse
     {
-        Cache::forget('User');
-        $users = User::whereIn('id', $request->ids)->get();
+        Cache::forget('users');
+        $users = User::withTrashed()->whereIn('id', $request->ids)->get();
+
         foreach ($users as $user) {
-            Cache::forget('generalUser'.$user->id);
-            Cache::forget('statusImageShowUser'.$user->id);
-            Cache::forget('mainPdfShowUser'.$user->id);
-            Cache::forget('defaultImageShowUser'.$user->id);
-            $user->forceDelete();
             $user->images()->detach();
         }
 
         User::whereIn('id', $request->ids)->withTrashed()->forceDelete();
 
         return response()->json([
-            'message' => __('strings.Deleted Successfully from Archive'),
-        ], 200);
+            'message' => __('strings.Mass Deleted Successfully from Archive'),
+            'alert-type' => 'success'
+        ]);
     }
 }

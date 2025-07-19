@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('permissions', function (Blueprint $table) {
             $table->jsonb('title');
+            $table->boolean('status')->default(true)->index();
             $table->softDeletes();
             $table->index('deleted_at');
         });
@@ -26,6 +27,7 @@ return new class extends Migration
         Schema::table('permissions', function (Blueprint $table) {
             $table->dropColumn([
                 'title',
+                'status',
                 'deleted_at'
             ]);
         });

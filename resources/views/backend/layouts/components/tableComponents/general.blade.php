@@ -1,6 +1,6 @@
 <button id="general-{{$locale->id}}"
         type="button"
-        hx-post="{{ route('backend.locales.general', [app()->getLocale(), 'id'=>$locale->id]) }}"
+        hx-post="{{ route('backend.locales.general', [app()->getLocale(), 'id'=>$locale->code]) }}"
         hx-trigger="click"
         hx-target="#general-{{$locale->id}}"
         hx-swap="outerHTML"

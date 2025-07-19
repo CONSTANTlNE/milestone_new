@@ -15,7 +15,7 @@ return new class extends Migration
             $table->foreignId('file_id')->constrained()->cascadeOnDelete();
             $table->unsignedBigInteger('fileable_id');
             $table->string('fileable_type');
-            $table->enum('cover', ['general','slider','social','default'])->default('default')->index();
+            $table->enum('cover', ['general','cover','slider','social','default'])->default('default')->index();
             $table->unsignedInteger('position')->default(0)->index();
             $table->timestamps();
 

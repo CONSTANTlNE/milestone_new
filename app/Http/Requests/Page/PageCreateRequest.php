@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Requests\Page;
+use App\Models\Page;
 use App\Rules\NonEmptyTitleArray;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -23,9 +24,11 @@ class PageCreateRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'status' => ['required', 'string'],
             'parent_id' => ['nullable', 'exists:pages,id'],
+            'published_at' => ['nullable'],
             'title' => ['array', new NonEmptyTitleArray],
             'slogan' => ['array'],
             'content' => ['array'],
@@ -35,6 +38,17 @@ class PageCreateRequest extends FormRequest
             'images' => ['array'],
             'mainImage_id' => ['integer'],
             'cover' => ['array'],
+            'template' => [
+                'required',
+                function ($attribute, $value, $fail) {
+                    if ($value !== 'frontend.page.show') {
+                        $exists = Page::where('template', $value)->exists();
+                        if ($exists) {
+                            $fail(__('messages.error_template_unique', ['attribute' => $attribute]));
+                        }
+                    }
+                },
+            ],
         ];
     }
 

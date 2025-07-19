@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\DataTables\RolesDataTable;
-use App\DataTables\RolesDataTableTrash;
-use App\Http\Requests\ChangeStatusRequest;
-use App\Http\Requests\MassDestroyRequest;
+use App\Http\Requests\Role\RoleChangeStatusRequest;
 use App\Http\Requests\Role\RoleCreateRequest;
+use App\Http\Requests\Role\RoleDestroyRequest;
+use App\Http\Requests\Role\RoleIndexRequest;
+use App\Http\Requests\Role\RoleMassDestroyRequest;
+use App\Http\Requests\Role\RoleMassRemoveRequest;
+use App\Http\Requests\Role\RoleRemoveRequest;
+use App\Http\Requests\Role\RoleRestoreRequest;
+use App\Http\Requests\Role\RoleTrashRequest;
 use App\Http\Requests\Role\RoleUpdateRequest;
-use App\Http\Requests\RemoveRequest;
 use App\Services\RoleService;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\View\View;
-use JetBrains\PhpStorm\NoReturn;
 
 class RoleController extends Controller
 {
@@ -24,48 +27,42 @@ class RoleController extends Controller
 
     /**
      * Create the controller instance.
-     *
-     * @return void
      */
     public function __construct(RoleService $roleService)
     {
         $this->roleService = $roleService;
-        $this->authorizeResource(Role::class, 'role');
     }
+
     /**
-     * View all Roles.
-     *
-     * @param RolesDataTable $dataTable
-     * @return View
+     * Display a listing of the roles.
      */
-    #[NoReturn] public function index(RolesDataTable $dataTable)
+    public function index(RoleIndexRequest $request): View
     {
         $this->authorize('viewAny', Role::class);
-        return $dataTable->render('backend.roles.index');
+
+        return view('backend.roles.index', [
+            'roles' => $this->roleService->index($request)
+        ]);
     }
 
     /**
      * Change Status.
      *
-     * @param ChangeStatusRequest $request
+     * @param RoleChangeStatusRequest $request
      * @return JsonResponse
      */
-    public function status(ChangeStatusRequest $request): JsonResponse
+    public function status(RoleChangeStatusRequest $request): JsonResponse
     {
-        $this->authorize('status',Role::class);
         try {
             return $this->roleService->changeStatus($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while change status role: ' . $e->getMessage()
+                'message' => 'Failed while change status Role: ' . $e->getMessage()
             ], 500);
         }
     }
-
     /**
-     * Create view the specified resource.
-     *
-     * @return View
+     * Show the form for creating a new role.
      */
     public function create(): View
     {
@@ -74,23 +71,23 @@ class RoleController extends Controller
             'permissions' => $this->roleService->getPermission()
         ]);
     }
-
     /**
      * Store a newly created resource in storage.
      *
      * @param RoleCreateRequest $request
      * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
      */
-    public function store(RoleCreateRequest $request): JsonResponse|RedirectResponse
+    public function store(RoleCreateRequest $request): RedirectResponse|JsonResponse
     {
         $this->authorize('create', Role::class);
         try {
             $this->roleService->store($request);
-            return redirect()->route('backend.roles.index', app()->getLocale())
+            return redirect()->route('backend.roles.index')
                 ->with('success', __('strings.Added Successfully'));
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed while creating role: ' . $e->getMessage()
+                'message' => 'Failed while creating Role: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -98,13 +95,14 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param $lang
      * @param Role $role
      * @return JsonResponse|View
+     * @throws AuthorizationException
      */
-    public function show($lang, Role $role): JsonResponse|View
+    public function show(Role $role): JsonResponse|View
     {
         $this->authorize('view', $role);
+
         try {
             return view('backend.roles.show', [
                 'role' => $this->roleService->show($role),
@@ -116,17 +114,17 @@ class RoleController extends Controller
             ], 500);
         }
     }
-
     /**
      * Edit the specified resource.
      *
-     * @param $lang
      * @param Role $role
      * @return JsonResponse|View
+     * @throws AuthorizationException
      */
-    public function edit($lang, Role $role): JsonResponse|View
+    public function edit(Role $role): JsonResponse|View
     {
         $this->authorize('update', $role);
+
         try {
             return view('backend.roles.edit', [
                 'role' => $this->roleService->edit($role),
@@ -135,124 +133,145 @@ class RoleController extends Controller
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to editing the role: ' . $e->getMessage()
+                'message' => 'Failed to editing the Role: ' . $e->getMessage()
             ], 500);
         }
     }
-
     /**
      * Update the specified resource.
      *
-     * @param $lang
      * @param RoleUpdateRequest $request
      * @param Role $role
-     * @return JsonResponse|View
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
      */
-    public function update($lang, RoleUpdateRequest $request, Role $role): JsonResponse|RedirectResponse
+    public function update(RoleUpdateRequest $request, Role $role): JsonResponse|RedirectResponse
     {
         $this->authorize('update', $role);
+
         try {
             $this->roleService->update($request, $role);
-            return redirect()->route('backend.roles.index', app()->getLocale())
+            return redirect()->route('backend.roles.index')
                 ->with('success', __('strings.Updated Successfully'));
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while updating role: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    /**
-     * Soft Delete Permission.
-     * @param $lang
-     * @param Role $role
-     * @return JsonResponse|RedirectResponse
-     */
-    public function destroy($lang, Role $role): JsonResponse|RedirectResponse
-    {
-        $this->authorize('delete', $role);
-        try {
-            $this->roleService->destroy($role);
-            return redirect()->route('backend.roles.index', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while deleting role: ' . $e->getMessage()
+                'message' => 'Failed while updating Role: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Mass Soft Delete Permission.
-     * @param MassDestroyRequest $request
-     * @return JsonResponse|RedirectResponse
+     * Soft Delete Role.
+     * @param RoleDestroyRequest $request
+     * @return JsonResponse
      */
-    public function massDestroy(MassDestroyRequest $request)
+    public function destroy(RoleDestroyRequest $request): JsonResponse
     {
-        $this->authorize('delete', Role::class);
         try {
-            $this->roleService->massDestroy($request);
-            return redirect()->route('backend.roles.index', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully'));
+            return $this->roleService->destroy($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while mass deleting role: ' . $e->getMessage()
+                'message' => 'Failed while deleting Role: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Mass delete roles.
+     */
+
+    public function massDestroy(RoleMassDestroyRequest $request): RedirectResponse|JsonResponse
+    {
+        $this->authorize('viewAny', Role::class);
+
+
+        return $this->executeOperation(function () use ($request) {
+            $this->roleService->massDestroy($request);
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('strings.Deleted Successfully')
+                ], 200);
+            }
+
+            return redirect()->route('backend.roles.index')
+                ->with('success', __('strings.Deleted Successfully'));
+        }, 'Role Mass Deletion');
     }
 
     // Archive
-
     /**
      * View all Roles in Trash.
      *
-     * @param RolesDataTableTrash $dataTable
+     * @param RoleTrashRequest $request
      * @return mixed
+     * @throws AuthorizationException
      */
-    #[NoReturn] public function trash(RolesDataTableTrash $dataTable)
+    public function trash(RoleTrashRequest $request): View
     {
         $this->authorize('trash', Role::class);
-        return $dataTable->render('backend.roles.trash');
+
+        return view('backend.roles.trash', [
+            'roles' => $this->roleService->trash($request)
+        ]);
     }
 
-    public function restore($lang, $id)
+    /**
+     * Restore a soft deleted role.
+     *
+     * @param RoleRestoreRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function restore(RoleRestoreRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('restore', Role::class);
+
         try {
-            $this->roleService->restore($id);
-            return redirect()->route('backend.roles.trash', app()->getLocale())
-                ->with('success', __('strings.Restored Successfully'));
+            return $this->roleService->restore($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while restoring role: ' . $e->getMessage()
-            ], 500);
-        }
-
-    }
-
-    public function remove($lang, $id): JsonResponse|RedirectResponse
-    {
-        $this->authorize('remove', Role::class);
-        try {
-            $this->roleService->remove($id);
-            return redirect()->route('backend.roles.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while removing role: ' . $e->getMessage()
+                'message' => 'Failed while restoring Role: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    public function massRemove(MassDestroyRequest $request): JsonResponse|RedirectResponse
+    /**
+     * Remove the specified resource permanently.
+     *
+     * @param RoleRemoveRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function remove(RoleRemoveRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('remove', Role::class);
         try {
-            $this->roleService->massRemove($request);
-            return redirect()->route('backend.roles.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
+            return $this->roleService->remove($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while mass Removing role: ' . $e->getMessage()
+                'message' => 'Failed while removing Role: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    /**
+     * Mass permanently delete Roles from trash.
+     */
+    /**
+     * Mass remove the specified resources permanently.
+     *
+     * @param RoleMassRemoveRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function massRemove(RoleMassRemoveRequest $request): JsonResponse|RedirectResponse
+    {
+        $this->authorize('remove', Role::class);
+        try {
+            return $this->roleService->massRemove($request);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed while mass removing Role: ' . $e->getMessage()
             ], 500);
         }
     }

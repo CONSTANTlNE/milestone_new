@@ -93,7 +93,7 @@ Route::group(
 Route::group(
     [
         'prefix' => LaravelLocalization::setLocale() . '/customer',
-        'middleware' => ['web', 'auth:customers', 'localeSessionRedirect', 'localizationRedirect', 'localeViewPath'],
+        'middleware' => ['web', 'auth:customers', 'localeSessionRedirect', 'localizationRedirect'],
         'as' => 'frontend.customers.'
     ], function()
 {

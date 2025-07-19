@@ -2,20 +2,25 @@
 
 namespace App\Http\Controllers\Backend;
 
-use App\Http\Requests\ChangeStatusRequest;
-use App\Http\Requests\MassDestroyRequest;
-use App\Http\Requests\RemoveRequest;
+use App\Http\Requests\Social\SocialChangeStatusRequest;
 use App\Http\Requests\Social\SocialCreateRequest;
+use App\Http\Requests\Social\SocialDestroyRequest;
+use App\Http\Requests\Social\SocialIndexRequest;
+use App\Http\Requests\Social\SocialMassDestroyRequest;
+use App\Http\Requests\Social\SocialMassRemoveRequest;
+use App\Http\Requests\Social\SocialRemoveRequest;
+use App\Http\Requests\Social\SocialRestoreRequest;
+use App\Http\Requests\Social\SocialTrashRequest;
 use App\Http\Requests\Social\SocialUpdateRequest;
-use App\Models\Social;
 use App\Services\SocialService;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use App\Models\Social;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use JetBrains\PhpStorm\NoReturn;
 
 class SocialController extends Controller
 {
@@ -29,41 +34,33 @@ class SocialController extends Controller
     public function __construct(SocialService $socialService)
     {
         $this->socialService = $socialService;
-        $this->authorizeResource(Social::class, 'social');
+    }
+    /**
+     * Display a listing of the Socials.
+     * @throws AuthorizationException
+     */
+    public function index(SocialIndexRequest $request): View
+    {
+        $this->authorize('viewAny', Social::class);
+
+        return view('backend.socials.index', [
+            'socials' => $this->socialService->index($request)
+        ]);
     }
 
     /**
-     * View all Social Icons.
-     *
-     * @return JsonResponse|View
-     */
-    public function index(): JsonResponse|View
-    {
-        $this->authorize('viewAny', Social::class);
-        try {
-            return view('backend.socials.index', [
-                'socials' => $this->socialService->getSocial()
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed while retrieve social icons: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    /**
      * Change Status.
      *
-     * @param ChangeStatusRequest $request
+     * @param SocialChangeStatusRequest $request
      * @return JsonResponse
      */
-    public function status(ChangeStatusRequest $request): JsonResponse
+    public function status(SocialChangeStatusRequest $request): JsonResponse
     {
-        $this->authorize('status',Social::class);
         try {
             return $this->socialService->changeStatus($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while change status social icons: ' . $e->getMessage()
+                'message' => 'Failed while change status Social: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -72,6 +69,7 @@ class SocialController extends Controller
      * Create view the specified resource.
      *
      * @return View
+     * @throws AuthorizationException
      */
     public function create(): View
     {
@@ -84,17 +82,19 @@ class SocialController extends Controller
      *
      * @param SocialCreateRequest $request
      * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
      */
     public function store(SocialCreateRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('create', Social::class);
+
         try {
             $this->socialService->store($request);
-            return redirect()->route('backend.socials.index', app()->getLocale())
+            return redirect()->route('backend.socials.index')
                 ->with('success', __('strings.Added Successfully'));
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Failed while creating social icons: ' . $e->getMessage()
+                'message' => 'Failed while creating Social: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -102,40 +102,43 @@ class SocialController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param $lang
      * @param Social $social
      * @return JsonResponse|View
+     * @throws AuthorizationException
      */
-    public function show($lang, Social $social): JsonResponse|View
+    public function show(Social $social): JsonResponse|View
     {
         $this->authorize('view', $social);
+
         try {
             return view('backend.socials.show', [
                 'social' => $this->socialService->show($social)
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to retrieve the social icons: ' . $e->getMessage()
+                'message' => 'Failed to retrieve the Social: ' . $e->getMessage()
             ], 500);
         }
     }
+
     /**
      * Edit the specified resource.
      *
-     * @param $lang
      * @param Social $social
      * @return JsonResponse|View
+     * @throws AuthorizationException
      */
-    public function edit($lang, Social $social): JsonResponse|View
+    public function edit(Social $social): JsonResponse|View
     {
         $this->authorize('update', $social);
+
         try {
             return view('backend.socials.edit', [
-                'social' => $this->socialService->edit($social),
+                'social' => $this->socialService->edit($social)
             ]);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to editing the social icons: ' . $e->getMessage()
+                'message' => 'Failed to editing the Social: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -143,62 +146,64 @@ class SocialController extends Controller
     /**
      * Update the specified resource.
      *
-     * @param $lang
      * @param SocialUpdateRequest $request
      * @param Social $social
-     * @return JsonResponse|View
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
      */
-    public function update($lang, SocialUpdateRequest $request, Social $social): JsonResponse|RedirectResponse
+    public function update(SocialUpdateRequest $request, Social $social): JsonResponse|RedirectResponse
     {
         $this->authorize('update', $social);
+
         try {
             $this->socialService->update($request, $social);
-            return redirect()->route('backend.socials.index', app()->getLocale())
+            return redirect()->route('backend.socials.index')
                 ->with('success', __('strings.Updated Successfully'));
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while updating social: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-    /**
-     * Soft Delete Social.
-     * @param $lang
-     * @param Social $social
-     * @return JsonResponse|RedirectResponse
-     */
-    public function destroy($lang, Social $social): JsonResponse|RedirectResponse
-    {
-        $this->authorize('delete', $social);
-        try {
-            $this->socialService->destroy($social);
-            return redirect()->route('backend.socials.index', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while deleting social icons: ' . $e->getMessage()
+                'message' => 'Failed while updating Social: ' . $e->getMessage()
             ], 500);
         }
     }
 
     /**
-     * Mass Soft Delete Social.
-     * @param MassDestroyRequest $request
-     * @return JsonResponse|RedirectResponse
+     * Soft Delete Social.
+     * @param SocialDestroyRequest $request
+     * @return JsonResponse
      */
-    public function massDestroy(MassDestroyRequest $request)
+    public function destroy(SocialDestroyRequest $request): JsonResponse
     {
-        $this->authorize('delete', Social::class);
         try {
-            $this->socialService->massDestroy($request);
-            return redirect()->route('backend.socials.index', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully'));
+            return $this->socialService->destroy($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while mass deleting social icons: ' . $e->getMessage()
+                'message' => 'Failed while deleting Social: ' . $e->getMessage()
             ], 500);
         }
+
     }
+
+    /**
+     * Mass delete socials.
+     */
+    public function massDestroy(SocialMassDestroyRequest $request): RedirectResponse|JsonResponse
+    {
+        $this->authorize('viewAny', Social::class);
+
+        return $this->executeOperation(function () use ($request) {
+            $this->socialService->massDestroy($request);
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('strings.Deleted Successfully')
+                ], 200);
+            }
+
+            return redirect()->route('backend.socials.index')
+                ->with('success', __('strings.Deleted Successfully'));
+        }, 'Social Mass Deletion');
+    }
+
 
     /**
      * Reorder Social.
@@ -211,63 +216,75 @@ class SocialController extends Controller
 
     // Archive
     /**
-     * View all Social Icons in Trash.
+     * View all socials in Trash.
      *
-     * @return JsonResponse|View
+     * @param SocialTrashRequest $request
+     * @return mixed
+     * @throws AuthorizationException
      */
-
-    public function trash(): JsonResponse|View
+    public function trash(SocialTrashRequest $request): View
     {
         $this->authorize('trash', Social::class);
-        try {
-            return view('backend.socials.trash', [
-                'socials' => $this->socialService->getSocialTrash()
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed while retrieve social icons: ' . $e->getMessage()
-            ], 500);
-        }
+
+        return view('backend.socials.trash', [
+            'socials' => $this->socialService->trash($request)
+        ]);
     }
 
-    public function restore($lang, $id)
+    /**
+     * Restore the specified resource from trash.
+     *
+     * @param SocialRestoreRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function restore(SocialRestoreRequest $request): JsonResponse|RedirectResponse
     {
-        $this->authorize('restore', Page::class);
+        $this->authorize('restore', Social::class);
+
         try {
-            $this->socialService->restore($id);
-            return redirect()->route('backend.socials.trash', app()->getLocale())
-                ->with('success', __('strings.Restored Successfully'));
+            return $this->socialService->restore($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while restoring social icons: ' . $e->getMessage()
+                'message' => 'Failed while restoring Social: ' . $e->getMessage()
             ], 500);
         }
     }
 
-    public function remove($lang, $id): JsonResponse|RedirectResponse
-    {
-        $this->authorize('remove', Social::class);
-        try {
-            $this->socialService->remove($id);
-            return redirect()->route('backend.socials.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while removing social icons: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function massRemove(MassDestroyRequest $request): JsonResponse|RedirectResponse
+    /**
+     * Remove the specified resource permanently.
+     *
+     * @param SocialRemoveRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function remove(SocialRemoveRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('remove', Social::class);
         try {
-            $this->socialService->massRemove($request);
-            return redirect()->route('backend.socials.trash', app()->getLocale())
-                ->with('success', __('strings.Deleted Successfully from Archive'));
+            return $this->socialService->remove($request);
         } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed while mass Removing social icons: ' . $e->getMessage()
+                'message' => 'Failed while removing Social: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mass remove the specified resources permanently.
+     *
+     * @param SocialMassRemoveRequest $request
+     * @return JsonResponse|RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function massRemove(SocialMassRemoveRequest $request): JsonResponse|RedirectResponse
+    {
+        $this->authorize('remove', Social::class);
+        try {
+            return $this->socialService->massRemove($request);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => 'Failed while mass removing Social: ' . $e->getMessage()
             ], 500);
         }
     }

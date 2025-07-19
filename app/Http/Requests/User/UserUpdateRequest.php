@@ -25,9 +25,12 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
+//                        'status' => ['required', 'integer', Rule::in([0, 1])],
             'status' => ['required', 'string'],
             'title' => ['array', new NonEmptyTitleArray],
             'about' => ['array', new NonEmptyTitleArray],
+            'published_at' => ['nullable'],
+            'phone' => ['nullable', 'string'],
             'email' => ['required', 'string', Rule::unique('users', 'email')->ignore($this->route('user')->id)],
             'password' => ['nullable', 'string', 'min:5', 'confirmed'],
             'password_confirmation' => ['nullable', 'string', 'min:5'],

@@ -60,7 +60,7 @@ class File extends Model
 
   public function folders()
   {
-    return $this->morphToMany(Folder::class, 'folderable');
+    return $this->belongsToMany(Folder::class, 'file_folder');
   }
 
   public function thumbnails()

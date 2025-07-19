@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('locales', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 30)->index();
-            $table->string('native', 50)->index();
+            $table->string('title', 30)->index();
+            $table->string('native', 50)->nullable()->index();
             $table->string('regional', 30)->nullable()->index();
             $table->string('script', 20)->nullable();
             $table->string('code', 2)->unique();

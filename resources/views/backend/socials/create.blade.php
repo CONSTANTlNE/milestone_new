@@ -1,105 +1,138 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.Social Network Create') }} @endsection
+@section('title') {{ __('admin.create_social_network') }} @endsection
 @section('content')
-    <div class="container-fluid">
-        <div class="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
-            <div class="mr-auto  d-lg-block">
-                <h2 class="text-black font-w600">{{ __('strings.Social Network Create') }}</h2>
-                <p class="mb-0 font-w600">{{ __('strings.Welcome') }}</p>
+    <div class="content">
+        <div class="main-content">
+
+            <div class="block justify-between page-header md:flex">
+                <div>
+                    <h3 class="!text-defaulttextcolor dark:!text-defaulttextcolor/70 dark:text-white dark:hover:text-white text-[1.375rem] font-semibold font-first-geo">
+                        {{ __('admin.create_social_network') }}
+                    </h3>
+                    <p class="font-second-geo text-defaulttextcolor/70">{{ __('admin.welcome') }}</p>
+                </div>
+                <ol class="flex items-center whitespace-nowrap min-w-0 gap-3 header-nav-links">
+                    @can('backend.socials.index')
+                        <li class="text-[0.813rem] ps-[0.5rem]">
+                            <a href="{{ route('backend.socials.index') }}" class="ti-btn bg-secondary text-white !font-medium font-second-geo">
+                                <i class="ri-arrow-go-back-line text-[1.375rem]"></i>
+                                {{ __('admin.return_back') }} - {{ __('admin.all_social_network') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('backend.socials.trash')
+                        <li class="text-[0.813rem] text-defaulttextcolor font-semibold hover:text-danger dark:text-[#8c9097] dark:text-white/50">
+                            <a href="{{ route('backend.socials.trash') }}" class="ti-btn bg-danger text-white !font-medium font-second-geo">
+                                <i class="ri-delete-bin-2-line text-[1.375rem]"></i>
+                                {{__('admin.deleted_social_network')}}
+                            </a>
+                        </li>
+                    @endcan
+                </ol>
             </div>
-            @can('backend.socials.index')
-                <a href="{{ route('backend.socials.index', app()->getLocale())}}" class="btn btn-info rounded"><i class="flaticon-381-repeat-1"></i> {{ __('strings.Return Back') }} - {{ __('strings.Social Network') }}</a>
-            @endcan
-            @can('backend.socials.trash')
-                <a href="{{ route('backend.socials.trash', app()->getLocale())}}" class="btn btn-primary rounded light deleted-archive ml-3"><i class="flaticon-381-trash-2"></i>  {{ __('strings.Deleted Social Network') }}</a>
-            @endcan
-        </div>
-        @include('backend.layouts.components.errors',[
-          'errors' => $errors,
-        ])
-        <form method="post" class="needs-validation" action="{{ route('backend.socials.store', app()->getLocale()) }}"  novalidate enctype="multipart/form-data">
-            {!! csrf_field() !!}
-            <div class="row">
-                <div class="col-md-12 col-xl-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="row">
-                                <x-input
-                                    type="text"
-                                    :lang="null"
-                                    :data="null"
-                                    label="Social Network Title"
-                                    column="title"
-                                    place-holder="Example : Facebook"
-                                    success-text="Success Field"
-                                    help-text="Error Field"
-                                    :required="true"
-                                    :disabled="false"
-                                    width="6"
-                                />
 
-                                <x-input
-                                    type="text"
-                                    :lang="null"
-                                    :data="null"
-                                    label="Social Network Link"
-                                    column="link"
-                                    place-holder="Example : F"
-                                    success-text="Success Field"
-                                    help-text="Error Field"
-                                    :required="true"
-                                    :disabled="false"
-                                    width="6"
-                                />
+            @include('backend.layouts.components.errors',[
+              'errors' => $errors,
+            ])
 
-                                <x-select
-                                    :lang="null"
-                                    :data="null"
-                                    column="icon"
-                                    label="Choose Social Network"
-                                    place-holder=""
-                                    success-text="Success Field"
-                                    help-text="Error Field"
-                                    :required="true"
-                                    :disabled="false"
-                                    :staticData="false"
-                                    width="6"
-                                />
+            <form method="post" action="{{ route('backend.socials.store') }}" novalidate enctype="multipart/form-data">
+                @csrf
+                <div class="grid grid-cols-12 gap-6 white-bg">
+                    <div class="xl:col-span-9 col-span-12">
+                        <div class="box">
+                            <div class="box-body">
+                                <div class="tab-content">
+                                    <div class="mt-4">
+                                        <x-backend.input
+                                            type="text"
+                                            :lang="null"
+                                            :data="null"
+                                            label="social_network_title"
+                                            column="title"
+                                            place-holder="social_network_title_example"
+                                            success-text="success_field"
+                                            help-text="error_field"
+                                            :required="true"
+                                            :disabled="false"
+                                        />
+                                    </div>
+                                    <div class="mt-4">
+                                        <x-backend.input
+                                            type="text"
+                                            :lang="null"
+                                            :data="null"
+                                            label="social_network_url"
+                                            column="url"
+                                            place-holder="social_network_url_example"
+                                            success-text="success_field"
+                                            help-text="error_field"
+                                            :required="true"
+                                            :disabled="false"
+                                        />
+                                    </div>
 
-                                <x-select
-                                    :lang="null"
-                                    :data="null"
-                                    column="status"
-                                    label="Choose Status"
-                                    place-holder=""
-                                    success-text="Success Field"
-                                    help-text="Error Field"
-                                    :required="true"
-                                    :disabled="false"
-                                    :staticData="false"
-                                    width="6"
-                                />
-                            </div>
-                            <div class="row">
-                                <x-checkbox
-                                    column="block"
-                                    label="Review"
-                                    place-holder="Review"
-                                    success-text="Checkbox Success"
-                                    help-text="Checkbox Error"
-                                    :required="true"
-                                />
-                                <div class="col-lg-12 mt-2">
-                                    <button class="btn btn-primary btn-md btn-block waves-effect waves-light" type="submit">{{ __('strings.Create') }}</button>
+                                    <div class="mt-4">
+                                        <x-backend.selectStatic
+                                            :data="config('crm.icons')"
+                                            column="icon"
+                                            label="choose_social_network"
+                                            place-holder=""
+                                            success-text="success_field"
+                                            help-text="error_field"
+                                            :required="true"
+                                            :disabled="false"
+                                            :staticData="false"
+                                            hidden="show-search-hidden"
+                                            width="12"
+                                        />
+                                    </div>
                                 </div>
+                            </div>
+                            <div class="box-footer text-end">
+                                <button type="submit" class="ti-btn bg-primary text-white font-second-geo">
+                                    <i class="ri-add-line"></i>
+                                    {{__('admin.create')}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xl:col-span-3 col-span-12">
+                        <div class="box">
+                            <div class="box-body">
+
+                                <x-backend.publishDate
+                                    :data="null"
+                                    column="published_at"
+                                    label="published_at"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="false"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    width="12"
+                                />
+
+                                <x-backend.selectStatic
+                                    :data="config('crm.status')"
+                                    column="status"
+                                    label="status_type"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="true"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    hidden="show-search-hidden"
+                                    width="12"
+                                />
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+
+        </div>
     </div>
 @endsection
-@push('scripts')
-    <script src="{{URL::asset('/js/additional/form-advanced.min.js')}}"></script>
-@endpush

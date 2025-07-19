@@ -68,9 +68,10 @@ class RolePolicy
      * Determine whether the user can delete the model.
      *
      * @param User $user
+     * @param Role $role
      * @return bool
      */
-    public function delete(User $user): bool
+    public function delete(User $user, Role $role): bool
     {
         return $user->can('backend.roles.destroy');
     }

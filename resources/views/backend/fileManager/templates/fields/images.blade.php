@@ -1,27 +1,26 @@
 <div class="image-group" style="width: 100%">
-    <div class="col-md-12 pl-0 pr-0">
-        <div class="form-group">
-            <label class="control-label">{{ __('strings.'.$label) }}</label>
-            <button type="button" class="btn btn-warning btn-sm btn-block select-media-btn"
-                    style="border-radius: 0.2rem;font-size: 16px !important; font-weight: 600">
-                <i class="bx bx-images font-size-18 align-middle me-2"></i> {{ __('strings.Select Additional Images') }}
-            </button>
-            <div class="selected-image-inputs">
-                @foreach($imageIds as $image_id)
-                    <input type="hidden" name="images[]" value="{{ $image_id }}">
-                @endforeach
+    <div class="images-upload-group">
+        <p class="font-second-geo  text-defaulttextcolor/70">{{ __('admin.'.$label) }}</p>
+        <button type="button"  class="w-full btn-file-upload hs-dropdown-toggle ti-btn !gap-0 mt-10 !py-2 !px-2 text-[0.75rem] !font-medium bg-primary text-white flex items-center justify-center select-media-btn" data-hs-overlay="#hs-full-screen-modal">
+            <div class="me-2">
+                <i class="ri ri-folder-upload-line align-middle text-[1.25rem] !me-1 text-white"></i>
             </div>
+            {{ __('admin.select_additional_images') }}
+        </button>
+        <div class="selected-image-inputs">
+            @foreach($imageIds as $image_id)
+                <input type="hidden" name="images[]" value="{{ $image_id }}">
+            @endforeach
         </div>
     </div>
 
-    <div class="col-md-12 mt-4 border border-start-0 border-end-0 p-3" style="border: 2px dashed #ced4da !important;
-      background: #f9f9f9;
-      min-height: 230px;">
+    <div class="image-body-view mt-2 border border-start-0 border-end-0 p-3">
         <i class="bx bxs-file-image font-size-24 align-middle me-2"
            style="font-size: 84px !important;line-height: 2;color: #ced4da;{{ !$images || !count($images) ? '': 'display:none' }}"></i>
         <div class="form-group" style="{{ !$images || !count($images) ? 'display:none': '' }} ">
-            <label class="col-md-12 mt-1 control-label">{{ __('strings.Display Additional Images') }}</label>
-            <div class="col-md-12 mt-2 p-0 more-image" style="overflow: hidden;">
+            <p class="font-second-geo text-defaulttextcolor/70 py-2">{{ __('admin.additional_image_or_files') }}</p>
+
+            <div class="more-image" style="overflow: hidden;">
                 <ul class="image-previews sortable-images" data-type="multy">
                     @foreach($images as $image)
                         <li class="image {{ $image->type !='image' ? 'no-type-image' : 'type-image'}}"
@@ -35,9 +34,9 @@
                                     @endif
                                     <option value='default'>Default</option>
                                     <option value='slider'>Slider</option>
-                                        <option value='cover'>Cover</option>
-                                        <option value='versus1'>Versus1</option>
-                                        <option value='versus2'>Versus2</option>
+                                    <option value='cover'>Cover</option>
+                                    <option value='versus1'>Versus1</option>
+                                    <option value='versus2'>Versus2</option>
                                     <option value='sent'>Sent</option>
                                     <option value='received'>Received</option>
                                 </select>
