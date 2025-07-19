@@ -357,5 +357,10 @@ return [
     'view_serviceCategories' => 'სერვისის კატეგორიის ნახვა',
     'edit_serviceCategories' => 'სერვისის კატეგორიის რედაქტირება',
     'serviceCategory_id' => 'სერვისის კატეგორიის ID',
+    'static_words' => 'სტატიკური სიტყვები',
+    'main_keywords' => 'საკვანძო სიტყვა',
+    'word' => 'სიტყვა',
+    'first_added_main_language' => 'პირველი დამატება ხდება მთავარ ენაზე',
+    'reset' => 'გაუქმება'
 ];
 

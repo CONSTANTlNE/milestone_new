@@ -35,6 +35,7 @@ return [
         "backend.locales.remove",
         "backend.locales.massDestroy",
         "backend.locales.massRemove",
+        "backend.localeStatics.index",
         "backend.notifications.index",
         "backend.notifications.show",
         "backend.notifications.create",

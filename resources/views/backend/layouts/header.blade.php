@@ -13,11 +13,11 @@
             </div>
             <div class="header-content-right">
                 @include('backend.components.header.locales')
-                @include('backend.components.header.theme-mode')
+{{--                @include('backend.components.header.theme-mode')--}}
                 @include('backend.components.header.frontend-site-link')
-                @can('backend.notifications.index')
-                @include('backend.components.header.notifications')
-                @endcan
+{{--                @can('backend.notifications.index')--}}
+{{--                @include('backend.components.header.notifications')--}}
+{{--                @endcan--}}
                 @can('backend.laravel-actions')
                 @include('backend.components.header.laravel-actions')
                 @endcan

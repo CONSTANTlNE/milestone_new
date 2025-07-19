@@ -246,8 +246,8 @@ Route::group(
     Route::post('/files/sortImages/', [FileManagerController::class, 'nestable'])->name('files.sort');
 
     //languages - static
-    Route::get('/locales/static', [LanguageTranslationController::class, 'index'])->name('locales.static.index');
-    Route::get('/locales/staticadmin', [LanguageTranslationController::class, 'index'])->name('locales.static.staticadmin');
+    Route::get('/locales/static', [LanguageTranslationController::class, 'index'])->name('localeStatics.index');
+    Route::get('/locales/staticadmin', [LanguageTranslationController::class, 'index'])->name('localeStatics.staticadmin');
 
     Route::post('/translations/update', [LanguageTranslationController::class, 'transUpdate'])->name('translation.update.json');
     Route::post('/translations/updateKey', [LanguageTranslationController::class, 'transUpdateKey'])->name('translation.update.json.key');

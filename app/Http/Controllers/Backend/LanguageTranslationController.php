@@ -10,8 +10,8 @@ class LanguageTranslationController extends Controller
 
     public function index(Request $request)
     {
-        $languages = Locale::where('status', 1)->orderby('default','desc')->get();
-        $default = Locale::where('default', 1)->first();
+        $languages = Locale::where('status', 1)->orderby('position','asc')->get();
+        $default = Locale::first();
         $columns = [];
         $columnsCount = $languages->count();
         if($languages->count() > 0){
@@ -21,7 +21,7 @@ class LanguageTranslationController extends Controller
                 $columns[$i++] = ['data'=> openJSONFile($language->code), 'lang'=>$language->code];
             }
         }
-       return view('backend.locales.static.index', compact('languages','columns','default','columnsCount'));
+       return view('backend.localeStatics.index', compact('languages','columns','default','columnsCount'));
     }
 
     public function store(Request $request)
@@ -30,12 +30,12 @@ class LanguageTranslationController extends Controller
             'localeKey' => 'required',
             'localeValue' => 'required',
         ]);
-        $default_lang = Locale::where('default', 1)->first();
+        $default_lang = Locale::first();
         $data = openJSONFile($default_lang->code);
         $data[$request->localeKey] = $request->localeValue;
         saveJSONFile($default_lang->code, $data);
 
-        return redirect()->route('backend.locales.static.index', app()->getLocale());
+        return redirect()->route('backend.localeStatics.index')->with('success', __('strings.Added Successfully'));
     }
 
     public function destroy(Request $request)

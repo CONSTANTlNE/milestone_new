@@ -34209,3 +34209,81 @@ th.title {
 .slide.has-sub .slide-menu {
     padding: 10px 0;
 }
+.add-static-btn,
+.add-static-btn-reset{
+    height: 50px;
+    max-height: 50px;
+    margin-top: 4px;
+}
+.add-static-btn {
+    font-size:28px;
+}
+.add-static-btn-remove {
+    font-size: 14px;
+    padding: 3px 6px;
+}
+.add-static-btn-reset {
+    font-size:24px;
+}
+.form-valide {
+    padding-top: 2px;
+}
+.static-words .popup {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200px;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap
+}
+
+.static-words table label {
+    cursor: pointer;
+}
+
+.static-words td.popupParent {
+    position: relative;
+}
+
+.static-words .emptyText {
+    color: red;
+    font-size: 18px;
+}
+
+.static-words td.popupParent {
+    position: relative
+}
+
+.static-words td.popupParent .popup {
+    top: 40px;
+    z-index: 111
+}
+
+.static-words textarea.form-control,.static-words .popup input.form-control {
+    border: 1px solid #ebe8e8;
+    box-shadow: 0 12px 23px #dedede
+}
+
+.static-words .table-responsive {
+    overflow: unset
+}
+
+.static-words table tr td:first-child {
+    background: #e9ecef;
+    border-bottom: 1px solid #fff
+}
+.static-actions {
+    width: 50px;
+    max-width: 50px;
+    font-size: 12px;
+    text-align: center !important;
+    color: rgb(var(--danger));
+}
+.static-key{
+    width: 150px;
+    max-width: 150px;
+}
