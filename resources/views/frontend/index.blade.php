@@ -42,8 +42,7 @@
 @endsection
 
 @section('content')
-<!-- About Start -->
-<section style="padding: 150px;">
+<section style="padding: 100px 0 130px 0;">
     <div class="container">
         <div class="row g-0">
             <div class="col-md-4 about-one-col1">
@@ -94,7 +93,7 @@
                             <span class="pbmit-icon-list-text">See projects through and proactively develop solutions</span>
                         </li>
                     </ul>
-                    <a class="pbmit-btn pbmit-btn-outline mt-4" href="about-us.html">
+                    <a class="pbmit-btn pbmit-btn-outline mt-4" href="#">
 									<span class="pbmit-button-content-wrapper">
 										<span class="pbmit-button-text">Know About Us</span>
 									</span>
@@ -104,9 +103,7 @@
         </div>
     </div>
 </section>
-<!-- About End -->
 
-<!-- Service Start -->
 <section class="service-one-bg pbmit-bg-color-blackish">
     <div class="container">
         <div class="row">
@@ -136,7 +133,7 @@
                                 <div class="pbmit-content-box">
                                     <div class="pbmit-serv-cat"></div>
                                     <h3 class="pbmit-service-title">
-                                        <a href="service-details.html">Warehouse Storage</a>
+                                        <a href="#">Warehouse Storage</a>
                                     </h3>
                                 </div>
                                 <div class="pbmit-service-icon">
@@ -150,7 +147,7 @@
                         <div class="pbmit-service-image-wrapper">
                             <div class="pbmit-featured-img-wrapper">
                                 <div class="pbmit-featured-wrapper">
-                                    <img src="images/homepage-1/service/service-01.jpg" class="img-fluid w-100" alt="">
+                                    <img src="{{asset('assets/images/homepage-1/service/service-01.jpg')}}" class="img-fluid w-100" alt="">
                                 </div>
                             </div>
                         </div>
@@ -164,7 +161,7 @@
                                 <div class="pbmit-content-box">
                                     <div class="pbmit-serv-cat"></div>
                                     <h3 class="pbmit-service-title">
-                                        <a href="service-details.html">Real Time Tracking</a>
+                                        <a href="#">Real Time Tracking</a>
                                     </h3>
                                 </div>
                                 <div class="pbmit-service-icon">
@@ -178,7 +175,7 @@
                         <div class="pbmit-service-image-wrapper">
                             <div class="pbmit-featured-img-wrapper">
                                 <div class="pbmit-featured-wrapper">
-                                    <img src="images/homepage-1/service/service-02.jpg" class="img-fluid w-100" alt="">
+                                    <img src="{{asset('assets/images/homepage-1/service/service-02.jpg')}}" class="img-fluid w-100" alt="">
                                 </div>
                             </div>
                         </div>
@@ -192,7 +189,7 @@
                                 <div class="pbmit-content-box">
                                     <div class="pbmit-serv-cat"></div>
                                     <h3 class="pbmit-service-title">
-                                        <a href="service-details.html">Distribution Centers</a>
+                                        <a href="#">Distribution Centers</a>
                                     </h3>
                                 </div>
                                 <div class="pbmit-service-icon">
@@ -206,7 +203,7 @@
                         <div class="pbmit-service-image-wrapper">
                             <div class="pbmit-featured-img-wrapper">
                                 <div class="pbmit-featured-wrapper">
-                                    <img src="images/homepage-1/service/service-03.jpg" class="img-fluid w-100" alt="">
+                                    <img src="{{asset('assets/images/homepage-1/service/service-03.jpg')}}" class="img-fluid w-100" alt="">
                                 </div>
                             </div>
                         </div>
@@ -220,7 +217,7 @@
                                 <div class="pbmit-content-box">
                                     <div class="pbmit-serv-cat"></div>
                                     <h3 class="pbmit-service-title">
-                                        <a href="service-details.html">Bonded Warehousing</a>
+                                        <a href="#">Bonded Warehousing</a>
                                     </h3>
                                 </div>
                                 <div class="pbmit-service-icon">
@@ -234,7 +231,7 @@
                         <div class="pbmit-service-image-wrapper">
                             <div class="pbmit-featured-img-wrapper">
                                 <div class="pbmit-featured-wrapper">
-                                    <img src="images/homepage-1/service/service-04.jpg" class="img-fluid w-100" alt="">
+                                    <img src="{{asset('assets/images/homepage-1/service/service-04.jpg')}}" class="img-fluid w-100" alt="">
                                 </div>
                             </div>
                         </div>
@@ -244,7 +241,6 @@
         </div>
     </div>
 </section>
-<!-- Service end -->
 
 <!-- Static Box Start -->
 <section class="pbmit-element-static-box-style-1 section-lg">
@@ -260,9 +256,9 @@
         <div class="row">
             <article class="pbmit-static-box-style-1">
                 <div class="pbmit-staticbox-wrapper">
-                    <div class="pbmit-bg-imgbox col-md-6" style="background-image: url(images/homepage-1/static-box/static-box-01.jpg);">
+                    <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset('assets/images/homepage-1/static-box/static-box-01.jpg')}});">
                         <div class="pbmit-img">
-                            <img src="images/homepage-1/static-box/static-box-01.jpg" class="img-fluid" alt="Receive packages">
+                            <img src="{{asset('assets/images/homepage-1/static-box/static-box-01.jpg')}}" class="img-fluid" alt="Receive packages">
                         </div>
                         <div class="pbmit-box-number">01</div>
                         <h4 class="pbmit-static-box-title">Receive packages</h4>
@@ -278,9 +274,9 @@
             </article>
             <article class="pbmit-static-box-style-1">
                 <div class="pbmit-staticbox-wrapper">
-                    <div class="pbmit-bg-imgbox col-md-6" style="background-image: url(images/homepage-1/static-box/static-box-02.jpg);">
+                    <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset('assets/images/homepage-1/static-box/static-box-02.jpg')}});">
                         <div class="pbmit-img">
-                            <img src="images/homepage-1/static-box/static-box-03.jpg" class="img-fluid" alt="Deliver packages">
+                            <img src="{{asset('assets/images/homepage-1/static-box/static-box-02.jpg')}}" class="img-fluid" alt="Deliver packages">
                         </div>
                         <div class="pbmit-box-number">02</div>
                         <h4 class="pbmit-static-box-title">Deliver packages</h4>
@@ -296,9 +292,9 @@
             </article>
             <article class="pbmit-static-box-style-1">
                 <div class="pbmit-staticbox-wrapper">
-                    <div class="pbmit-bg-imgbox col-md-6" style="background-image: url(images/homepage-1/static-box/static-box-03.jpg);">
+                    <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset('assets/images/homepage-1/static-box/static-box-03.jpg')}});">
                         <div class="pbmit-img">
-                            <img src="images/homepage-1/static-box/static-box-04.jpg" class="img-fluid" alt="Transport packages">
+                            <img src="{{asset('assets/images/homepage-1/static-box/static-box-03.jpg')}}" class="img-fluid" alt="Transport packages">
                         </div>
                         <div class="pbmit-box-number">03</div>
                         <h4 class="pbmit-static-box-title">Transport packages</h4>
@@ -314,9 +310,9 @@
             </article>
             <article class="pbmit-static-box-style-1">
                 <div class="pbmit-staticbox-wrapper">
-                    <div class="pbmit-bg-imgbox col-md-6" style="background-image: url(images/homepage-1/static-box/static-box-04.jpg);">
+                    <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset('assets/images/homepage-1/static-box/static-box-04.jpg')}});">
                         <div class="pbmit-img">
-                            <img src="images/homepage-1/static-box/static-box-02.jpg" class="img-fluid" alt="Warehousing Operation">
+                            <img src="{{asset('assets/images/homepage-1/static-box/static-box-04.jpg')}}" class="img-fluid" alt="Warehousing Operation">
                         </div>
                         <div class="pbmit-box-number">04</div>
                         <h4 class="pbmit-static-box-title">Warehousing Operation</h4>
@@ -498,7 +494,6 @@
 </section>
 <!-- Contact End -->
 
-
 <!-- Blog start -->
 <section class="section-lg">
     <div class="container">
@@ -528,7 +523,7 @@
                             <div class="pbmit-date-wraper d-flex align-items-center">
                                 <div class="pbmit-meta-category-wrapper pbmit-meta-line">
                                     <div class="pbmit-meta-category">
-                                        <a href="blog-classic.html" rel="category tag">Strategy</a>
+                                        <a href="{{ route('frontend.blogs.show', ['id' => $blog->id, 'slug' => $blog->slug]) }}" rel="category tag">Strategy</a>
                                     </div>
                                 </div>
                                 <div class="pbmit-date-author-wrapper">
@@ -545,16 +540,16 @@
                             <div class="pbmit-featured-container">
                                 <div class="pbmit-featured-img-wrapper">
                                     <div class="pbmit-featured-wrapper">
-                                        <img src="images/homepage-1/blog/blog-01.jpg" class="img-fluid" alt="">
+                                        <img src="{{asset($blog->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="">
                                     </div>
                                 </div>
                             </div>
                             <div class="pbmit-content-wrapper">
                                 <h3 class="pbmit-post-title">
-                                    <a href="blog-single-details.html">The Guide On How to Ship Oversize Loads</a>
+                                    <a href="{{ route('frontend.blogs.show', ['id' => $blog->id, 'slug' => $blog->slug]) }}">The Guide On How to Ship Oversize Loads</a>
                                 </h3>
                                 <div class="pbmit-blog-button">
-                                    <a class="pbmit-button-inner" href="blog-single-details.html" title="The Guide On How to Ship Oversize Loads">
+                                    <a class="pbmit-button-inner" href="{{ route('frontend.blogs.show', ['id' => $blog->id, 'slug' => $blog->slug]) }}" title="The Guide On How to Ship Oversize Loads">
                                         <span class="pbmit-button-icon">Read More</span>
                                     </a>
                                 </div>

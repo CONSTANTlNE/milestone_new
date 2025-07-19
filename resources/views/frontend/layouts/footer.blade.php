@@ -1,35 +1,13 @@
 <footer class="site-footer pbmit-bg-color-secondary">
     <div class="pbmit-footer-big-area-wrapper">
-        <div class="pbmit-footer-big-area">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-12 col-xl-6 pbmit-footer-left">
-                        <h3>Subscribe for latest <br> updates & insights</h3>
-                    </div>
-                    <div class="col-md-12 col-xl-6">
-                        <form>
-                            <div class="pbmit-footer-newsletter">
-                                <div class="pbmit-news-wrap">
-                                    <input type="email" class="form-control" name="EMAIL" placeholder="Enter Your Email Address">
-                                    <button class="pbmit-btn">
-												<span class="pbmit-button-content-wrapper">
-													<span class="pbmit-button-text">Subscribe Now</span>
-												</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div class="pbmit-footer-widget-area">
             <div class="container">
                 <div class="row">
                     <div class="pbmit-footer-widget-col-1 col-md-4">
                         <aside class="widget">
-                            <div class="pbmit-footer-logo">
-                                <img src="images/footer-logo.svg" class="img-fluid" alt="">
+                            <div class="pbmit-footer-logo" style="width: 100% !important;">
+                                <img src="{{asset('assets/images/logo.png')}}" class="img-fluid" alt="">
                             </div><br>
                             <ul class="pbmit-social-links">
                                 <li class="pbmit-social-li pbmit-social-facebook">
@@ -68,11 +46,11 @@
                         <aside class="widget">
                             <h2 class="widget-title">Useful Link</h2>
                             <ul class="menu">
-                                <li><a href="about-us.html">About</a></li>
-                                <li><a href="services.html">Our Service</a></li>
-                                <li><a href="our-history.html">Company</a></li>
-                                <li><a href="blog-classic.html">News & Media</a></li>
-                                <li><a href="our-team.html">Team</a></li>
+                                <li><a href="#">About</a></li>
+                                <li><a href="#">Our Service</a></li>
+                                <li><a href="#">Company</a></li>
+                                <li><a href="#">News & Media</a></li>
+                                <li><a href="#">Team</a></li>
                             </ul>
                         </aside>
                     </div>
@@ -80,11 +58,11 @@
                         <aside class="widget widget_text">
                             <h2 class="widget-title">Our Services</h2>
                             <ul class="menu">
-                                <li><a href="blog-classic.html">Logistics</a></li>
-                                <li><a href="blog-classic.html">Manufacturing</a></li>
-                                <li><a href="blog-classic.html">Production</a></li>
-                                <li><a href="blog-classic.html">Transportation</a></li>
-                                <li><a href="blog-classic.html">Warehouse</a></li>
+                                <li><a href="#">Logistics</a></li>
+                                <li><a href="#">Manufacturing</a></li>
+                                <li><a href="#">Production</a></li>
+                                <li><a href="#">Transportation</a></li>
+                                <li><a href="#">Warehouse</a></li>
                             </ul>
                         </aside>
                     </div>
@@ -97,7 +75,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="pbmit-footer-copyright-text-area">
-                                Copyright © 2025 <a href="#">Shipex Demo1</a>, All Rights Reserved.
+                                Copyright © 2025, All Rights Reserved.
                             </div>
                         </div>
                     </div>

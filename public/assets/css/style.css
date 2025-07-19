@@ -4,7 +4,7 @@
     01 - Inner Page
 		01 - Our History
 		02 - Service Detail
-        03 - Portfolio Single 
+        03 - Portfolio Single
         04 - Blog Detail
              Sidebar Right
              Blog Classic
@@ -12,7 +12,7 @@
         05 - Team Single
         06 - Contact Us
         07 - Comment Form
-    
+
 ******************************/
 
 /*----------------------------------------*/
@@ -209,7 +209,7 @@ body {
 	0% {
 		opacity: 0;
 	}
-	
+
 	100% {
 		opacity: 1;
 	}
@@ -311,7 +311,7 @@ body {
 	right: 0;
 	top: 0;
 }
-.ihbox-swiper-arrow .swiper-button-next, 
+.ihbox-swiper-arrow .swiper-button-next,
 .ihbox-swiper-arrow .swiper-button-prev{
 	width: 35px;
 	height: 35px;
@@ -325,11 +325,11 @@ body {
 .ihbox-swiper-arrow .swiper-button-next{
 	right: 0;
 }
-.ihbox-swiper-arrow .swiper-button-next:after, 
+.ihbox-swiper-arrow .swiper-button-next:after,
 .ihbox-swiper-arrow .swiper-button-prev:after{
 	font-size: 16px;
 }
-.ihbox-swiper-arrow .swiper-button-next:hover, 
+.ihbox-swiper-arrow .swiper-button-next:hover,
 .ihbox-swiper-arrow .swiper-button-prev:hover{
 	color: var(--pbmit-white-color);
 	background-color: var(--pbmit-global-color);
@@ -349,7 +349,7 @@ body {
 	position: relative;
 	margin-top: -150px;
 }
-/** Homepage 03 **/ 
+/** Homepage 03 **/
 .banner-section-three{
 	margin: 20px 0;
 }
@@ -582,7 +582,7 @@ body {
 }
 
 /*------------------- ---------------------*/
-/*01 - Inner Page 
+/*01 - Inner Page
 /*----------------------------------------*/
 /** 01 - Our History **/
 .pbmit-element-timeline-style-1 .pbmit-timeline-year{
@@ -673,7 +673,7 @@ body {
 	right: 0;
 	top: 0;
 	bottom: 0;
-} 
+}
 .pbmit-element-timeline-style-1 .steps-dot .steps-dot-line::before,
 .pbmit-element-timeline-style-1 .steps-dot .steps-dot-line::after{
 	content: "";
@@ -709,7 +709,7 @@ body {
 }
 .pbmit-element-timeline-style-1 .pbmit-timeline-wrapper:not(.pbmit-slide-even) .pbmit-feature-image{
 	transition: all 0.4s, opacity 0.4s 0.9s, transform 0.4s 0.9s;
-} 
+}
 .pbmit-element-timeline-style-1 .pbmit-feature-image img{
 	border-radius: 30px;
 }
@@ -998,7 +998,7 @@ body {
 
 /** 04 - Blog Detail**/
 /** Sidebar Right **/
-.sidebar .widget{ 
+.sidebar .widget{
     padding: 30px;
     margin-bottom: 45px;
     border-radius: 30px;
@@ -1016,20 +1016,20 @@ body {
 .widget .search-form .widget-title{
 	color: var(--pbmit-white-color);
 }
-.sidebar .widget .widget-title{ 
+.sidebar .widget .widget-title{
 	display: block;
 	padding-left: 30px;
 	margin-bottom: 20px;
     position: relative;
     width: auto;
 	font-size: 24px;
-    line-height: 30px;	
+    line-height: 30px;
     letter-spacing: 0px;
     padding-bottom: 0;
 	font-weight: 600;
 	text-transform: capitalize;
 	color: var(--pbmit-heading-color);
-} 
+}
 .sidebar .widget.widget-search .widget-title,
 .sidebar .widget.widget-search .widget-title:before{
 	color: var(--pbmit-white-color);
@@ -1412,7 +1412,7 @@ aside.widget.widget-tag-cloud a:hover,
     font-size: 13px;
 	margin-right: 10px;
 	text-transform: uppercase;
-}	
+}
 .blog-classic .pbmit-blog-meta-top.pbmit-blog-meta,
 .blog-classic .pbmit-blog-meta-top.pbmit-blog-meta a{
 	color: rgba( var(--pbmit-blackish-color-rgb), 0.8);
@@ -1495,7 +1495,7 @@ aside.widget.widget-tag-cloud a:hover,
 	margin-bottom: 25px;
     padding-bottom: 25px;
     border-bottom: 1px solid rgba( var(--pbmit-blackish-color-rgb), 0.1);
-} 
+}
 .pbmit-firstletter::first-letter{
 	padding: 8px 12px;
     font-size: 30px;
@@ -2058,7 +2058,7 @@ aside.widget.widget-tag-cloud a:hover,
 }
 .contact-iframe-section{
 	padding: 0px 110px 100px 110px;
-	margin-top: 100px;
+	/*margin-top: 100px;*/
 }
 .contact-iframe-section iframe{
 	height: 600px;
