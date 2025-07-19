@@ -145,16 +145,16 @@
                 </li>
                 @endcan
                 @can('backend.locales.index')
-                <li class="slide has-sub {{ request()->routeIs('backend.locales.*') ? 'open' : '' }}">
-                    <a href="javascript:void(0);" class="side-menu__item font-first-geo {{ request()->routeIs('backend.locales.*') ? 'active' : '' }}">
+                <li class="slide has-sub {{ request()->routeIs('backend.locales.*') || request()->routeIs('backend.localeStatics.*') ? 'open' : '' }}">
+                    <a href="javascript:void(0);" class="side-menu__item font-first-geo {{ request()->routeIs('backend.locales.*') || request()->routeIs('backend.localeStatics.*') ? 'active' : '' }}">
                         <i class="ri ri-global-line side-menu__icon"></i>
                         <span class="side-menu__label font-bold">{{ __('admin.sidebar_locales') }}</span>
                         <i class="ri ri-arrow-right-s-line side-menu__angle"></i>
                     </a>
                     <ul class="slide-menu child1">
                         <li class="slide"><a href="{{ route('backend.locales.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.locales.index') ? 'active' : '' }}">{{ __('admin.sidebar_all_locales') }}</a></li>
-                        @can('backend.locales.static')
-                        <li class="slide"><a href="{{ route('backend.locales.static.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.locales.static.*') ? 'active' : '' }}">{{ __('admin.sidebar_static_words') }}</a></li>
+                        @can('backend.localeStatics.index')
+                        <li class="slide"><a href="{{ route('backend.localeStatics.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.localeStatics.*') ? 'active' : '' }}">{{ __('admin.sidebar_static_words') }}</a></li>
                         @endcan
                     </ul>
                 </li>

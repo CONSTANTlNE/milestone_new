@@ -30,25 +30,25 @@
         <ul class="text-defaulttextcolor font-medium dark:text-[#8c9097] dark:text-white/50">
             @can('backend.users.edit')
             <li>
-                <a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex font-second-geo" href="#">
+                <a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex font-second-geo" href="{{ route('backend.users.edit', Auth::user()->id) }}">
                     <i class="ri ri-user-settings-line text-[1.125rem] me-2 opacity-[0.7] margin-top-min"></i>{{ __('admin.profile') }}
                 </a>
             </li>
             @endcan
-            @can('backend.settings.show')
+            @can('backend.settings.edit')
             <li>
-                <a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex font-second-geo" href="#">
+                <a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex font-second-geo" href="{{ route('backend.settings.edit') }}">
                     <i class="ri ri-settings-5-line text-[1.125rem] me-2 opacity-[0.7] margin-top-min"></i>{{ __('admin.sidebar_setting') }}
                 </a>
             </li>
             @endcan
-            @can('backend.dashboard.information')
-            <li>
-                <a class="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex font-second-geo" href="#">
-                    <i class="ri ri-information-line text-[1.125rem] me-2 opacity-[0.7] margin-top-min"></i>{{ __('admin.information') }}
-                </a>
-            </li>
-            @endcan
+{{--            @can('backend.dashboard.information')--}}
+{{--            <li>--}}
+{{--                <a class="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex font-second-geo" href="#">--}}
+{{--                    <i class="ri ri-information-line text-[1.125rem] me-2 opacity-[0.7] margin-top-min"></i>{{ __('admin.information') }}--}}
+{{--                </a>--}}
+{{--            </li>--}}
+{{--            @endcan--}}
             <li>
                 <a href="{{ route('backend.logout') }}" aria-expanded="false" class="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex font-second-geo bg-danger login" onclick="event.preventDefault();
                                      document.getElementById('logout-form').submit();">
