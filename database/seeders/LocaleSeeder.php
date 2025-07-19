@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Locale;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class LocaleSeeder extends Seeder
 {
@@ -25,6 +26,7 @@ class LocaleSeeder extends Seeder
             'position' => 2
         ]
     ];
+
     /**
      * Run the database seeds.
      *
@@ -34,11 +36,10 @@ class LocaleSeeder extends Seeder
     {
         array_map(function ($locale) {
             Locale::firstOrCreate([
-                'name' => $locale['name'],
+                'title' => $locale['name'],
                 'native' => $locale['native'],
                 'status' => $locale['status'],
                 'code' => $locale['code'],
-                'default' => $locale['default'],
                 'position' => $locale['position']
             ]);
 
@@ -50,32 +51,47 @@ class LocaleSeeder extends Seeder
             saveJSONFile($locale['code'], $data);
 
         }, $this->locales);
-        // Seed the database
+
+    // Seed the database
     foreach ($this->locales as $locale) {
         Locale::firstOrCreate([
-            'name' => $locale['name'],
+            'title' => $locale['name'],
             'native' => $locale['native'],
             'status' => $locale['status'],
             'code' => $locale['code'],
-            'default' => $locale['default'],
             'position' => $locale['position']
         ]);
     }
 
-    // Prepare data for locales.json
-    $localesData = [];
-    foreach ($this->locales as $locale) {
-        $localesData[$locale['code']] = $locale['name'];
-    }
+        // Prepare data for locales.json
+        $localesData = [];
+        foreach ($this->locales as $locale) {
+            $localesData[$locale['code']] = $locale['name'];
+        }
 
     // Save to resources/lang/config_locales.json (or wherever you want)
-    $jsonPath = resource_path('lang/config_locales.json');
+    $jsonPath = lang_path('locales.json');
     File::put($jsonPath, json_encode($localesData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
 
-    // Optionally, create a separate file for each locale code
-    foreach ($this->locales as $locale) {
-        $localePath = resource_path("lang/{$locale['code']}.json");
-        File::put($localePath, json_encode([$locale['code'] => $locale['name']], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
-    }
+        // Save to lang/config_locales.json
+        $configLocalesData = [];
+        foreach ($this->locales as $locale) {
+            $configLocalesData[$locale['code']] = [
+                'name' => $locale['name'],
+                'script' => null,
+                'native' => $locale['native'],
+                'regional' => null
+            ];
+        }
+        $configPath = lang_path('config_locales.json');
+        File::put($configPath, json_encode($configLocalesData, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+
+        // Initialize empty JSON files for each locale if they don't exist or are empty
+        foreach ($this->locales as $locale) {
+            $localePath = lang_path("{$locale['code']}.json");
+            if (!File::exists($localePath) || File::size($localePath) <= 2) {
+                File::put($localePath, json_encode([], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+            }
+        }
     }
 }
