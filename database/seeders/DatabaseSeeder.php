@@ -15,9 +15,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             //LocaleSeeder::class,
             PermissionSeeder::class,
-            RoleSeeder::class,
-            AdminUserSeeder::class,
-            SettingSeeder::class,
+            //RoleSeeder::class,
+            //AdminUserSeeder::class,
+            //SettingSeeder::class,
             //FolderSeeder::class
         ]);
     }

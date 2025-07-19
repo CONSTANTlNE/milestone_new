@@ -343,6 +343,19 @@ return [
     'contact_page' => 'კონტაქტის გვერდისთვის',
     'about_page' => 'ჩვენს შესახებ გვერდისთვის',
     'templates' => 'გთხოვთ აირჩიეთ გვერდის ტიპები:',
-    'template' => 'გვერდის ტიპი'
+    'template' => 'გვერდის ტიპი',
+    'faq_page' => 'ხ.დ.კ გვერდისთვის',
+    'email1' => 'დამატებითი ელ-ფოსტა',
+    'phone1' => 'დამატებითი ტელეფონის ნომერი',
+    'sidebar_serviceCategories' => 'სერვისის კატეგორიები',
+    'choose_service_category' => 'აირჩიეთ სერვისების კატეგორიები',
+    'all_serviceCategories' => 'ყველა სერვისის კატეგორია',
+    'create_new_serviceCategories' => 'ახალი სერვისის კატეგორიის შექმნა',
+    'deleted_serviceCategories' => 'წაშლილი სერვისის კატეგორიები',
+    'create_first_serviceCategory' => 'შექმენი პირველი სერვისის კატეგორია',
+    'create_serviceCategories' => 'სერვისის კატეგორიის შექმნა',
+    'view_serviceCategories' => 'სერვისის კატეგორიის ნახვა',
+    'edit_serviceCategories' => 'სერვისის კატეგორიის რედაქტირება',
+    'serviceCategory_id' => 'სერვისის კატეგორიის ID',
 ];
 

@@ -51,7 +51,7 @@
                 </li>
                 @endcan
                 @can('backend.sliders.index')
-                    <li class="slide has-sub {{ request()->routeIs('backend.sliders.*') || request()->routeIs('backend.portfolios.*') || request()->routeIs('backend.faqs.*') || request()->routeIs('backend.services.*') || request()->routeIs('backend.payments.*') ? 'open' : '' }}">
+                    <li class="slide has-sub {{ request()->routeIs('backend.sliders.*') || request()->routeIs('backend.portfolios.*') || request()->routeIs('backend.faqs.*') || request()->routeIs('backend.services.*') || request()->routeIs('backend.serviceCategories.*') ? 'open' : '' }}">
                         <a href="javascript:void(0);" class="side-menu__item font-first-geo {{ request()->routeIs('backend.sliders.*') || request()->routeIs('backend.portfolios.*') || request()->routeIs('backend.productTags.*') || request()->routeIs('backend.orders.*') || request()->routeIs('backend.payments.*') ? 'active' : '' }}">
                             <i class="ri ri-folder-chart-line side-menu__icon"></i>
                             <span class="side-menu__label font-bold">{{ __('admin.sidebar_content') }}</span>
@@ -66,6 +66,9 @@
                             @endcan
                             @can('backend.services.index')
                                 <li class="slide"><a href="{{ route('backend.services.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.services.*') ? 'active' : '' }}">{{ __('admin.sidebar_services') }}</a></li>
+                            @endcan
+                            @can('backend.serviceCategories.index')
+                                <li class="slide"><a href="{{ route('backend.serviceCategories.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.serviceCategories.*') ? 'active' : '' }}">{{ __('admin.sidebar_serviceCategories') }}</a></li>
                             @endcan
                             @can('backend.faqs.index')
                                 <li class="slide"><a href="{{ route('backend.faqs.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.faqs.*') ? 'active' : '' }}">{{ __('admin.sidebar_faqs') }}</a></li>

@@ -7,12 +7,14 @@ use App\Models\BlogCategory;
 use App\Models\Faq;
 use App\Models\Page;
 use App\Models\Portfolio;
+use App\Models\ServiceCategory;
 use App\Models\Slider;
 use App\Models\Service;
 use App\Policies\BlogCategoryPolicy;
 use App\Policies\BlogPolicy;
 use App\Policies\PagePolicy;
 use App\Policies\PortfolioPolicy;
+use App\Policies\ServiceCategoryPolicy;
 use App\Policies\SliderPolicy;
 use App\Policies\FaqPolicy;
 use App\Policies\ServicePolicy;
@@ -32,6 +34,7 @@ class AuthServiceProvider extends ServiceProvider
         BlogCategory::class => BlogCategoryPolicy::class,
         Faq::class => FaqPolicy::class,
         Service::class => ServicePolicy::class,
+        ServiceCategory::class => ServiceCategoryPolicy::class,
     ];
 
     /**

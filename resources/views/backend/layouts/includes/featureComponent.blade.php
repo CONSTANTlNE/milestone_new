@@ -1,4 +1,28 @@
 <div class="hidden py-2 px-3" id="feature-locale-{{$code}}" role="tabpanel" aria-labelledby="feature-locale-item-{{$code}}">
+    @if(!empty($data))
+        <div id="cardContainer{{$code}}" class="w-full">
+            @foreach($data as $featureindex =>$existingfeature)
+                <div class="card{{$code}} mt-2">
+                    <div class="flex rounded-sm gap-4 existingfeature{{$existingfeature->id}}">
+                        <div class="flex w-full">
+                                                    <span class="px-4 inline-flex items-center min-w-fit rounded-s-sm border-e-0 border-gray-200 bg-light text-sm text-gray-500 dark:bg-black/20 dark:border-white/10 dark:text-[#8c9097] dark:text-white/50">
+                                                        {{ __('admin.feature_title') }} - {{$code}}
+                                                    </span>
+                            <input form="form"
+                                   name="service_feature_name_{{$code}}[]"
+                                   type="text"
+                                   value="{{$existingfeature->getTranslation('title',$code)}}"
+                                   class="py-2 px-3 ti-form-input rounded-none rounded-e-sm focus:z-10 !border-s-0">
+                        </div>
+                        <button onclick="removeExistingFeature({{$existingfeature->id}})"
+                                class="" style="color:red">
+                            <i style="font-size: 2rem" class="ri-subtract-line"></i>
+                        </button>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
     <template id="cardTemplate{{$code}}">
         <div class="feature-section card{{$code}}">
             <div class="flex rounded-sm gap-4 mt-3">

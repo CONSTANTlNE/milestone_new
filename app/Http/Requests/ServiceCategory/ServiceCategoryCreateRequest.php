@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Setting;
+namespace App\Http\Requests\ServiceCategory;
 use App\Rules\NonEmptyTitleArray;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SettingUpdateRequest extends FormRequest
+class ServiceCategoryCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,18 +27,13 @@ class SettingUpdateRequest extends FormRequest
             'status' => ['required', 'string'],
             'title' => ['array', new NonEmptyTitleArray],
             'published_at' => ['nullable'],
-            'working_hours' => ['array'],
-            'address' => ['array'],
-            'phone' => ['nullable', 'string'],
-            'phone1' => ['nullable', 'string'],
-            'email' => ['nullable', 'string'],
-            'email1' => ['nullable', 'string'],
-            'send_email' => ['nullable', 'string'],
-            'lat' => ['nullable', 'string'],
-            'lng' => ['nullable', 'string'],
-            'g_map' => ['nullable', 'string'],
-            'g_analytics' => ['nullable', 'string'],
-            'fb_id' => ['nullable', 'string'],
+            'content' => ['array'],
+            'seoTitles' => ['array'],
+            'seoKeywords' => ['array'],
+            'seoDescriptions' => ['array'],
+            'images' => ['array'],
+            'mainImage_id' => ['integer'],
+            'cover' => ['array'],
         ];
     }
 
@@ -79,4 +74,5 @@ class SettingUpdateRequest extends FormRequest
             'cover.*' => __('messages.error_cover_boolean'),
         ];
     }
+
 }

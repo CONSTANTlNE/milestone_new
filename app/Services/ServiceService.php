@@ -87,6 +87,10 @@ class ServiceService implements ServiceInterface
         $service->created_at = $data['published_at'] ?? now();
         $service->save();
 
+        if (isset($data['category'])) {
+            $service->categories()->sync($data['category']);
+        }
+
         // Save features with translations using a private function, only if data exists
         $locales = array_keys(json_decode(file_get_contents(lang_path('config_locales.json')), true));
         $hasFeatures = false;
@@ -127,11 +131,11 @@ class ServiceService implements ServiceInterface
     /**
      * Save service features with translations from request
      *
-     * @param ServiceCreateRequest $request
+     * @param $request
      * @param Service $service
      * @return void
      */
-    private function saveServiceFeatures(ServiceCreateRequest $request, Service $service, array $locales): void
+    private function saveServiceFeatures($request, Service $service, array $locales): void
     {
         $featureNames = [];
         foreach ($locales as $locale) {
@@ -150,7 +154,7 @@ class ServiceService implements ServiceInterface
         }
     }
 
-    private function saveServiceFaqs(ServiceCreateRequest $request, Service $service, array $locales): void
+    private function saveServiceFaqs($request, Service $service, array $locales): void
     {
         $questions = [];
         $answers = [];
@@ -195,6 +199,42 @@ class ServiceService implements ServiceInterface
         $service->status = $data['status'];
         $service->created_at = $data['published_at'] ?? now();
         $service->save();
+
+        if (isset($data['category'])) {
+            $service->categories()->sync($data['category']);
+        }else{
+            $service->categories()->detach();
+        }
+
+        // Save features with translations using a private function, only if data exists
+        $locales = array_keys(json_decode(file_get_contents(lang_path('config_locales.json')), true));
+        $hasFeatures = false;
+        $hasFaqs = false;
+
+        foreach ($locales as $locale) {
+            if (!empty($request->input("service_feature_name_{$locale}", []))) {
+                $hasFeatures = true;
+                break;
+            }
+        }
+
+        foreach ($locales as $locale) {
+            if (!empty($request->input("faq_question_{$locale}", []))) {
+                $hasFaqs = true;
+                break;
+            }
+        }
+
+        // Clear existing features and FAQs before adding new ones
+        if ($hasFeatures) {
+            $service->features()->delete();
+            $this->saveServiceFeatures($request, $service, $locales);
+        }
+
+        if ($hasFaqs) {
+            $service->faqs()->forceDelete();
+            $this->saveServiceFaqs($request, $service, $locales);
+        }
 
         // Set SEO translations if available
         $service->setSeoTranslations($data);

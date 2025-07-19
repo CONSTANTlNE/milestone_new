@@ -7,6 +7,7 @@ use App\Traits\MultiTranslatableTrait;
 use App\Traits\SeoTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -52,7 +53,10 @@ class Service extends Model
     {
         return $this->morphMany(Seo::class,'seoble');
     }
-
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany('App\Models\ServiceCategory','service_cat','service_id','service_category_id');
+    }
     public function images(): MorphToMany
     {
         return $this->morphToMany(File::class, 'fileable')

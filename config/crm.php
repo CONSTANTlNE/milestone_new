@@ -33,5 +33,6 @@ return [
         ['id' => 'frontend.portfolios.index', 'title' => 'admin.portfolios_page'],
         ['id' => 'frontend.page.contact', 'title' => 'admin.contact_page'],
         ['id' => 'frontend.page.about', 'title' => 'admin.about_page'],
+        ['id' => 'frontend.page.faq', 'title' => 'admin.faq_page'],
     ]
 ];

@@ -12,6 +12,7 @@ use App\Http\Requests\Service\ServiceRemoveRequest;
 use App\Http\Requests\Service\ServiceRestoreRequest;
 use App\Http\Requests\Service\ServiceTrashRequest;
 use App\Http\Requests\Service\ServiceUpdateRequest;
+use App\Models\ServiceCategory;
 use App\Services\ServiceService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -73,7 +74,8 @@ class ServiceController extends Controller
     public function create(): View
     {
         $this->authorize('create', Service::class);
-        return view('backend.services.create');
+        $serviceCategories = ServiceCategory::where("status", 1)->pluck('title', 'id');
+        return view('backend.services.create', compact('serviceCategories'));
     }
 
     /**
@@ -132,9 +134,11 @@ class ServiceController extends Controller
         $this->authorize('update', $service);
 
         try {
+            $serviceCategories = ServiceCategory::where("status", 1)->pluck('title', 'id');
             return view('backend.services.edit', [
                 'service' => $this->serviceService->edit($service),
-                'seo' => $this->serviceService->getSeoFirst($service)
+                'seo' => $this->serviceService->getSeoFirst($service),
+                'serviceCategories' => $serviceCategories
             ]);
         } catch (Exception $e) {
             return response()->json([

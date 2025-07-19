@@ -101,6 +101,20 @@
                                         type="text"
                                         :lang="null"
                                         :data="$setting"
+                                        label="email1"
+                                        column="email1"
+                                        place-holder="email1"
+                                        success-text="success_field"
+                                        help-text="error_field"
+                                        :required="false"
+                                        :disabled="false"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <x-backend.input
+                                        type="text"
+                                        :lang="null"
+                                        :data="$setting"
                                         label="send_email"
                                         column="send_email"
                                         place-holder="send_email"
@@ -118,6 +132,20 @@
                                         label="phone"
                                         column="phone"
                                         place-holder="phone"
+                                        success-text="success_field"
+                                        help-text="error_field"
+                                        :required="false"
+                                        :disabled="false"
+                                    />
+                                </div>
+                                <div class="mt-4">
+                                    <x-backend.input
+                                        type="text"
+                                        :lang="null"
+                                        :data="$setting"
+                                        label="phone1"
+                                        column="phone1"
+                                        place-holder="phone1"
                                         success-text="success_field"
                                         help-text="error_field"
                                         :required="false"

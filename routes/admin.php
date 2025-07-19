@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Backend\Projects\FaqController;
+use App\Http\Controllers\Backend\Projects\ServiceCategoryController;
 use App\Http\Controllers\Backend\Projects\ServiceController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\FileManagerController;
@@ -494,7 +495,20 @@ Route::group(
         Route::get('/trash', [ServiceController::class, 'trash'])->name('trash');
     });
     Route::resource('services', ServiceController::class);
+//serviceCategory
+    Route::prefix('serviceCategories')->name('serviceCategories.')->group(function () {
+        // Additional routes
+        Route::post('status', [ServiceCategoryController::class, 'status'])->name('status');
+        Route::post('delete/{id}', [ServiceCategoryController::class, 'destroy'])->name('delete');
+        Route::post('massDestroy', [ServiceCategoryController::class, 'massDestroy'])->name('massDestroy');
 
+        // Trash-related
+        Route::post('/restore/{id}', [ServiceCategoryController::class, 'restore'])->name('restore');
+        Route::post('/remove/{id}', [ServiceCategoryController::class, 'remove'])->name('remove');
+        Route::post('/remove', [ServiceCategoryController::class, 'massRemove'])->name('massRemove');
+        Route::get('/trash', [ServiceCategoryController::class, 'trash'])->name('trash');
+    });
+    Route::resource('serviceCategories', ServiceCategoryController::class);
 //services
 //    Route::prefix('services')->as('services.')->group(function () {
 //        // Additional routes

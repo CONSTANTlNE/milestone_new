@@ -10,7 +10,7 @@ use Spatie\Translatable\HasTranslations;
 class ServiceFeature extends Model
 {
     use HasTranslations;
-    public $table = 'availabilities';
+    public $table = 'service_features';
 
     protected $fillable = [
         'title',

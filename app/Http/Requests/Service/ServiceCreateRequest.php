@@ -27,6 +27,7 @@ class ServiceCreateRequest extends FormRequest
             'status' => ['required', 'string'],
             'published_at' => ['nullable'],
             'title' => ['array', new NonEmptyTitleArray],
+            'category' => ['array'],
             'slogan' => ['array'],
             'content' => ['array'],
             'seoTitles' => ['array'],

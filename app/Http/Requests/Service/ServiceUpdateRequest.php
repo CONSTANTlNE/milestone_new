@@ -23,9 +23,11 @@ class ServiceUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'status' => ['required', 'string'],
+            'published_at' => ['nullable'],
             'title' => ['array', new NonEmptyTitleArray],
+            'category' => ['array'],
             'slogan' => ['array'],
             'content' => ['array'],
             'seoTitles' => ['array'],
@@ -35,6 +37,19 @@ class ServiceUpdateRequest extends FormRequest
             'mainImage_id' => ['integer'],
             'cover' => ['array'],
         ];
+
+        $locales = array_keys(json_decode(file_get_contents(lang_path('config_locales.json')), true));
+
+        foreach ($locales as $locale) {
+            $rules["faq_question_{$locale}"] = ['nullable', 'array'];
+            $rules["faq_question_{$locale}.*"] = ['nullable', 'string'];
+            $rules["faq_answer_{$locale}"] = ['nullable', 'array'];
+            $rules["faq_answer_{$locale}.*"] = ['nullable', 'string'];
+            $rules["service_feature_name_{$locale}"] = ['nullable', 'array'];
+            $rules["service_feature_name_{$locale}.*"] = ['nullable', 'string'];
+        }
+
+        return $rules;
     }
 
     /**

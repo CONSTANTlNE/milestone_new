@@ -36,7 +36,7 @@
               'errors' => $errors,
             ])
 
-            <form method="post" action="{{ route('backend.services.update', $service->id) }}" novalidate enctype="multipart/form-data">
+            <form id="form" method="post" action="{{ route('backend.services.update', $service->id) }}" novalidate enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="grid grid-cols-12 gap-6 white-bg">
@@ -64,6 +64,18 @@
                                                 'code' => $lang->code,
                                                 'data' => $service->seo->first()
                                             ])
+                                            @include('backend.layouts.includes.faqComponent', [
+                                                    'lang' => $lang,
+                                                    'code' => $lang->code,
+                                                    'data' => $service->faqs
+                                                ])
+
+                                            @include('backend.layouts.includes.featureComponent', [
+                                                'lang' => $lang,
+                                                'code' => $lang->code,
+                                                'data' => $service->features
+                                            ])
+
                                         </div>
                                     @endforeach
                                 </div>
@@ -80,7 +92,21 @@
                         <div class="box">
                             <div class="box-body">
                                 @include('backend.fileManager.layers.both', ['item' => $service])
-
+                                @if(count($serviceCategories))
+                                    <div class="mb-3">
+                                        <label for="choices-multiple-remove-button" class="px-3 block text-sm text-gray-600 font-medium dark:text-white font-second-geo">{{ __('admin.choose_blog_category') }}:</label>
+                                        <select class="form-control ti-form-select rounded-sm !py-2 !px-3" name="category[]" id="choices-multiple-remove-button" multiple>
+                                            @if(isset($service->categories))
+                                                @foreach($service->categories as $category)
+                                                    <option value="{{$category->id}}" selected>{{$category->getTranslation('title', app()->getLocale())}}</option>
+                                                @endforeach
+                                            @endif
+                                            @foreach($serviceCategories as $key => $serviceCategory)
+                                                <option value="{{$key}}">{{$serviceCategory}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
                                 <x-backend.publishDate
                                     :data="$service->created_at"
                                     column="published_at"
@@ -121,4 +147,89 @@
 @push('scripts')
     @vite('public/js/quill-editor.js')
     @include('backend.fileManager.templates.filemanager', ['indexRoute' => route('backend.files.index')])
+    <script>
+        let locales = @json(['ka','en']);
+
+
+        // FEATURES
+        let featureCount = 0;
+
+        function addCard() {
+            featureCount++
+            locales.forEach((abbr, index) => {
+
+                const template = document.getElementById('cardTemplate' + abbr);
+                const container = document.getElementById('cardContainer' + abbr);
+                const clone = template.content.cloneNode(true);
+
+                // Add dynamic class to the button
+                const button = clone.querySelector('button.removebtn');
+                button.dataset.removefeature = featureCount;
+
+                container.appendChild(clone);
+
+                const removebtns = document.querySelectorAll('.removebtn')
+
+                removebtns.forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        const dataset = btn.dataset
+                        const selector = `[data-removefeature="${dataset.removefeature}"]`;
+                        const removables = document.querySelectorAll(selector);
+                        removables.forEach((removable) => {
+                            removable.parentElement.remove()
+                        })
+                    })
+                })
+            });
+        }
+
+
+        // FAQ
+        let faqCount = 0;
+
+        function addFaq() {
+            faqCount++
+            locales.forEach((abbr, index) => {
+
+                const faqtemplate = document.getElementById('faqTemplate' + abbr);
+                const faqcontainer = document.getElementById('faqContainer' + abbr);
+                const faqclone = faqtemplate.content.cloneNode(true);
+
+                // Add dynamic class to the button
+                const faqbutton = faqclone.querySelector('button.removefaq');
+                faqbutton.dataset.removefaq = faqCount;
+
+                faqcontainer.appendChild(faqclone);
+
+                const removefaqbtns = document.querySelectorAll('.removefaq')
+
+                removefaqbtns.forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        const faqdataset = btn.dataset
+                        const faqselector = `[data-removefaq="${faqdataset.removefaq}"]`;
+                        const faqremovables = document.querySelectorAll(faqselector);
+                        faqremovables.forEach((removable) => {
+                            removable.parentElement.remove()
+                        })
+                    })
+                })
+            });
+        }
+
+
+        function removeExistingFeature(id) {
+            const existingFeatures = document.querySelectorAll(`.existingfeature${id}`)
+            existingFeatures.forEach((ftcontainer) => {
+                ftcontainer.remove()
+            })
+        }
+
+        function removeExistingfaq(id) {
+            const existingFaqs = document.querySelectorAll(`.existingfaq${id}`)
+            existingFaqs.forEach((faqcontainer) => {
+                faqcontainer.remove()
+            })
+        }
+
+    </script>
 @endpush
