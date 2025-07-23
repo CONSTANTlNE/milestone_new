@@ -1,14 +1,20 @@
 {
-    "ka": {
-        "name": "ქართული",
-        "script": null,
-        "native": "ka_GE",
-        "regional": null
-    },
     "en": {
         "name": "English",
         "script": null,
         "native": "en_EN",
+        "regional": null
+    },
+    "ru": {
+        "name": "Russian",
+        "script": null,
+        "native": "ru_RU",
+        "regional": null
+    },
+    "es": {
+        "name": "Spain",
+        "script": null,
+        "native": "es_ES",
         "regional": null
     }
 }

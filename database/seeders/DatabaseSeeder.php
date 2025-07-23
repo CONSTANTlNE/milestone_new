@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             AdminUserSeeder::class,
             SettingSeeder::class,
-            FolderSeeder::class
+            FolderSeeder::class,
+            AvailabilitySeeder::class
         ]);
     }
 }

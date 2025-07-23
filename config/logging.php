@@ -64,6 +64,16 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
+        'ailog' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/ailog.log'),
+            'level' => 'debug'
+        ],
+        'twilio' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/twilio.log'),
+            'level' => 'debug',
+        ],
 
         'daily' => [
             'driver' => 'daily',

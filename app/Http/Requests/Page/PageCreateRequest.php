@@ -41,7 +41,7 @@ class PageCreateRequest extends FormRequest
             'template' => [
                 'required',
                 function ($attribute, $value, $fail) {
-                    if ($value !== 'frontend.page.show') {
+                    if ($value !== 'frontend.pages.show') {
                         $exists = Page::where('template', $value)->exists();
                         if ($exists) {
                             $fail(__('messages.error_template_unique', ['attribute' => $attribute]));

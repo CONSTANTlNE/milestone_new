@@ -376,6 +376,7 @@ return [
     'more' => 'მრავალი',
     'add_menu_item' => 'დაამატება',
     'blogCategories' => 'სიახლეების კატეგორიები',
-    'serviceCategories' => 'სერვიცების კატეგორიები'
+    'serviceCategories' => 'სერვიცების კატეგორიები',
+    'sidebar_qotations'=>'ქვოთეიშენი',
 ];
 

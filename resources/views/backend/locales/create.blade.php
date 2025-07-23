@@ -62,6 +62,21 @@
                                         type="text"
                                         :lang="null"
                                         :data="null"
+                                        label="locale_native"
+                                        column="native"
+                                        place-holder="locale_native_example"
+                                        success-text="success_field"
+                                        help-text="error_field"
+                                        :required="true"
+                                        :disabled="false"
+                                    />
+                                </div>
+
+                                <div class="mt-4">
+                                    <x-backend.input
+                                        type="text"
+                                        :lang="null"
+                                        :data="null"
                                         label="locale_code"
                                         column="code"
                                         place-holder="locale_code_example"

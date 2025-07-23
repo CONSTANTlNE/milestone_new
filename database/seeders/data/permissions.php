@@ -2018,5 +2018,215 @@ return [
         ],
         "guard_name" => "web",
         "name" => "backend.localeStatics.index"
-    ]
+    ],
+    //  blogs
+    [
+        "title" => [
+            "ka" => "სიახლეების ნახვა",
+            "en" => "View blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.index"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის ნახვა",
+            "en" => "Show blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.show"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლეების შექმნა",
+            "en" => "Creating blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.create"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლეების შენახვა",
+            "en" => "Store blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.store"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლეების შეცვლა",
+            "en" => "Edit blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.edit"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლეების განახლება",
+            "en" => "Update blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.update"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლეების წაშლა",
+            "en" => "Delete blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.destroy"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლეების სტატუსის შეცვლა",
+            "en" => "Change blogs Status"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.status"
+    ],
+    [
+        "title" => [
+            "ka" => "ყველა წაშლილი მანქანის ბრენდები",
+            "en" => "All Deleted blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.trash"
+    ],
+    [
+        "title" => [
+            "ka" => "აღდგენა წაშლილი სიახლეების",
+            "en" => "Restore Deleted blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.restore"
+    ],
+    [
+        "title" => [
+            "ka" => "საბოლოო წაშლა წაშლილი სიახლეების",
+            "en" => "Final deletion of deleted blogs"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.remove"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლეების ერთდროული წაშლა",
+            "en" => "Deleting multiple blogs at once"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.massDestroy"
+    ],
+    [
+        "title" => [
+            "ka" => "საბოლოო, სიახლეების ერთდროული წაშლა",
+            "en" => "Final, Deleting multiple blogs at once"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogs.massRemove"
+    ],
+    //  blogCategories
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიების ნახვა",
+            "en" => "View blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.index"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიის ნახვა",
+            "en" => "Show blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.show"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიების შექმნა",
+            "en" => "Creating blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.create"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიების შენახვა",
+            "en" => "Store blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.store"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიების შეცვლა",
+            "en" => "Edit blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.edit"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიების განახლება",
+            "en" => "Update blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.update"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიების წაშლა",
+            "en" => "Delete blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.destroy"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიების სტატუსის შეცვლა",
+            "en" => "Change blogCategories Status"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.status"
+    ],
+    [
+        "title" => [
+            "ka" => "ყველა წაშლილი მანქანის ბრენდები",
+            "en" => "All Deleted blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.trash"
+    ],
+    [
+        "title" => [
+            "ka" => "აღდგენა წაშლილი სიახლის კატეგორიების",
+            "en" => "Restore Deleted blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.restore"
+    ],
+    [
+        "title" => [
+            "ka" => "საბოლოო წაშლა წაშლილი სიახლის კატეგორიების",
+            "en" => "Final deletion of deleted blogCategories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.remove"
+    ],
+    [
+        "title" => [
+            "ka" => "სიახლის კატეგორიების ერთდროული წაშლა",
+            "en" => "Deleting multiple blogCategories at once"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.massDestroy"
+    ],
+    [
+        "title" => [
+            "ka" => "საბოლოო, სიახლის კატეგორიების ერთდროული წაშლა",
+            "en" => "Final, Deleting multiple blogCategories at once"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.blogCategories.massRemove"
+    ],
 ];

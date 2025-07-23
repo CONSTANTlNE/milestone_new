@@ -25,27 +25,27 @@
                         </div>
                         @include('frontend.layouts.mainMenu')
                     </div>
+
+
+
                     <div class="pbmit-right-box d-flex align-items-center">
                         <div class="social-links-wrapper">
                             <ul class="pbmit-social-links">
                                 <li class="pbmit-social-li pbmit-social-facebook">
-                                    <a title="Facebook" href="#" target="_blank">
-                                        <span><i class="pbmit-base-icon-facebook-f"></i></span>
+                                    <a title="EN" href="#" style="background: #fff;
+    color: #000;
+    padding: 10px;">
+                                        EN
                                     </a>
                                 </li>
                                 <li class="pbmit-social-li pbmit-social-twitter">
-                                    <a title="Twitter" href="#" target="_blank">
-                                        <span><i class="pbmit-base-icon-twitter-2"></i></span>
+                                    <a title="ES" href="#" >
+                                        ES
                                     </a>
                                 </li>
                                 <li class="pbmit-social-li pbmit-social-linkedin">
-                                    <a title="LinkedIn" href="#" target="_blank">
-                                        <span><i class="pbmit-base-icon-linkedin-in"></i></span>
-                                    </a>
-                                </li>
-                                <li class="pbmit-social-li pbmit-social-instagram">
-                                    <a title="Instagram" href="#" target="_blank">
-                                        <span><i class="pbmit-base-icon-instagram"></i></span>
+                                    <a title="ES" href="#" >
+                                        RU
                                     </a>
                                 </li>
                             </ul>
@@ -55,8 +55,8 @@
                                 <i class="pbmit-base-icon-search-1"></i>
                             </a>
                         </div>
-                        <div class="pbmit-header-button2">
-                            <a class="pbmit-btn pbmit-btn-white" href="contact-us.html">
+                        <div class="pbmit-header-button2 pbmit-header-book-consult-btn">
+                            <a class="pbmit-btn pbmit-btn-white" href="#" id="consultation-trigger">
 										<span class="pbmit-button-content-wrapper">
 											<span class="pbmit-button-text">Book Consult</span>
 										</span>

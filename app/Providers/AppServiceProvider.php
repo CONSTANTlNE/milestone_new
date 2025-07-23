@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Availability;
+use App\Models\CarBrand;
 use App\Models\MenuItem;
 use App\Rules\Validator\UniqueTranslationValidator;
 use Illuminate\Support\Facades\Validator;
@@ -72,14 +74,20 @@ class AppServiceProvider extends ServiceProvider
 //            return $view->with(compact('mainMenus'));
 //        });
 
-        view()->composer('frontend.layouts.mainMenu', function($view){
-            $mainMenus = MenuItem::where('menu_id', 3)
-                    ->where('parent_id', 0)
-                    ->where('status', 1)
-                    ->with('children') // Ensure 'children' is cached too
-                    ->orderBy('sort', 'asc')
-                    ->get();
-            return $view->with(compact('mainMenus'));
-        });
+view()->composer('frontend.layouts.mainMenu', function($view){
+    $mainMenus = MenuItem::where('menu_id', 3)
+            ->where('parent_id', 0)
+            ->where('status', 1)
+            ->with('children') // Ensure 'children' is cached too
+            ->orderBy('sort', 'asc')
+            ->get();
+    return $view->with(compact('mainMenus'));
+});
+view()->composer('components.frontend.index_quotation', function($view){
+    $cars = CarBrand::all();
+    $availabilities = Availability::all();
+
+    return $view->with(compact('cars', 'availabilities'));
+});
     }
 }

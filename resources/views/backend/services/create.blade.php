@@ -1,7 +1,7 @@
 @extends('backend.layouts.master')
 @section('title') {{ __('admin.create_services') }} @endsection
 @section('styles')
-@vite('public/css/quill-editor.css')
+    @vite('public/css/quill-editor.css')
 @endsection
 @section('content')
     <div class="content">
@@ -52,28 +52,28 @@
                                             aria-labelledby="locale-item-{{$lang->code}}"
                                         >
                                             @include('backend.layouts.includes.seoLangTabComponent', ['code' => $lang->code, 'service' => true])
-                                                @include('backend.layouts.includes.contentComponent', [
-                                                    'lang' => $lang,
-                                                    'code' => $lang->code,
-                                                    'data' => null
-                                                ])
-                                                @include('backend.layouts.includes.seoComponent', [
-                                                    'lang' => $lang,
-                                                    'code' => $lang->code,
-                                                    'data' => null
-                                                ])
+                                            @include('backend.layouts.includes.contentComponent', [
+                                                'lang' => $lang,
+                                                'code' => $lang->code,
+                                                'data' => null
+                                            ])
+                                            @include('backend.layouts.includes.seoComponent', [
+                                                'lang' => $lang,
+                                                'code' => $lang->code,
+                                                'data' => null
+                                            ])
 
-                                                @include('backend.layouts.includes.faqComponent', [
-                                                    'lang' => $lang,
-                                                    'code' => $lang->code,
-                                                    'data' => null
-                                                ])
+                                            @include('backend.layouts.includes.faqComponent', [
+                                                'lang' => $lang,
+                                                'code' => $lang->code,
+                                                'data' => null
+                                            ])
 
-                                                @include('backend.layouts.includes.featureComponent', [
-                                                    'lang' => $lang,
-                                                    'code' => $lang->code,
-                                                    'data' => null
-                                                ])
+                                            @include('backend.layouts.includes.featureComponent', [
+                                                'lang' => $lang,
+                                                'code' => $lang->code,
+                                                'data' => null
+                                            ])
 
 
                                         </div>
@@ -83,7 +83,7 @@
                             <div class="box-footer text-end">
                                 <button type="submit" class="ti-btn bg-primary text-white font-second-geo">
                                     <i class="ri-add-line"></i>
-                                     {{__('admin.create')}}
+                                    {{__('admin.create')}}
                                 </button>
                             </div>
                         </div>
@@ -91,45 +91,45 @@
                     <div class="xl:col-span-3 col-span-12">
                         <div class="box">
                             <div class="box-body">
-                                    @include('backend.fileManager.layers.both')
+                                @include('backend.fileManager.layers.both')
 
-                                    @if(count($serviceCategories))
-                                        <div class="mb-3">
-                                            <label for="choices-multiple-remove-button" class="px-3 block text-sm text-gray-600 font-medium dark:text-white font-second-geo">{{ __('admin.choose_service_category') }}:</label>
-                                            <select class="form-control ti-form-select rounded-sm !py-2 !px-3" name="category[]" id="choices-multiple-remove-button" multiple>
-                                                @foreach($serviceCategories as $key => $serviceCategory)
-                                                    <option value="{{$key}}">{{$serviceCategory}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    @endif
+                                @if(count($serviceCategories))
+                                    <div class="mb-3">
+                                        <label for="choices-multiple-remove-button" class="px-3 block text-sm text-gray-600 font-medium dark:text-white font-second-geo">{{ __('admin.choose_service_category') }}:</label>
+                                        <select class="form-control ti-form-select rounded-sm !py-2 !px-3" name="category[]" id="choices-multiple-remove-button" multiple>
+                                            @foreach($serviceCategories as $key => $serviceCategory)
+                                                <option value="{{$key}}">{{$serviceCategory}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
 
                                 <x-backend.publishDate
-                                        :data="null"
-                                        column="published_at"
-                                        label="published_at"
-                                        place-holder=""
-                                        success-text="success_field"
-                                        help-text="error_field"
-                                        :required="false"
-                                        :disabled="false"
-                                        :staticData="false"
-                                        width="12"
-                                    />
+                                    :data="null"
+                                    column="published_at"
+                                    label="published_at"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="false"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    width="12"
+                                />
 
-                                    <x-backend.selectStatic
-                                        :data="config('crm.status')"
-                                        column="status"
-                                        label="status_type"
-                                        place-holder=""
-                                        success-text="success_field"
-                                        help-text="error_field"
-                                        :required="true"
-                                        :disabled="false"
-                                        :staticData="false"
-                                        hidden="show-search-hidden"
-                                        width="12"
-                                    />
+                                <x-backend.selectStatic
+                                    :data="config('crm.status')"
+                                    column="status"
+                                    label="status_type"
+                                    place-holder=""
+                                    success-text="success_field"
+                                    help-text="error_field"
+                                    :required="true"
+                                    :disabled="false"
+                                    :staticData="false"
+                                    hidden="show-search-hidden"
+                                    width="12"
+                                />
 
                             </div>
                         </div>
@@ -157,6 +157,7 @@
             locales.forEach((abbr, index) => {
 
                 const template = document.getElementById('cardTemplate' + abbr);
+                if (!template) return; // or handle error
                 const container = document.getElementById('cardContainer' + abbr);
                 const clone = template.content.cloneNode(true);
 
@@ -190,6 +191,7 @@
             locales.forEach((abbr, index) => {
 
                 const faqtemplate = document.getElementById('faqTemplate' + abbr);
+                if (!faqtemplate) return; // or handle error
                 const faqcontainer = document.getElementById('faqContainer' + abbr);
                 const faqclone = faqtemplate.content.cloneNode(true);
 

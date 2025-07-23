@@ -228,13 +228,13 @@
                                                                         $html .= '<span style="color: transparent;">|' . $item->id . '|</span>';
                                                                         $html .= '</span>';
                                                                         if ($depth > 0) {
-                                                                            $html .= '<span class="is-submenu">' . __('strings.subelement') . '</span>';
+                                                                            $html .= '<span class="is-submenu">' . __('admin.sub_element') . '</span>';
                                                                         }
                                                                         $html .= '</span>';
                                                                         $html .= '<span class="item-controls">';
                                                                         $html .= '<span class="item-type">' . $item->prefix . '</span>';
                                                                         $html .= '<a class="item-edit" id="edit-' . $item->id . '" title=" " href="' . url()->current() . '?edit-menu-item=' . $item->id . '#menu-item-settings-' . $item->id . '"><i class="ri-edit-fill"></i></a>';
-                                                                        $html .= '<a class="item-delete-quick" id="delete-quick-' . $item->id . '" title="' . __('strings.delete') . '" href="javascript:void(0)"><i class="ri-delete-bin-2-fill"></i></a>';
+                                                                        $html .= '<a class="item-delete-quick" id="delete-quick-' . $item->id . '" title="' . __('admin.delete') . '" href="javascript:void(0)"><i class="ri-delete-bin-2-fill"></i></a>';
                                                                         $html .= '</span>';
                                                                         $html .= '</dt>';
                                                                         $html .= '</dl>';
@@ -242,7 +242,7 @@
                                                                         $html .= '<div class="menu-item-settings" id="menu-item-settings-' . $item->id . '">';
                                                                         $html .= '<input type="hidden" class="edit-menu-item-id" name="menuid_' . $item->id . '" value="' . $item->id . '"/>';
                                                                         $html .= '<p class="field-css-classes description description-thin">';
-                                                                        $html .= '<label for="edit-menu-item-classes-' . $item->id . '">' . __('strings.class_css') . '<br>';
+                                                                        $html .= '<label for="edit-menu-item-classes-' . $item->id . '">' . __('admin.class_css') . '<br>';
                                                                         $html .= '<input type="text" id="clases_menu_' . $item->id . '" class="widefat code edit-menu-item-classes" name="clases_menu_' . $item->id . '" value="' . $item->class . '">';
                                                                         $html .= '</label>';
                                                                         $html .= '</p>';
@@ -253,11 +253,11 @@
                                                                         $html .= '</p>';
 
                                                                         $html .= '<div class="menu-item-actions description-wide submitbox">';
-                                                                        $html .= '<a class="item-delete submitdelete deletion" id="delete-' . $item->id . '" href="javascript:void(0)" onclick="window.menuManager.deleteMenuItem(' . $item->id . ')">' . __('strings.delete') . '</a>';
+                                                                        $html .= '<a class="item-delete submitdelete deletion" id="delete-' . $item->id . '" href="javascript:void(0)" onclick="window.menuManager.deleteMenuItem(' . $item->id . ')">' . __('admin.delete') . '</a>';
                                                                         $html .= '<span class="meta-sep hide-if-no-js"> | </span>';
-                                                                        $html .= '<a class="item-cancel submitcancel hide-if-no-js button-secondary" id="cancel-' . $item->id . '" href="' . url()->current() . '?edit-menu-item=' . $item->id . '&cancel=1424297719#menu-item-settings-' . $item->id . '">' . __('strings.cancel') . '</a>';
+                                                                        $html .= '<a class="item-cancel submitcancel hide-if-no-js button-secondary" id="cancel-' . $item->id . '" href="' . url()->current() . '?edit-menu-item=' . $item->id . '&cancel=1424297719#menu-item-settings-' . $item->id . '">' . __('admin.cancel') . '</a>';
                                                                         $html .= '<span class="meta-sep hide-if-no-js"> | </span>';
-                                                                                                                                                        $html .= '<a onclick="window.menuManager.getMenus()" class="button button-primary updatemenu" id="update-' . $item->id . '" href="javascript:void(0)">' . __('strings.update_item') . '</a>';
+                                                                                                                                                        $html .= '<a onclick="window.menuManager.getMenus()" class="button button-primary updatemenu" id="update-' . $item->id . '" href="javascript:void(0)">' . __('admin.update_item') . '</a>';
                                                                         $html .= '</div>';
                                                                         $html .= '</div>';
                                                                         $html .= '<ul class="menu-item-transport"></ul>';
@@ -290,7 +290,7 @@
                                                         <div class="publishing-action">
                                                             <a onclick="window.menuManager.getMenus()" name="save_menu"
                                                                        id="save_menu_header"
-                                                                       class="button button-primary menu-save">მენიუს განახლება</a>
+                                                                       class="button button-primary menu-save">{{ __('admin.update_menu') }}</a>
                                                             <span class="spinner" id="spincustomu2"></span>
                                                         </div>
                                                     </div>

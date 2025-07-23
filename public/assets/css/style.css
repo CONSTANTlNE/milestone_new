@@ -2115,3 +2115,194 @@ form textarea.form-control{
 .pbmit-bg-color-global form .form-control::placeholder{
 	color: rgba(var(--pbmit-white-color-rgb),.6);
 }
+
+/*----------------------------------------*/
+/*  Consultation Drawer Styles
+/*----------------------------------------*/
+.pbmit-consultation-overlay {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    transition: all 0.4s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.pbmit-consultation-overlay.active {
+    right: 0;
+}
+
+.pbmit-consultation-outer {
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    background-color: #fff;
+    position: relative;
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+    overflow-y: auto;
+}
+
+.pbmit-consultation-overlay.active .pbmit-consultation-outer {
+    transform: translateX(0);
+}
+
+.pbmit-consultation-header {
+    position: sticky;
+    top: 0;
+    background-color: var(--pbmit-global-color);
+    color: #fff;
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+}
+
+.pbmit-consultation-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.pbmit-consultation-header .pbmit-icon-close {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.pbmit-consultation-header .pbmit-icon-close:hover {
+    transform: rotate(90deg);
+}
+
+.pbmit-consultation-header .pbmit-icon-close svg {
+    width: 20px;
+    height: 20px;
+    fill: #fff;
+}
+
+.pbmit-consultation-content {
+    padding: 30px;
+}
+
+.pbmit-consultation-form .form-group {
+    margin-bottom: 20px;
+}
+
+.pbmit-consultation-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.pbmit-consultation-form .form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #fff;
+}
+
+.pbmit-consultation-form .form-control:focus {
+    outline: none;
+    border-color: var(--pbmit-global-color);
+    box-shadow: 0 0 0 3px rgba(var(--pbmit-global-color-rgb), 0.1);
+}
+
+.pbmit-consultation-form textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.pbmit-consultation-form .pbmit-btn {
+    width: 100%;
+    padding: 15px 30px;
+    background-color: var(--pbmit-global-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.pbmit-consultation-form .pbmit-btn:hover {
+    background-color: var(--pbmit-global-color-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.pbmit-consultation-form .pbmit-btn .pbmit-button-content-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pbmit-consultation-form .pbmit-btn .pbmit-button-text {
+    color: #fff;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .pbmit-consultation-outer {
+        max-width: 100%;
+    }
+    
+    .pbmit-consultation-header {
+        padding: 20px;
+    }
+    
+    .pbmit-consultation-title {
+        font-size: 20px;
+    }
+    
+    .pbmit-consultation-content {
+        padding: 20px;
+    }
+}
+
+/* Animation for form elements */
+.pbmit-consultation-form .form-group {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInUp 0.5s ease forwards;
+}
+
+.pbmit-consultation-form .form-group:nth-child(1) { animation-delay: 0.1s; }
+.pbmit-consultation-form .form-group:nth-child(2) { animation-delay: 0.2s; }
+.pbmit-consultation-form .form-group:nth-child(3) { animation-delay: 0.3s; }
+.pbmit-consultation-form .form-group:nth-child(4) { animation-delay: 0.4s; }
+.pbmit-consultation-form .form-group:nth-child(5) { animation-delay: 0.5s; }
+.pbmit-consultation-form .form-group:nth-child(6) { animation-delay: 0.6s; }
+.pbmit-consultation-form .form-group:nth-child(7) { animation-delay: 0.7s; }
+.pbmit-consultation-form .form-group:nth-child(8) { animation-delay: 0.8s; }
+
+@keyframes slideInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Prevent body scroll when drawer is open */
+body.drawer-open {
+    overflow: hidden;
+}

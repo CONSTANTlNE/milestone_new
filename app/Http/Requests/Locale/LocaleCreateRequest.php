@@ -25,6 +25,7 @@ class LocaleCreateRequest extends FormRequest
     return [
         'status' => ['required', 'string'],
         'title' => ['required', 'string'],
+        'native' => ['required', 'string'],
         'code' => ['required', 'string', 'unique:locales,code'],
         'published_at' => ['nullable'],
         'images' => ['array'],

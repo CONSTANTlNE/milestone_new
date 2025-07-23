@@ -10,13 +10,10 @@ return [
     'Restored Successfully' => 'Restored Successfully',
     'Deleted Successfully from Archive' => 'Deleted Successfully from Archive',
     'massDestroy Successfully' => 'Items deleted successfully',
-    'Return Back' => 'Return Back',
-    'All Page' => 'All Pages',
-    'Add a new Page' => 'Add a new Page',
-    'Deleted Pages' => 'Deleted Pages',
-    'Return Back' => 'Return Back',
-    'All Page' => 'All Pages',
-    'Add a new Page' => 'Add a new Page',
-    'Deleted Pages' => 'Deleted Pages',
-    'All menu items deleted successfully' => 'All menu items deleted successfully'
-]; 
+    'All menu items deleted successfully' => 'All menu items deleted successfully',
+    'Restored Successfully from Archive' => 'Restored Successfully from Archive',
+    'Mass Deleted Successfully from Archive' => 'Mass Deleted Successfully from Archive',
+    'Position changed successfully' => 'Position changed successfully',
+    'You really want to delete it' => 'You really want to delete it',
+    'Delete Successfully' => 'Delete Successfully!'
+];
