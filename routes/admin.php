@@ -40,6 +40,8 @@ use Laravel\Fortify\Http\Controllers\TwoFactorSecretKeyController;
 use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 use Laravel\Fortify\RoutePath;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use App\Http\Controllers\Frontend\QuotationController;
+
 
 //admins auth routes
 Route::group(
@@ -580,23 +582,12 @@ Route::group(
 //        Route::any('ime/{id}/{positionId}/update', 'ImageController@update');
 //        Route::any('cover/{id}/{cover}/cover', 'ImageController@cover');
 
-
-    Route::controller(AdminController::class)->group(function () {
-        Route::get('/users/all', 'allUsers')->name('all.users');
-        Route::get('/payments/all', 'payments')->name('payments');
-        Route::get('/restaurants/all', 'restaurants')->name('restaurants');
-        Route::post('/users/delete', 'deleteuser')->name('user.delete');
-        Route::post('/locale/add', 'addLocaleRestaurant')->name('locale.add.restaurant');
-        Route::post('/image/optimization', 'imageOptimization')->name('image.optimization');
-        Route::post('image/delete', 'deleteimage')->name('image.delete');
-    });
-
     Route::controller(QuotationController::class)->group(function () {
-        Route::get('/quotations', 'getQuotation')->name('quotations.get');
-        Route::post('/quotation/delete', 'delete')->name('quotation.delete');
-        Route::post('/calculate/distance', 'calculateDistance')->name('distance.calculate');
+        Route::get('quotations','index')->name('quotations.index');
+        Route::post('/quotation/delete', 'delete')->name('quotations.delete');
+        Route::post('/calculate/distance', 'calculateDistance')->name('quotations.calculatedistance');
+        route::post('/quotation/request/ai/data', 'requestAiData')->name('quotations.airequest');
     });
-
 //    Route::controller(ServiceController::class)->group(function () {
 //        route::get('/service/create', 'createService')->name('service.create');
 //        route::post('/service/store', 'storeService')->name('service.store');

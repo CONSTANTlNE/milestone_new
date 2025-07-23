@@ -10,26 +10,13 @@
                                 <img src="{{asset('assets/images/logo.png')}}" class="img-fluid" alt="">
                             </div><br>
                             <ul class="pbmit-social-links">
-                                <li class="pbmit-social-li pbmit-social-facebook">
-                                    <a title="Facebook" href="#" target="_blank">
-                                        <span><i class="pbmit-base-icon-facebook-f"></i></span>
+                                @foreach(getSocials() as $social)
+                                <li class="pbmit-social-li pbmit-social-{{$social->title}}">
+                                    <a title="{{$social->title}}" href="{{$social->link}}" target="_blank">
+                                        <span><i class="{{$social->icon}}"></i></span>
                                     </a>
                                 </li>
-                                <li class="pbmit-social-li pbmit-social-twitter">
-                                    <a title="Twitter" href="#" target="_blank">
-                                        <span><i class="pbmit-base-icon-twitter-2"></i></span>
-                                    </a>
-                                </li>
-                                <li class="pbmit-social-li pbmit-social-linkedin">
-                                    <a title="LinkedIn" href="#" target="_blank">
-                                        <span><i class="pbmit-base-icon-linkedin-in"></i></span>
-                                    </a>
-                                </li>
-                                <li class="pbmit-social-li pbmit-social-instagram">
-                                    <a title="Instagram" href="#" target="_blank">
-                                        <span><i class="pbmit-base-icon-instagram"></i></span>
-                                    </a>
-                                </li>
+                                @endforeach
                             </ul>
                         </aside>
                     </div>
@@ -44,7 +31,7 @@
                     </div>
                     <div class="pbmit-footer-widget-col-3 col-md-2">
                         <aside class="widget">
-                            <h2 class="widget-title">Useful Link</h2>
+                            <h2 class="widget-title">{{__('useful_link')}}</h2>
                             <ul class="menu">
                                 <li><a href="#">About</a></li>
                                 <li><a href="#">Our Service</a></li>

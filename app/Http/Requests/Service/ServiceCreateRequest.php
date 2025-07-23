@@ -39,14 +39,10 @@ class ServiceCreateRequest extends FormRequest
         ];
 
         $locales = array_keys(json_decode(file_get_contents(lang_path('config_locales.json')), true));
-
         foreach ($locales as $locale) {
             $rules["faq_question_{$locale}"] = ['nullable', 'array'];
-            $rules["faq_question_{$locale}.*"] = ['nullable', 'string'];
             $rules["faq_answer_{$locale}"] = ['nullable', 'array'];
-            $rules["faq_answer_{$locale}.*"] = ['nullable', 'string'];
             $rules["service_feature_name_{$locale}"] = ['nullable', 'array'];
-            $rules["service_feature_name_{$locale}.*"] = ['nullable', 'string'];
         }
 
         return $rules;

@@ -1,6 +1,8 @@
 @extends('frontend.layouts.master')
-@section('title') {{ __('strings.Home') }} @endsection
-
+@section('title') {{ $blog->title }} - @endsection
+@section('seo')
+    @include('components.frontend.socials.seo', ['data' => $blog])
+@endsection
 @section('header_background')
     <div class="pbmit-title-bar-wrapper">
         <div class="container">
@@ -14,18 +16,8 @@
                     <div class="pbmit-breadcrumb">
                         <div class="pbmit-breadcrumb-inner">
 								<span>
-									<a title="" href="#" class="home"><span>Blog</span></a>
+									<a title="" href="#" class="home"><span>{{__('blog')}}</span></a>
 								</span>
-                            <span class="sep">
-									<i class="pbmit-base-icon-angle-right"></i>
-								</span>
-                            <span>
-									<a title="" href="#" class="home"><span>Freight</span></a>
-								</span>
-                            <span class="sep">
-									<i class="pbmit-base-icon-angle-right"></i>
-								</span>
-                            <span><span class="post-root post post-post current-item"> Need from our Transport Tracking specialists</span></span>
                         </div>
                     </div>
                 </div>
@@ -118,7 +110,7 @@
                 <div class="col-md-3 blog-right-col">
                     <aside class="sidebar">
                         <aside class="widget widget-categories">
-                            <h2 class="widget-title">Categories</h2>
+                            <h2 class="widget-title">{{__('catagories')}}</h2>
                             <ul>
                                 @foreach($blogCategories as $category)
                                     <li>
@@ -132,16 +124,23 @@
                         </aside>
                         <aside class="widget pbmit-service-ad">
                             <div class="pbmit-widget-ads">
-                                <img src="{{asset("assets/images/bg/service-ad-bg.jpg")}}" class="bg-img" alt="">
+                                <img
+                                    src="{{asset('assets/images/bg/service-ad-bg.jpg')}}"
+                                    class="bg-img"
+                                    alt=""
+                                />
                                 <div class="pbmit-service-ad-wrapper">
                                     <div class="pbmit-service-ads">
                                         <div class="pbmit-ads-icon">
                                             <i class="pbmit-base-icon-phone-call"></i>
                                         </div>
-                                        <span>We Offering Speed & Reliable Services.</span>
-                                        <h3 class="pbmit-ads-call">
-                                            <a href="tel:+0(123)456-789">+0(123)456-789</a>
-                                        </h3>
+                                        <span>{{__('contact_text_number')}}</span>
+                                        @if(!empty(getContact()->phone) or !empty(getContact()->phone1))
+                                            <h3 class="pbmit-ads-call">
+                                                <a href="tel:{{getContact()->phone}}">{{getContact()->phone}}</a>
+                                                <a href="tel:{{getContact()->phone1}}">{{getContact()->phone1}}</a>
+                                            </h3>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

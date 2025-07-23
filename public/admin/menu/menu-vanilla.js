@@ -560,7 +560,7 @@ class MenuManager {
         const checkboxes = container.querySelectorAll('.category-checkbox:checked');
         
         if (checkboxes.length === 0) {
-            alert('გთხოვთ აირჩიოთ მინიმუმ ერთი კატეგორია');
+            alert('Please select at least one category.');
             return;
         }
 
@@ -577,7 +577,7 @@ class MenuManager {
         const progressDiv = document.createElement('div');
         progressDiv.id = 'bulk-add-progress';
         progressDiv.style.cssText = 'background: #e7f7ff; border: 1px solid #0073aa; padding: 10px; margin: 10px 0; border-radius: 4px; text-align: center;';
-        progressDiv.innerHTML = `დასამატებელია ${selectedCategories.length} კატეგორია...`;
+        progressDiv.innerHTML = `Adding ${selectedCategories.length} categories...`;
         container.appendChild(progressDiv);
 
         // Add each category one by one
@@ -587,7 +587,7 @@ class MenuManager {
         const addNextCategory = (index) => {
             if (index >= totalCategories) {
                 // All categories added, reload the page
-                progressDiv.innerHTML = `წარმატებით დაემატა ${addedCount} კატეგორია! გვერდი იტვირთება...`;
+                progressDiv.innerHTML = `Successfully added ${addedCount} categories! Reloading...`;
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);
@@ -605,7 +605,7 @@ class MenuManager {
             };
 
             // Update progress
-            progressDiv.innerHTML = `დამატებულია ${addedCount} / ${totalCategories} კატეგორია...`;
+            progressDiv.innerHTML = `Added ${addedCount} / ${totalCategories} categories...`;
 
             this.makeRequest(this.routes.addCustomMenu, data, 'POST')
                 .then(response => {
@@ -630,7 +630,7 @@ class MenuManager {
         const checkboxes = container.querySelectorAll('.service-category-checkbox:checked');
         
         if (checkboxes.length === 0) {
-            alert('გთხოვთ აირჩიოთ მინიმუმ ერთი სერვისების კატეგორია');
+            alert('Please select at least one service category.');
             return;
         }
 
@@ -647,7 +647,7 @@ class MenuManager {
         const progressDiv = document.createElement('div');
         progressDiv.id = 'bulk-add-progress';
         progressDiv.style.cssText = 'background: #e7f7ff; border: 1px solid #0073aa; padding: 10px; margin: 10px 0; border-radius: 4px; text-align: center;';
-        progressDiv.innerHTML = `დასამატებელია ${selectedServiceCategories.length} სერვისების კატეგორია...`;
+        progressDiv.innerHTML = `Adding ${selectedServiceCategories.length} service categories...`;
         container.appendChild(progressDiv);
 
         // Add each service category one by one
@@ -657,7 +657,7 @@ class MenuManager {
         const addNextServiceCategory = (index) => {
             if (index >= totalServiceCategories) {
                 // All service categories added, reload the page
-                progressDiv.innerHTML = `წარმატებით დაემატა ${addedCount} სერვისების კატეგორია! გვერდი იტვირთება...`;
+                progressDiv.innerHTML = `Successfully added ${addedCount} service categories! Reloading...`;
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);
@@ -675,7 +675,7 @@ class MenuManager {
             };
 
             // Update progress
-            progressDiv.innerHTML = `დამატებულია ${addedCount} / ${totalServiceCategories} სერვისების კატეგორია...`;
+            progressDiv.innerHTML = `Added ${addedCount} / ${totalServiceCategories} service categories...`;
 
             this.makeRequest(this.routes.addCustomMenu, data, 'POST')
                 .then(response => {

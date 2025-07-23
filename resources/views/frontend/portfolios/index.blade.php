@@ -1,6 +1,8 @@
 @extends('frontend.layouts.master')
-@section('title') {{ __('strings.Home') }} @endsection
-
+@section('title') {{ $page->title }} - @endsection
+@section('seo')
+    @include('components.frontend.socials.seo', ['data' => $page])
+@endsection
 @section('header_background')
     <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($page->src ?: config('filemanager.default_backend_image'))}});">
         <div class="container">
@@ -43,10 +45,10 @@
                         <div class="pbminfotech-box-content">
                             <div class="pbminfotech-titlebox">
                                 <div class="pbmit-port-cat">
-                                    <a href="{{ route('frontend.portfolios.show', ['id' => $portfolio->id, 'slug' =>$portfolio->slug]) }}" rel="tag">Analystics</a>
+                                    <a href="{{ route('frontend.portfolios.show', ['id' => $portfolio->id, 'slug' =>$portfolio->slug]) }}" rel="tag">{{$portfolio->slogan}}</a>
                                 </div>
                                 <h3 class="pbmit-portfolio-title">
-                                    <a href="{{ route('frontend.portfolios.show', ['id' => $portfolio->id, 'slug' =>$portfolio->slug]) }}">Consulting Storage</a>
+                                    <a href="{{ route('frontend.portfolios.show', ['id' => $portfolio->id, 'slug' =>$portfolio->slug]) }}">{{$portfolio->title}}</a>
                                 </h3>
                             </div>
                         </div>

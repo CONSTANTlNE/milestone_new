@@ -7,7 +7,9 @@ use Spatie\Translatable\HasTranslations;
 
 class Availability extends Model
 {
+    protected  $guarded=[];
+
     use HasTranslations;
 
-    public array $translatable = ['name'];
+    public array $translatable = ['title'];
 }

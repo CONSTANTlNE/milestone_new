@@ -80,7 +80,6 @@ class ServiceService implements ServiceInterface
     {
         $data = $request->validated();
         Cache::forget('services');
-
         $service = new Service();
         $service->setMultiTranslations($data);
         $service->status = $data['status'];
@@ -142,6 +141,7 @@ class ServiceService implements ServiceInterface
             $featureNames[$locale] = $request->input("service_feature_name_{$locale}", []);
         }
         $featureCount = count($featureNames[$locales[0]] ?? []);
+
         for ($i = 0; $i < $featureCount; $i++) {
             $translations = [];
             foreach ($locales as $locale) {
@@ -169,7 +169,6 @@ class ServiceService implements ServiceInterface
             $slugTranslations = [];
             foreach ($locales as $locale) {
                 $questionTranslations[$locale] = $questions[$locale][$i] ?? '';
-                $slugTranslations[$locale] = Str::slug((string)$questions[$locale][$i]) ?? '';
                 $answerTranslations[$locale] = $answers[$locale][$i] ?? '';
             }
             $service->faqs()->create([

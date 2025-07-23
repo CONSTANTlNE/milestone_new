@@ -17,7 +17,7 @@
 
     @vite('public/css/admin-app.css')
     @yield('styles')
-    
+
 </head>
 <body>
     <div id="loader" >

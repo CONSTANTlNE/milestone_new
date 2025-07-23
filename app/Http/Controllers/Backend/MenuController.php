@@ -184,8 +184,17 @@ class MenuController extends Controller
         $menuItem = new MenuItem();
         $menuItem->setTranslations('title', json_decode($menuTitle[1], true, JSON_UNESCAPED_UNICODE));
         $menuItem->setTranslations('slug', json_decode($menuTitle[2], true, JSON_UNESCAPED_UNICODE));
-        $menuItem->route = $menuTitle[3] ?? $menuPrefix;
-        $menuItem->is_prefix = $menuTitle[0] == 0 ? 0 : 1;
+        $menuItem->route = isset($menuTitle[3]) && $menuTitle[3] ? $menuTitle[3] : $menuPrefix;
+        if (isset($menuTitle[3])) {
+            if ($menuTitle[3] !== "frontend.pages.show") {
+                $menuItem->is_prefix = 0;
+            } else {
+                $menuItem->is_prefix = 1;
+            }
+        } else {
+            // For categories, treat as prefix
+            $menuItem->is_prefix = 1;
+        }
         $menuItem->model_id = int_value($menuTitle[0]);
         $menuItem->model_type = request()->menuModel;
         $menuItem->menu_id = request()->input("idmenu");

@@ -1,5 +1,5 @@
 @extends('backend.layouts.master')
-@section('title') {{ __('strings.File Manager') }} @endsection
+@section('title') {{ __('admin.file_manager') }} @endsection
 @section('content')
     <div class="content">
         <div class="main-content">

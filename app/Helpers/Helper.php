@@ -139,21 +139,14 @@ if (!function_exists('getSocials')) {
                 return Social::orderBy('position', 'asc')->get();
             });
         }
-        return  $socials;
+        return  Social::orderBy('position', 'asc')->get();
     }
 }
 
 if (!function_exists('getContact')) {
     function getContact()
     {
-        if (Cache::has('Contact')){
-            $maps = Cache::get('Contact');
-        } else {
-            $maps = Cache::remember('Contact', 60*60*24, function (){
-                return Setting::all();
-            });
-        }
-        return  $maps->first();
+        return  Setting::first();
     }
 }
 
@@ -180,20 +173,13 @@ if (! function_exists('int_value')) {
 
 if (! function_exists('getPageById')) {
     function getPageById($id){
-        if (Cache::has('Page')){
-            $page = Cache::get('Page')->where('status', '1')->find($id);
-        } else {
-            $pages = Cache::remember('Page', 60*60*24, function (){
-                return Page::with('seo','rowParent')->get();
-            });
-            $page = Cache::get('Page')->where('status', '1')->find($id);
-        }
-        return $page;
+        return Page::with('seo','rowParent')->find($id);
     }
 }
 
-if (! function_exists('clean')) {
-    function clean($str){
+if (! function_exists('clear')) {
+    function clear($str): string
+    {
         $str = str_replace("&nbsp;", " ", $str);
         $str = str_replace("&amp;", "&", $str);
         $str = preg_replace('/\s+/', ' ',$str);

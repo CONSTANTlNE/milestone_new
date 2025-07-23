@@ -1,6 +1,8 @@
 @extends('frontend.layouts.master')
-@section('title') {{ __('strings.Home') }} @endsection
-
+@section('title') {{ $page->title }} - @endsection
+@section('seo')
+    @include('components.frontend.socials.seo', ['data' => $page])
+@endsection
 @section('header_background')
     <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($page->src ?: config('filemanager.default_backend_image'))}});">
         <div class="container">
@@ -83,5 +85,4 @@
             </div>
         </div>
     </section>
-    <!-- Faq End -->
 @endsection

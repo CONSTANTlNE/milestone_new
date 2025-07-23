@@ -1,6 +1,8 @@
 @extends('frontend.layouts.master')
-@section('title') {{ __('strings.Home') }} @endsection
-
+@section('title') {{ $page->title }} - @endsection
+@section('seo')
+    @include('components.frontend.socials.seo', ['data' => $page])
+@endsection
 @section('header_background')
     <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($page->src ?: config('filemanager.default_backend_image'))}});">
         <div class="container">
@@ -29,8 +31,6 @@
 @endsection
 
 @section('content')
-
-    <!-- Blog Classic -->
     <section class="site-content">
         <div class="container">
             <div class="row">
@@ -64,16 +64,16 @@
 										</span>
                                     </div>
                                     <h3 class="pbmit-post-title">
-                                        <a href="{{ route('frontend.blogs.show', ['id'=> $blog->id, 'slug'=> $blog->slug, ]) }}">The Guide On How to Ship Oversize Loads</a>
+                                        <a href="{{ route('frontend.blogs.show', ['id'=> $blog->id, 'slug'=> $blog->slug, ]) }}">{{$blog->title}}</a>
                                     </h3>
                                     <div class="pbmit-entry-content">
                                         <div class="pbmit-entry-content">
-                                            <p>Logistic regression is a data analysis technique that uses mathematics to find the relationships between two data factors. then uses this relationship to predict the value of one of those…</p>
+                                            <p>{{$blog->slogan}}</p>
                                         </div>
                                         <div class="pbmit-read-more-link">
                                             <a class="pbmit-btn" href="{{ route('frontend.blogs.show', ['id'=> $blog->id, 'slug'=> $blog->slug, ]) }}">
 												<span class="pbmit-button-content-wrapper">
-													<span class="pbmit-button-text">Read More</span>
+													<span class="pbmit-button-text">{{__('read_more')}}</span>
 												</span>
                                             </a>
                                         </div>
@@ -86,7 +86,7 @@
                 <div class="col-md-12 col-xl-3 blog-right-col">
                     <aside class="sidebar">
                         <aside class="widget widget-categories">
-                            <h2 class="widget-title">Categories</h2>
+                            <h2 class="widget-title">{{__('categories')}}</h2>
                             <ul>
                                 @foreach($blogCategories as $category)
                                     <li>
@@ -100,16 +100,23 @@
                         </aside>
                         <aside class="widget pbmit-service-ad">
                             <div class="pbmit-widget-ads">
-                                <img src="{{asset('assets/images/bg/service-ad-bg.jpg')}}" class="bg-img" alt="">
+                                <img
+                                    src="{{asset('assets/images/bg/service-ad-bg.jpg')}}"
+                                    class="bg-img"
+                                    alt=""
+                                />
                                 <div class="pbmit-service-ad-wrapper">
                                     <div class="pbmit-service-ads">
                                         <div class="pbmit-ads-icon">
                                             <i class="pbmit-base-icon-phone-call"></i>
                                         </div>
-                                        <span>We Offering Speed & Reliable Services.</span>
-                                        <h3 class="pbmit-ads-call">
-                                            <a href="tel:+0(123)456-789">+0(123)456-789</a>
-                                        </h3>
+                                        <span>{{__('contact_text_number')}}</span>
+                                        @if(!empty(getContact()->phone) or !empty(getContact()->phone1))
+                                            <h3 class="pbmit-ads-call">
+                                                <a href="tel:{{getContact()->phone}}">{{getContact()->phone}}</a>
+                                                <a href="tel:{{getContact()->phone1}}">{{getContact()->phone1}}</a>
+                                            </h3>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

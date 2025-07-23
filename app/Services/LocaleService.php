@@ -91,6 +91,7 @@ class LocaleService implements LocaleInterface
         $locale = Locale::create([
             'title' => $data['title'],
             'code' => $data['code'],
+            'native' => $data['native'],
             'status' => $data['status'],
             'created_at' => $data['published_at'] ?? now(),
             'position' => Locale::getNextPosition(),

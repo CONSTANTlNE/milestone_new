@@ -1,6 +1,8 @@
 @extends('frontend.layouts.master')
-@section('title') {{ __('strings.Home') }} @endsection
-
+@section('title') {{ $portfolio->title }} - @endsection
+@section('seo')
+    @include('components.frontend.socials.seo', ['data' => $portfolio])
+@endsection
 @section('header_background')
     <div class="pbmit-title-bar-wrapper">
         <div class="container">
@@ -8,19 +10,18 @@
                 <div class="pbmit-title-bar-content-inner">
                     <div class="pbmit-tbar">
                         <div class="pbmit-tbar-inner container">
-                            <h3 class="pbmit-tbar-subtitle"> Portfolio</h3>
-                            <h1 class="pbmit-tbar-title"> Warehouse Inventory</h1>
+                            <h1 class="pbmit-tbar-title">{{$portfolio->title}}</h1>
                         </div>
                     </div>
                     <div class="pbmit-breadcrumb">
                         <div class="pbmit-breadcrumb-inner">
-									<span>
-										<a title="" href="#" class="home"><span>Portfolio</span></a>
-									</span>
+								<span>
+									<a title="" href="#" class="home"><span>{{__('portfolio')}}</span></a>
+								</span>
                             <span class="sep">
-										<i class="pbmit-base-icon-angle-right"></i>
-										</span>
-                            <span><span class="post-root post post-post current-item"> Warehouse Inventory</span></span>
+									<i class="pbmit-base-icon-angle-right"></i>
+								</span>
+                            <span><span class="post-root post post-post current-item"> {{$portfolio->title}}</span></span>
                         </div>
                     </div>
                 </div>
@@ -35,9 +36,9 @@
     <section class="site-content">
         <div class="container">
             <article class="pbmit-portfolio-single">
-                <div class="pbmit-featured-img-wrapper">
-                    <img src="images/portfolio/portfolio-single-01.jpg" class="img-fluid w-100" alt="">
-                </div>
+{{--                <div class="pbmit-featured-img-wrapper">--}}
+{{--                    <img src="{{asset($portfolio->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="">--}}
+{{--                </div>--}}
 {{--                <div class="pbmit-single-project-details-list">--}}
 {{--                    <h3 class="mb-4">Project info</h3>--}}
 {{--                    <div class="pbmit-portfolio-lines-wrapper">--}}

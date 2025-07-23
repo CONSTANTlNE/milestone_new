@@ -177,6 +177,9 @@
                     </ul>
                 </li>
                 @endcan
+                <li class="slide__category font-second-geo"><span class="category-name">{{ __('admin.sidebar_qotations') }}</span></li>
+                <li class="slide"><a href="{{ route('backend.quotations.index') }}" class="side-menu__item font-second-geo {{ request()->routeIs('backend.quotations.*') ? 'active' : '' }}">Qotations</a></li>
+
                 <li class="slide">
                     <a href="{{ route('backend.logout') }}" aria-expanded="false" class="side-menu__item font-first-geo !bg-secondary/10 text-danger" onclick="event.preventDefault();
                                      document.getElementById('logout-form').submit();">

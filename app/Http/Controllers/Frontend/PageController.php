@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Faq;
 use App\Models\Page;
+use App\Models\ServiceCategory;
 use App\Models\Setting;
 
 class PageController extends Controller
@@ -26,7 +27,8 @@ class PageController extends Controller
 
     public function about(){
         $page = Page::where('template', 'frontend.pages.about')->first();
-        return view('frontend.pages.about', compact('page'));
+        $serviceCategories = ServiceCategory::where('status', true)->get();
+        return view('frontend.pages.about', compact('page', 'serviceCategories'));
     }
 
     public function faq(){

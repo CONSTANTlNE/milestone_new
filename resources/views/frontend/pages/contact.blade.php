@@ -1,6 +1,8 @@
 @extends('frontend.layouts.master')
-@section('title') {{ __('strings.Home') }} @endsection
-
+@section('title') {{ $page->title }} - @endsection
+@section('seo')
+    @include('components.frontend.socials.seo', ['data' => $page])
+@endsection
 @section('header_background')
     <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($page->src ?: config('filemanager.default_backend_image'))}});">
         <div class="container">
@@ -29,20 +31,25 @@
 @endsection
 
 @section('content')
-    <!-- Ihbox -->
     <section class="section-xl">
         <div class="container">
             <div class="row">
+                @if(!empty($setting->email) or !empty($setting->email1))
                 <article class="pbmit-miconheading-style-5 col-md-6 col-lg-4 col-xl-3">
                     <div class="pbmit-ihbox-style-5">
                         <div class="pbmit-ihbox-headingicon">
                             <div class="pbmit-ihbox-wrap">
                                 <div class="pbmit-ihbox-contents">
                                     <h2 class="pbmit-element-title">
-                                        Mail Us 24/7
+                                        {{__('mail_text')}}
                                     </h2>
-                                    <div class="pbmit-heading-desc"><a href="#" class="__cf_email__" data-cfemail="4333212e2a2d252c3726202b03242e222a2f6d202c2e">{{$setting->email}}</a> <br>
-                                        <a href="#" class="__cf_email__" data-cfemail="e18f8ecc9384918d98a191838c888f878e95848289cf828e8c">{{$setting->email1}}</a>
+                                    <div class="pbmit-heading-desc">
+                                        @if(!empty($setting->email))
+                                        <a href="mailto:{{$setting->email}}" class="__cf_email__" data-cfemail="4333212e2a2d252c3726202b03242e222a2f6d202c2e">{{$setting->email}}</a> <br>
+                                        @endif
+                                        @if(!empty($setting->email1))
+                                        <a href="mailto:{{$setting->email}}" class="__cf_email__" data-cfemail="e18f8ecc9384918d98a191838c888f878e95848289cf828e8c">{{$setting->email1}}</a>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="pbmit-ihbox-icon">
@@ -53,7 +60,7 @@
                             </div>
                             <div class="pbmit-btn-wrap">
                                 <div class="pbmit-ihbox-btn">
-                                    <a class="pbmit-button-inner" href="#">
+                                    <a class="pbmit-button-inner" href="#contact-information">
                                         <span class="pbmit-button-icon"></span>
                                     </a>
                                 </div>
@@ -61,13 +68,15 @@
                         </div>
                     </div>
                 </article>
+                @endif
+                @if(!empty(clear($setting->address)))
                 <article class="pbmit-miconheading-style-5 col-md-6 col-lg-4 col-xl-3">
                     <div class="pbmit-ihbox-style-5">
                         <div class="pbmit-ihbox-headingicon">
                             <div class="pbmit-ihbox-wrap">
                                 <div class="pbmit-ihbox-contents">
                                     <h2 class="pbmit-element-title">
-                                        Our Location
+                                        {{__('our_location')}}
                                     </h2>
                                     <div class="pbmit-heading-desc">{{$setting->address}}
                                     </div>
@@ -80,7 +89,7 @@
                             </div>
                             <div class="pbmit-btn-wrap">
                                 <div class="pbmit-ihbox-btn">
-                                    <a class="pbmit-button-inner" href="#">
+                                    <a class="pbmit-button-inner" href="#contact-information">
                                         <span class="pbmit-button-icon"></span>
                                     </a>
                                 </div>
@@ -88,16 +97,18 @@
                         </div>
                     </div>
                 </article>
+                @endif
+                @if(!empty($setting->phone) or !empty($setting->phone1))
                 <article class="pbmit-miconheading-style-5 col-md-6 col-lg-4 col-xl-3">
                     <div class="pbmit-ihbox-style-5">
                         <div class="pbmit-ihbox-headingicon">
                             <div class="pbmit-ihbox-wrap">
                                 <div class="pbmit-ihbox-contents">
                                     <h2 class="pbmit-element-title">
-                                        Call US 24/7
+                                        {{__('call')}}
                                     </h2>
-                                    <div class="pbmit-heading-desc">Phone: {{$setting->phone}}<br>
-                                        Mobile: {{$setting->phone1}}
+                                    <div class="pbmit-heading-desc">{{__('phone')}}: {{$setting->phone}}<br>
+                                        {{__('mobile')}}: {{$setting->phone1}}
                                     </div>
                                 </div>
                                 <div class="pbmit-ihbox-icon">
@@ -108,7 +119,7 @@
                             </div>
                             <div class="pbmit-btn-wrap">
                                 <div class="pbmit-ihbox-btn">
-                                    <a class="pbmit-button-inner" href="#">
+                                    <a class="pbmit-button-inner" href="#contact-information">
                                         <span class="pbmit-button-icon"></span>
                                     </a>
                                 </div>
@@ -116,13 +127,15 @@
                         </div>
                     </div>
                 </article>
+                @endif
+                @if(!empty($setting->working_hours) or !empty($setting->working_hours))
                 <article class="pbmit-miconheading-style-5 col-md-6 col-lg-4 col-xl-3">
                     <div class="pbmit-ihbox-style-5">
                         <div class="pbmit-ihbox-headingicon">
                             <div class="pbmit-ihbox-wrap">
                                 <div class="pbmit-ihbox-contents">
                                     <h2 class="pbmit-element-title">
-                                        Working Days
+                                        {{__('working_days')}}
                                     </h2>
                                     <div class="pbmit-heading-desc">{{$setting->working_hours}}
                                     </div>
@@ -135,7 +148,7 @@
                             </div>
                             <div class="pbmit-btn-wrap">
                                 <div class="pbmit-ihbox-btn">
-                                    <a class="pbmit-button-inner" href="#">
+                                    <a class="pbmit-button-inner" href="#contact-information">
                                         <span class="pbmit-button-icon"></span>
                                     </a>
                                 </div>
@@ -143,22 +156,22 @@
                         </div>
                     </div>
                 </article>
+                @endif
             </div>
         </div>
     </section>
-    <!-- Ihbox End -->
 
     <!-- Contact Form -->
-    <section style="padding-bottom: 100px;">
+    <section id="contact-information" style="padding-bottom: 100px;">
         <div class="container">
             <div class="row g-0">
                 <div class="col-md-12 col-xl-6">
                     <div class="contact-us-left-area">
                         <div class="pbmit-heading-subheading animation-style4">
-                            <h4 class="pbmit-subtitle">Contact us</h4>
-                            <h2 class="pbmit-title">Write us what you want to know</h2>
+                            <h4 class="pbmit-subtitle">{{$page->title}}</h4>
+                            <h2 class="pbmit-title">{{$page->slogan}}</h2>
                             <div class="pbmit-heading-desc">
-                                We carefully screen all of our cleaners, so you can rest assured that <br> your home would receive the absolute highest quality of service providing.
+                                {!! $page->content !!}
                             </div>
                         </div>
                         <div class="contact-bg-img">
@@ -169,38 +182,30 @@
                 <div class="col-md-12 col-xl-6">
                     <div class="contact-form-rightbox pbmit-bg-color-white">
                         <div class="pbmit-heading animation-style2">
-                            <h2 class="pbmit-title">Send a message to staff</h2>
+                            <h2 class="pbmit-title">{{__('contact_form')}}</h2>
                         </div>
-                        <p>Your email address will not be published. Required fields are marked *</p>
-                        <form class="contact-form" method="post" id="contact-form" action="send.php">
+                        <p>{{__('required')}}</p>
+                        <form class="contact-form" method="post" id="contact-form" action="#">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Your Name" name="name" required="">
+                                    <input type="text" class="form-control" placeholder="{{__('your_name')}}" name="name" required="">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="email" class="form-control" placeholder="Your Email" name="email" required="">
+                                    <input type="email" class="form-control" placeholder="{{__('your_email')}}" name="email" required="">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="tel" class="form-control" placeholder="Your Phone" name="phone" required="">
+                                    <input type="tel" class="form-control" placeholder="{{__('your_email')}}" name="phone" required="">
                                 </div>
                                 <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="Subject" name="subject" required="">
+                                    <input type="text" class="form-control" placeholder="{{__('subject')}}" name="subject" required="">
                                 </div>
                                 <div class="col-md-12">
-                                    <textarea name="message" cols="40" rows="10" class="form-control" placeholder="Message" required=""></textarea>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="form-check-input" type="checkbox">
-                                            Save my name, email, and website in this browser for the next time I comment.
-                                        </label>
-                                    </div>
+                                    <textarea name="message" cols="40" rows="10" class="form-control" placeholder="{{__('message')}}" required=""></textarea>
                                 </div>
                             </div>
                             <button class="pbmit-btn submit my-4">
 										<span class="pbmit-button-content-wrapper">
-											<span class="pbmit-button-text">Get Cost Estimate</span>
+											<span class="pbmit-button-text">{{__('send')}}</span>
 										</span>
                                 <span class="form-btn-loader d-none">
 											<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 200 100"><circle fill="#fff" stroke="#fff" stroke-width="15" r="15" cx="40" cy="50"><animate attributename="opacity" calcmode="spline" dur="2" values="1;0;1;" keysplines=".5 0 .5 1;.5 0 .5 1" repeatcount="indefinite" begin="-.4"></animate></circle><circle fill="#fff" stroke="#fff" stroke-width="15" r="15" cx="100" cy="50"><animate attributename="opacity" calcmode="spline" dur="2" values="1;0;1;" keysplines=".5 0 .5 1;.5 0 .5 1" repeatcount="indefinite" begin="-.2"></animate></circle><circle fill="#fff" stroke="#fff" stroke-width="15" r="15" cx="160" cy="50"><animate attributename="opacity" calcmode="spline" dur="2" values="1;0;1;" keysplines=".5 0 .5 1;.5 0 .5 1" repeatcount="indefinite" begin="0"></animate></circle></svg>
@@ -213,12 +218,11 @@
             </div>
         </div>
     </section>
-    <!-- Contact Form End -->
 
     @if(!empty($setting->g_map))
     <section class="contact-iframe-section">
         <div class="container-fluid p-0">
-            <iframe src="https://maps.google.com/maps?q=London%20Eye%2C%20London%2C%20United%20Kingdom&t=m&z=10&output=embed&iwloc=near" title="London Eye, London, United Kingdom" aria-label="London Eye, London, United Kingdom"></iframe>
+            {!! $setting->g_map !!}
         </div>
     </section>
     @endif

@@ -23,14 +23,14 @@ class ServiceController extends Controller
     public function category($id)
     {
         $category = ServiceCategory::find($id);
-        $categoryServices = $category->services()
+        $services = $category->services()
                 ->whereNotNull('slug->' . app()->getLocale())
                 ->where('slug->'.app()->getLocale(), "!=", '')
                 ->where('status', 1)
                 ->orderBy('id', 'DESC')
                 ->paginate(15);
 
-        return view('frontend.serviceCategories.show', compact('category', 'categoryServices'));
+        return view('frontend.serviceCategories.show', compact('category', 'services'));
     }
 
     public function show($id)
@@ -39,6 +39,11 @@ class ServiceController extends Controller
             ->where('slug->'.app()->getLocale(), "!=", '')
             ->where('id', $id)
             ->first();
-        return view('frontend.services.show', compact('service'));
+        $services = Service::whereNotNull('slug->' . app()->getLocale())
+            ->where('slug->'. app()->getLocale(), "!=", '')
+            ->where('status', 1)
+            ->orderBy('id', 'DESC')
+            ->get();
+        return view('frontend.services.show', compact('service', 'services'));
     }
 }
