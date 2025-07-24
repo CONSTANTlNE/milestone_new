@@ -23,13 +23,15 @@
                                                 <div class="pbmit-desc transform-center transform-delay-3">
                                                     {!! clear($slider->content) !!}
                                                 </div>
+                                                @if(!empty(clear($slider->url)))
                                                 <div class="pbmit-button transform-bottom transform-delay-4">
                                                     <a class="pbmit-btn" href="{{$slider->url}}">
-															<span class="pbmit-button-content-wrapper">
-																<span class="pbmit-button-text">{{__('view_more')}}</span>
-															</span>
+                                                        <span class="pbmit-button-content-wrapper">
+                                                            <span class="pbmit-button-text">{{__('view_more')}}</span>
+                                                        </span>
                                                     </a>
                                                 </div>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -42,8 +44,8 @@
         </div>
     </div>
 @endsection
-
 @section('content')
+    @if(isset(getPageById(156)->id))
     <section style="padding: 100px 0 130px 0;">
         <div class="container">
             <div class="row g-0">
@@ -62,7 +64,7 @@
                                     <div class="pbmit-fld-wrap">
                                         <h4 class="pbmit-fid-inner">
                                             <span class="pbmit-fid-before"></span>
-                                            <span class="pbmit-number-rotate numinate" data-appear-animation="animateDigits" data-from="0" data-to="245" data-interval="10" data-before="" data-before-style="" data-after="" data-after-style="">245</span>
+                                            <span class="pbmit-number-rotate numinate" data-appear-animation="animateDigits" data-from="0" data-to="{{__('home_about_number')}}" data-interval="10" data-before="" data-before-style="" data-after="" data-after-style="">{{__('home_about_number')}}</span>
                                             <span class="pbmit-fid"><span>+</span></span>
                                         </h4>
                                         <span class="pbmit-fid-title">{{getPageById(156)->slogan}}</span>
@@ -76,15 +78,16 @@
                     <div class="ps-xl-5">
                         {!! getPageById(156)->content !!}
                         <a class="pbmit-btn pbmit-btn-outline mt-4" href="{{route('frontend.pages.about')}}">
-									<span class="pbmit-button-content-wrapper">
-										<span class="pbmit-button-text">{{__('about_us')}}</span>
-									</span>
+                            <span class="pbmit-button-content-wrapper">
+                                <span class="pbmit-button-text">{{__('about_us')}}</span>
+                            </span>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    @endif
 
     <section class="service-one-bg pbmit-bg-color-blackish">
         <div class="container">
@@ -129,7 +132,7 @@
                                 <div class="pbmit-service-image-wrapper">
                                     <div class="pbmit-featured-img-wrapper">
                                         <div class="pbmit-featured-wrapper">
-                                            <img src="{{asset($service->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid w-100" alt="">
+                                            <img src="{{asset($service->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid w-100" alt="{{$service->title}}">
                                         </div>
                                     </div>
                                 </div>
@@ -157,7 +160,7 @@
                         <div class="pbmit-staticbox-wrapper">
                             <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}});">
                                 <div class="pbmit-img">
-                                    <img src="{{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="Receive packages">
+                                    <img src="{{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="{{$serviceCategory->title}}">
                                 </div>
                                 <div class="pbmit-box-number">{{$key < 10 ? '0'.$key+1 : $key+1}}</div>
                                 <h4 class="pbmit-static-box-title">{{$serviceCategory->title}}</h4>
@@ -183,65 +186,7 @@
         </div>
     </section>
 
-    <section>
-        <div class="container-fluid px-4">
-            <div class="row g-0">
-                <div class="col-md-12 col-xl-6">
-                    <div class="contact-one-left-bg"></div>
-                </div>
-                <div class="col-md-12 col-xl-6">
-                    <div class="pbmit-bg-color-global contact-one-right-bg">
-                        <div class="pbmit-heading-subheading">
-                            <h4 class="pbmit-subtitle">
-                                {{__('what_to_expect')}}
-                            </h4>
-                            <h2 class="pbmit-title">
-                                {{__('estimate')}}
-                            </h2>
-                        </div>
-                        <form class="contact-form" method="post" id="contact-form" action="#">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <input type="tel" class="form-control" placeholder="{{__('phone_number')}}" name="number" required="">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="email" class="form-control" placeholder="{{__('email')}}" name="email" required="">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="{{__('city_of_depature')}}" name="City" required="">
-                                </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control" placeholder="{{__('delivery_city')}}" name="Delivery" required="">
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" placeholder="{{__('weight')}}" name="weight" required="">
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" placeholder="{{__('length')}}" name="length" required="">
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" placeholder="{{__('width')}}" name="width" required="">
-                                </div>
-                                <div>
-                                    <button class="pbmit-btn pbmit-btn-white submit my-3">
-												<span class="pbmit-button-content-wrapper">
-													<span class="pbmit-button-text">{{__('submit_now')}}</span>
-												</span>
-                                        <span class="form-btn-loader d-none">
-													<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 200 100"><circle fill="#0036FF" stroke="#0036FF" stroke-width="15" r="15" cx="40" cy="50"><animate attributename="opacity" calcmode="spline" dur="2" values="1;0;1;" keysplines=".5 0 .5 1;.5 0 .5 1" repeatcount="indefinite" begin="-.4"></animate></circle><circle fill="#0036FF" stroke="#0036FF" stroke-width="15" r="15" cx="100" cy="50"><animate attributename="opacity" calcmode="spline" dur="2" values="1;0;1;" keysplines=".5 0 .5 1;.5 0 .5 1" repeatcount="indefinite" begin="-.2"></animate></circle><circle fill="#0036FF" stroke="#0036FF" stroke-width="15" r="15" cx="160" cy="50"><animate attributename="opacity" calcmode="spline" dur="2" values="1;0;1;" keysplines=".5 0 .5 1;.5 0 .5 1" repeatcount="indefinite" begin="0"></animate></circle></svg>
-												</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-lg-12 message-status"></div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-lg">
+    <section class="section-lg" style="padding-top: 0 !important;">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
@@ -269,7 +214,7 @@
                                     <div class="pbmit-date-wraper d-flex align-items-center">
                                         <div class="pbmit-meta-category-wrapper pbmit-meta-line">
                                             <div class="pbmit-meta-category">
-                                                <a href="{{ route('frontend.blogs.show', ['id' => $blog->id, 'slug' => $blog->slug]) }}" rel="category tag">{{$blog->categories->first()->title}}</a>
+                                                <a href="{{ route('frontend.blogs.show', ['id' => $blog->id, 'slug' => $blog->slug]) }}" rel="category tag">{{$blog->categories->first()->title ?? "N/A"}}</a>
                                             </div>
                                         </div>
                                         <div class="pbmit-date-author-wrapper">

@@ -39,7 +39,7 @@
                     <div class="pbminfotech-post-content">
                         <div class="pbmit-featured-img-wrapper">
                             <div class="pbmit-featured-wrapper">
-                                <img src="{{asset($portfolio->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="portfolio-01">
+                                <img src="{{asset($portfolio->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="{{$portfolio->title}}">
                             </div>
                         </div>
                         <div class="pbminfotech-box-content">

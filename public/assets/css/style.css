@@ -2265,15 +2265,15 @@ form textarea.form-control{
     .pbmit-consultation-outer {
         max-width: 100%;
     }
-    
+
     .pbmit-consultation-header {
         padding: 20px;
     }
-    
+
     .pbmit-consultation-title {
         font-size: 20px;
     }
-    
+
     .pbmit-consultation-content {
         padding: 20px;
     }
@@ -2306,3 +2306,60 @@ form textarea.form-control{
 body.drawer-open {
     overflow: hidden;
 }
+.logo-text{
+    color: #fff;
+    font-size: 22px;
+    width: 103px;
+    display: block;
+    float: left;
+    line-height: 20px;
+    margin-top: 9px;
+    margin-left: 5px;
+    text-align: left;
+}
+.logo-img{
+    margin-top: 1px;
+    float: left;
+}
+
+.locales-wrapper a {
+    color: #fff;
+}
+
+.site-header .locales-wrapper .main-menu ul > li.dropdown > a:after{
+    top: 5px;
+    right: -15px;
+    position: absolute;
+}
+
+.site-header .locales-wrapper .main-menu ul > li.dropdown {
+    position: relative;
+}
+
+.locales-wrapper  .main-menu .navigation > li > ul,  .locales-wrapper  .main-menu .navigation > li > ul > li > ul {
+    min-width: 30px;
+    position: absolute;
+    padding: 8px 0;
+    top: 35px;
+    left: -8px;
+    border-radius: 10px;
+    z-index: 100;
+    visibility: hidden;
+    border-top: 3px solid var(--pbmit-global-color);
+    background-color: #ffffff;
+}
+
+.locales-wrapper .main-menu .navigation > li > ul li {
+    font-weight: 400;
+    padding: 10px 15px;
+}
+
+.locales-wrapper .main-menu .navigation > li > ul li:hover > a:before{
+    display:none;
+}
+
+.locales-wrapper .main-menu .navigation > li > ul li:hover > a {
+    padding-left: 0px;
+    color:var(--pbmit-global-color);
+}
+
