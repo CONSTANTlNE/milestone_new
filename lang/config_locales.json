@@ -5,16 +5,16 @@
         "native": "en_EN",
         "regional": null
     },
-    "ru": {
-        "name": "Russian",
-        "script": null,
-        "native": "ru_RU",
-        "regional": null
-    },
     "es": {
         "name": "Spain",
         "script": null,
         "native": "es_ES",
+        "regional": null
+    },
+    "ru": {
+        "name": "Russian",
+        "script": null,
+        "native": "ru_RU",
         "regional": null
     }
 }

@@ -1,7 +1,6 @@
 <div class="site-navigation">
     <nav class="main-menu navbar-expand-xl navbar-light">
         <div class="navbar-header">
-            <!-- Toggle Button -->
             <button class="navbar-toggler" type="button">
                 <i class="pbmit-base-icon-menu-1"></i>
             </button>
@@ -36,6 +35,17 @@
                         </li>
                     @endforeach
                 </ul>
+                @if(count((array)getLocales()) > 1)
+                <ul class="locales-menu-wrapper">
+                    @foreach(getLocales() as $locale)
+                        <li>
+                            <a class="{{app()->getLocale() == $locale->code ? 'active': ''}}" href="{{ LaravelLocalization::getLocalizedURL($locale->code, null, [], true) }}" hreflang="{{ $locale->code }}">
+                                {{ $locale->title }}
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+                @endif
             </div>
         </div>
     </nav>

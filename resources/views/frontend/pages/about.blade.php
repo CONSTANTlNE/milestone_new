@@ -43,7 +43,7 @@
                                     <div class="pbmit-fld-wrap">
                                         <h4 class="pbmit-fid-inner">
                                             <span class="pbmit-fid-before"></span>
-                                            <span class="pbmit-number-rotate numinate" data-appear-animation="animateDigits" data-from="0" data-to="25" data-interval="5" data-before="" data-before-style="" data-after="" data-after-style="">{{__('about_page_number')}}</span>
+                                            <span class="pbmit-number-rotate numinate" data-appear-animation="animateDigits" data-from="0" data-to="{{__('about_page_number')}}" data-interval="5" data-before="" data-before-style="" data-after="" data-after-style="">{{__('about_page_number')}}</span>
                                             <span class="pbmit-fid"><span>+</span></span>
                                         </h4>
                                         <span class="pbmit-fid-title">{{__('years_of_experience')}}</span>
@@ -52,7 +52,7 @@
                             </div>
                         </div>
                         <div class="about-first-img">
-                            <img src="{{asset(getPageById(155)->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="">
+                            <img src="{{asset(getPageById(155)->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="{{getPageById(155)->title}}">
                         </div>
                         <div class="about-second-img">
                             <div class="img-wrap">
@@ -77,7 +77,6 @@
     </section>
     @endif
 
-    <!-- Static Box Start -->
     <section class="pbmit-element-static-box-style-1 section-md" style="padding-top: 0px;">
         <div class="container">
             <div class="pbmit-heading-subheading text-center">
@@ -94,7 +93,7 @@
                         <div class="pbmit-staticbox-wrapper">
                             <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}});">
                                 <div class="pbmit-img">
-                                    <img src="{{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="Receive packages">
+                                    <img src="{{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="{{$serviceCategory->title}}">
                                 </div>
                                 <div class="pbmit-box-number">{{$key < 10 ? '0'.$key+1 : $key+1}}</div>
                                 <h4 class="pbmit-static-box-title">{{$serviceCategory->title}}</h4>

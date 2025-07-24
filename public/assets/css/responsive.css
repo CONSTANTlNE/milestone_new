@@ -2042,7 +2042,7 @@ body {
 		max-width: none;
 	}
 	.header-style-1 .site-branding{
-		padding-right: 150px;
+		padding-right: 70px;
 	}
 	.header-style-1 .site-navigation{
 		border-radius: 30px;
@@ -2238,3 +2238,32 @@ body {
 		width: 50%;
 	}
 }
+
+@media (max-width: 1345px) and (min-width: 1200px) {
+    .logo-text{
+        display: none;
+    }
+}
+@media (max-width: 1200px){
+    .locales-wrapper {
+        display: none;
+    }
+    .site-header.header-style-1 .main-menu .navigation > li:first-child {
+        margin-left: 15px;
+    }
+}
+.locales-menu-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.locales-menu-wrapper .active {
+    color: red;
+}
+@media (min-width: 1200px){
+    .locales-menu-wrapper {
+        display: none;
+    }
+}
+

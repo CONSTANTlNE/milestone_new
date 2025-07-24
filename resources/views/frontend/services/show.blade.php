@@ -159,5 +159,4 @@
             </div>
         </div>
     </section>
-    <!-- Service Details End -->
 @endsection

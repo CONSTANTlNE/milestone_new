@@ -31,7 +31,6 @@
 @endsection
 
 @section('content')
-    <!-- Faq Start -->
     <section class="section-md">
         <div class="container">
             <div class="pbmit-heading-subheading text-center animation-style2">

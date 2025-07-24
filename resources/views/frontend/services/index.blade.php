@@ -31,7 +31,6 @@
 @endsection
 
 @section('content')
-    <!-- Services Start -->
     <section class="section-lg">
         <div class="container">
             <div class="pbmit-element-posts-wrapper row">
@@ -71,5 +70,4 @@
             </div>
         </div>
     </section>
-    <!-- Services end -->
 @endsection
