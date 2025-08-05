@@ -19,6 +19,13 @@
 
                     <div class="pbmit-right-box d-flex align-items-center">
                         @include('components.frontend.locales')
+                        @auth
+                            <div class="pbmit-header-user-btn">
+                                <a href="{{ route('backend.index') }}">
+                                    <i class="pbmit-base-icon-user-1"></i>
+                                </a>
+                            </div>
+                        @endauth
                         <div class="pbmit-header-search-btn">
                             <a href="#" title="{{__('search')}}">
                                 <i class="pbmit-base-icon-search-1"></i>
