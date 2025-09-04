@@ -26,24 +26,9 @@ class FaqService implements FaqInterface
 
     public function index(FaqIndexRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Faq::query()
+        return Faq::select(['id', 'title', 'service_id', 'created_at', 'status'])
             ->with(['service'])
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+            ->filter($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
@@ -144,20 +129,8 @@ class FaqService implements FaqInterface
     // Archive Function Method
     public function trash(FaqTrashRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Faq::onlyTrashed()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Faq::select(['id', 'title', 'created_at'])
+            ->filterTrash($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }

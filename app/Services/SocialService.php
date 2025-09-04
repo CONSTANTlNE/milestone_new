@@ -23,29 +23,8 @@ class SocialService implements SocialInterface
 {
     public function index(SocialIndexRequest $request): LengthAwarePaginator
     {
-        return Social::query()
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title ILIKE ?", ['%' . $search . '%']);
-                });
-            })
-            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->when(
-                $request->filled('sort_column'),
-                function ($q) use ($request) {
-                    $q->orderBy(
-                        $request->input('sort_column'),
-                        $request->input('sort_direction', 'asc')
-                    );
-                },
-                function ($q) {
-                    $q->orderBy('position', 'asc');
-                }
-            )
+        return Social::select(['id', 'title', 'icon', 'created_at', 'status'])
+            ->filter($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
@@ -169,18 +148,8 @@ class SocialService implements SocialInterface
     // Archive Function Method
     public function trash(SocialTrashRequest $request): LengthAwarePaginator
     {
-        return Social::onlyTrashed()
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title ILIKE ?", ['%' . $search . '%']);
-                });
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Social::select(['id', 'title', 'created_at'])
+            ->filterTrash($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }

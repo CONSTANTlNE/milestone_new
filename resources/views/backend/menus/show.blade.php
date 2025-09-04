@@ -173,7 +173,7 @@
                                                                                        value="{{$m->id}}"/>
                                                                                 <p class="description description-thin">
                                                                                     <label
-                                                                                        for="edit-menu-item-title-{{$m->id}}"> @lang("strings.label")
+                                                                                        for="idlabelmenu_{{$m->id}}"> @lang("strings.label")
                                                                                         <br>
                                                                                         <input type="text"
                                                                                                id="idlabelmenu_{{$m->id}}"
@@ -185,7 +185,7 @@
 
                                                                                 <p class="field-css-classes description description-thin">
                                                                                     <label
-                                                                                        for="edit-menu-item-classes-{{$m->id}}"> @lang("strings.class_css")
+                                                                                        for="clases_menu_{{$m->id}}"> @lang("strings.class_css")
                                                                                         <br>
                                                                                         <input type="text"
                                                                                                id="clases_menu_{{$m->id}}"
@@ -197,37 +197,35 @@
 
                                                                                 <p class="field-css-url description description-wide">
                                                                                     <label
-                                                                                        for="edit-menu-item-url-{{$m->id}}">
+                                                                                        for="url_menu_{{$m->id}}">
                                                                                         URL
                                                                                         <br>
                                                                                         <input type="text"
                                                                                                id="url_menu_{{$m->id}}"
                                                                                                class="widefat code edit-menu-item-url"
-                                                                                               id="url_menu_{{$m->id}}"
+                                                                                               name="url_menu_{{$m->id}}"
                                                                                                value="{{$m->link}}">
                                                                                     </label>
                                                                                 </p>
 
                                                                                 <p class="field-move hide-if-no-js description description-wide">
-                                                                                    <label>
-                                                                                        <span>@lang("strings.move")</span>
-                                                                                        <a href="{{ $currentUrl }}"
-                                                                                           class="menus-move-up"
-                                                                                           style="display: none;">@lang("strings.move_up")</a>
-                                                                                        <a href="{{ $currentUrl }}"
-                                                                                           class="menus-move-down"
-                                                                                           title="Mover uno abajo"
-                                                                                           style="display: inline;">@lang("strings.move_down")</a>
-                                                                                        <a href="{{ $currentUrl }}"
-                                                                                           class="menus-move-left"
-                                                                                           style="display: none;"></a> <a
-                                                                                            href="{{ $currentUrl }}"
-                                                                                            class="menus-move-right"
-                                                                                            style="display: none;"></a> <a
-                                                                                            href="{{ $currentUrl }}"
-                                                                                            class="menus-move-top"
-                                                                                            style="display: none;">@lang("strings.top")</a>
-                                                                                    </label>
+                                                                                    <span class="move-label">@lang("strings.move")</span>
+                                                                                    <a href="{{ $currentUrl }}"
+                                                                                       class="menus-move-up"
+                                                                                       style="display: none;">@lang("strings.move_up")</a>
+                                                                                    <a href="{{ $currentUrl }}"
+                                                                                       class="menus-move-down"
+                                                                                       title="Mover uno abajo"
+                                                                                       style="display: inline;">@lang("strings.move_down")</a>
+                                                                                    <a href="{{ $currentUrl }}"
+                                                                                       class="menus-move-left"
+                                                                                       style="display: none;"></a> <a
+                                                                                        href="{{ $currentUrl }}"
+                                                                                        class="menus-move-right"
+                                                                                        style="display: none;"></a> <a
+                                                                                        href="{{ $currentUrl }}"
+                                                                                        class="menus-move-top"
+                                                                                        style="display: none;">@lang("strings.top")</a>
                                                                                 </p>
 
                                                                                 <div

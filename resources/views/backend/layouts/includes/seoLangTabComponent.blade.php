@@ -19,6 +19,18 @@
             {{ __('admin.seo') }}
         </button>
 
+        @if(!empty($page))
+            <button
+                type="button"
+                class="font-second-geo hs-tab-active:bg-white hs-tab-active:border-b-transparent hs-tab-active:text-primary dark:hs-tab-active:bg-transparent dark:hs-tab-active:border-b-white/10 dark:hs-tab-active:text-primary -mb-px py-2 px-3 inline-flex items-center gap-2 bg-gray-50 text-sm font-medium text-center border text-defaulttextcolor rounded-t-sm hover:text-primary dark:bg-black/20 dark:border-white/10 dark:text-[#8c9097] dark:text-white/50 dark:hover:text-gray-300"
+                id="tiers-locale-item-{{$code}}"
+                data-hs-tab="#tiers-locale-{{$code}}"
+                aria-controls="tiers-locale-{{$code}}"
+            >
+                {{ __('admin.tiers') }}
+            </button>
+        @endif
+
         @if(!empty($service))
         <button
             type="button"

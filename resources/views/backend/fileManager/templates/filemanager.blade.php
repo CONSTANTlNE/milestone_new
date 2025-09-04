@@ -50,7 +50,7 @@
                     sel.name = 'cover[]';
                     sel.className = 'form-control covers';
                     sel.innerHTML = previews.dataset.type === 'multy' && file.type === 'image'
-                        ? '<option value="default">Default</option><option value="slider">Slider</option><option value="cover">Cover</option><option value="versus1">Versus1</option><option value="versus2">Versus2</option><option value="sent">Sent</option><option value="received">Received</option>'
+                        ? '<option value="default">Default</option><option value="cover">Cover</option>'
                         : '<option value="general">General</option>';
                     if (previews.dataset.type !== 'multy') sel.style.display = 'none';
 

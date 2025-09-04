@@ -54,9 +54,9 @@
                                                 <div class="inside">
                                                     <div class="customlinkdiv" id="customlinkdiv">
                                                         <div class="form-group position-relative select-access">
-                                                            <label for="custom-menu-item-title-page-show" class="control-label howto">{{__('admin.choose_multi_page')}}</label>
-                                                            <input type="hidden" id="custom-menu-item-prefix" value="pages-show">
-                                                            <input type="hidden" id="custom-menu-item-model" value="App\Models\Page">
+                                                            <label class="control-label howto">{{__('admin.choose_multi_page')}}</label>
+                                                            <input type="hidden" id="custom-menu-item-prefix" name="custom-menu-item-prefix" value="pages-show">
+                                                            <input type="hidden" id="custom-menu-item-model" name="custom-menu-item-model" value="App\Models\Page">
 
                                                             <div class="page-checkboxes">
                                                                 @foreach ($pages as $key => $val)
@@ -64,6 +64,7 @@
                                                                         <label>
                                                                             <input type="checkbox"
                                                                                    class="page-checkbox"
+                                                                                   name="page-checkbox[]"
                                                                                    value="{{$val->id}}|{{ json_encode($val->getTranslations('title'), JSON_UNESCAPED_UNICODE)}}|{{ json_encode($val->getTranslations('slug'), JSON_UNESCAPED_UNICODE)}}|{{ $val->template }}">
                                                                             <span>{{ $val->title}}</span>
                                                                         </label>
@@ -94,15 +95,16 @@
                                                 <div class="inside">
                                                     <div class="customlinkdiv" id="customlinkdiv">
                                                         <div class="form-group position-relative select-access">
-                                                            <label for="custom-menu-item-title-category" class="control-label howto">{{__('admin.choose_multi_category')}}:</label>
-                                                            <input type="hidden" id="custom-menu-item-prefix" value="frontend.blogCategories.show">
-                                                            <input type="hidden" id="custom-menu-item-model" value="App\Models\BlogCategory">
+                                                            <label class="control-label howto">{{__('admin.choose_multi_category')}}:</label>
+                                                            <input type="hidden" id="custom-menu-item-prefix" name="custom-menu-item-prefix" value="frontend.blogCategories.show">
+                                                            <input type="hidden" id="custom-menu-item-model" name="custom-menu-item-model" value="App\Models\BlogCategory">
                                                             <div class="page-checkboxes">
                                                                 @foreach ($blogCategories as $key => $val)
                                                                     <div class="checkbox-item">
                                                                         <label>
                                                                             <input type="checkbox"
                                                                                    class="category-checkbox"
+                                                                                   name="category-checkbox[]"
                                                                                    value="{{$val->id}}|{{ json_encode($val->getTranslations('title'), JSON_UNESCAPED_UNICODE)}}|{{ json_encode($val->getTranslations('slug'), JSON_UNESCAPED_UNICODE)}}">
                                                                             <span>{{ $val->title}}</span>
                                                                         </label>
@@ -133,9 +135,9 @@
                                                 <div class="inside">
                                                     <div class="customlinkdiv" id="customlinkdiv">
                                                         <div class="form-group position-relative select-access">
-                                                            <label for="custom-menu-item-title-persons-show" class="control-label howto">{{__('admin.choose_multi_category')}}</label>
-                                                            <input type="hidden" id="custom-menu-item-prefix" value="frontend.serviceCategories.show">
-                                                            <input type="hidden" id="custom-menu-item-model" value="App\Models\ServiceCategory">
+                                                            <label class="control-label howto">{{__('admin.choose_multi_category')}}</label>
+                                                            <input type="hidden" id="custom-menu-item-prefix" name="custom-menu-item-prefix" value="frontend.serviceCategories.show">
+                                                            <input type="hidden" id="custom-menu-item-model" name="custom-menu-item-model" value="App\Models\ServiceCategory">
 
                                                             <div class="page-checkboxes">
                                                                 @foreach ($serviceCategories as $key => $val)
@@ -143,6 +145,7 @@
                                                                         <label>
                                                                             <input type="checkbox"
                                                                                    class="service-category-checkbox"
+                                                                                   name="service-category-checkbox[]"
                                                                                    value="{{$val->id}}|{{ json_encode($val->getTranslations('title'), JSON_UNESCAPED_UNICODE)}}|{{ json_encode($val->getTranslations('slug'), JSON_UNESCAPED_UNICODE)}}">
                                                                             <span>{{ $val->title}}</span>
                                                                         </label>
@@ -242,12 +245,12 @@
                                                                         $html .= '<div class="menu-item-settings" id="menu-item-settings-' . $item->id . '">';
                                                                         $html .= '<input type="hidden" class="edit-menu-item-id" name="menuid_' . $item->id . '" value="' . $item->id . '"/>';
                                                                         $html .= '<p class="field-css-classes description description-thin">';
-                                                                        $html .= '<label for="edit-menu-item-classes-' . $item->id . '">' . __('admin.class_css') . '<br>';
+                                                                        $html .= '<label for="clases_menu_' . $item->id . '">' . __('admin.class_css') . '<br>';
                                                                         $html .= '<input type="text" id="clases_menu_' . $item->id . '" class="widefat code edit-menu-item-classes" name="clases_menu_' . $item->id . '" value="' . $item->class . '">';
                                                                         $html .= '</label>';
                                                                         $html .= '</p>';
                                                                         $html .= '<p class="field-css-url description description-wide">';
-                                                                        $html .= '<label for="edit-menu-item-url-' . $item->id . '">Prefix<br>';
+                                                                        $html .= '<label for="url_menu_' . $item->id . '">Prefix<br>';
                                                                         $html .= '<input type="text" id="url_menu_' . $item->id . '" name="url_menu_' . $item->id . '" class="widefat code edit-menu-item-url" value="' . $item->prefix . '" disabled>';
                                                                         $html .= '</label>';
                                                                         $html .= '</p>';

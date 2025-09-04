@@ -28,23 +28,8 @@ class ServiceService implements ServiceInterface
 
     public function index(ServiceIndexRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Service::query()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Service::select(['id', 'title', 'src', 'created_at', 'status'])
+            ->filter($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
@@ -281,20 +266,8 @@ class ServiceService implements ServiceInterface
     // Archive Function Method
     public function trash(ServiceTrashRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Service::onlyTrashed()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Service::select(['id', 'title', 'created_at'])
+            ->filterTrash($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }

@@ -18,12 +18,11 @@ return new class extends Migration
             $table->jsonb('slogan')->nullable();
             $table->jsonb('content')->nullable();
             $table->string('src')->nullable();
-            $table->integer('views')->default(0);
+            $table->integer('views')->default(0)->index();
             $table->boolean('status')->default(true)->index();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
             $table->softDeletes();
-            $table->index('deleted_at');
         });
     }
 

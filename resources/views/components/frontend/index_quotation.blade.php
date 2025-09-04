@@ -1,106 +1,111 @@
-@push('css')
-    <style>
+{{--@push('csss')--}}
+<style>
 
-        input {
-            color: black !important;
-            font-size: 16px;
-            opacity: 1 !important;
-        }
+    input {
+        color: black !important;
+        font-size: 16px;
+        opacity: 1 !important;
+    }
 
-        #suggestions {
-            list-style: none;
-            padding: 0;
-            position: absolute;
-            top: 60px;
-            background: white;
-            z-index: 100;
-            width: 100%; /* ✅ Match parent width */
-            box-sizing: border-box; /* ✅ Include border/padding in width */
-        }
 
-        #suggestions li {
-            padding: 8px;
-            cursor: pointer;
-        }
+    #suggestions {
+        list-style: none;
+        padding: 0;
+        position: absolute;
+        top: 60px;
+        background: white;
+        z-index: 100;
+        width: 100%; /* ✅ Match parent width */
+        box-sizing: border-box; /* ✅ Include border/padding in width */
+    }
 
-        #suggestions li:hover {
-            background: #f0f0f0;
-        }
+    #suggestions li {
+        padding: 8px;
+        cursor: pointer;
+    }
 
-        #suggestions2 {
-            list-style: none;
-            padding: 0;
-            top: 60px;
-            position: absolute;
-            background: white;
-            z-index: 100;
-            width: 100%; /* ✅ Match parent width */
-            box-sizing: border-box; /* ✅ Include border/padding in width */
-        }
+    #suggestions li:hover {
+        background: #f0f0f0;
+    }
 
-        #suggestions2 li {
-            padding: 8px;
-            cursor: pointer;
-        }
+    #suggestions2 {
+        list-style: none;
+        padding: 0;
+        top: 60px;
+        position: absolute;
+        background: white;
+        z-index: 100;
+        width: 100%; /* ✅ Match parent width */
+        box-sizing: border-box; /* ✅ Include border/padding in width */
+    }
 
-        #suggestions2 li:hover {
-            background: #f0f0f0;
-        }
+    #suggestions2 li {
+        padding: 8px;
+        cursor: pointer;
+    }
 
-        /*@media only screen and (min-width:1200px ){*/
-        /*    #suggestions {*/
-        /*        width: 500px;*/
-        /*    }*/
-        /*}*/
+    #suggestions2 li:hover {
+        background: #f0f0f0;
+    }
 
-        .htmx-indicator {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 500ms ease-in;
-        }
+    /*@media only screen and (min-width:1200px ){*/
+    /*    #suggestions {*/
+    /*        width: 500px;*/
+    /*    }*/
+    /*}*/
 
-        .htmx-request .htmx-indicator {
-            display: block;
-            opacity: 1;
-        }
+    .htmx-indicator {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 500ms ease-in;
+    }
 
-        .htmx-request.htmx-indicator {
-            display: block;
-            opacity: 1;
-        }
+    .htmx-request .htmx-indicator {
+        display: block;
+        opacity: 1;
+    }
 
-        .remove-after::after {
-            content: none !important;
-        }
+    .htmx-request.htmx-indicator {
+        display: block;
+        opacity: 1;
+    }
 
-        .customul {
-            width: 100px;
-            min-width: 100px;
-        }
+    .remove-after::after {
+        content: none !important;
+    }
 
-        select, option{
-            color: black!important;
-        }
+    .customul {
+        width: 100px;
+        min-width: 100px;
+    }
 
-        .htmx_errors {
-            display: none;
-            text-align: center;
-            margin-bottom: 3px;
-        }
+    select, option {
+        color: black !important;
+    }
 
-        .availability_select{
-            padding-bottom:5px;
-            padding-top:5px;
-            height: 50px;
-        }
+    option {
+        color: black !important;
+    }
 
-    </style>
-@endpush
+    .htmx_errors {
+        display: none;
+        text-align: center;
+        margin-bottom: 3px;
+    }
+
+    .availability_select {
+        padding-bottom: 5px;
+        padding-top: 5px;
+        height: 50px;
+    }
+
+</style>
+{{--@endpush--}}
 
 <section id="index_quotation">
 
@@ -112,9 +117,10 @@
                     <input type="hidden" name="from" value="" id="start_id">
                     <input type="hidden" name="phone" id="phone_hidden"/>
                     <input type="hidden" name="email" id="email_hidden"/>
+                    <input type="hidden" name="cloudflare_captcha" id="cloudflare_captcha">
                     <div style="padding-left:30px;padding-right: 30px"
                          class="contact-form-rightbox pbmit-bg-color-white" id="adresses">
-                        
+
                         <p id="htmx_error_request_type" class="htmx_errors"></p>
                         <p id="htmx_error_make_id" class="htmx_errors"></p>
                         <p id="htmx_error_email" class="htmx_errors"></p>
@@ -252,9 +258,9 @@
                                                     class="availability_select form-control"
                                                     autocomplete="off"
                                                     id="availability">
-                                                <option  value="">Select Availability</option>
+                                                <option value="">Select Availability</option>
                                                 @foreach($availabilities as $availability)
-                                                    <option  value="{{$availability->id}}">{{$availability->name}}</option>
+                                                    <option value="{{$availability->id}}">{{$availability->name}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -279,19 +285,26 @@
                                 <p class="text-center">Please fill in contact information *</p>
                                 <div class="row mb-2" style="position: relative">
                                     <div class="d-flex justify-content-center">
-
-                                        <select name="request_type"  class="form-control">
-                                            <option value="" class="text-center">Request Type</option>
-                                            <option value="" class="text-center">Business</option>
-                                            <option value="" class="text-center">Individual</option>
-                                        </select>
+                                        <div style="gap: 20px" class="d-flex justify-content-center mb-3">
+                                            <p class="mb-0">Request Type</p>
+                                            <label>
+                                                <input type="radio" class="form-check-input" name="request_type"
+                                                       value="1">
+                                                Individual
+                                            </label>
+                                            <label>
+                                                <input type="radio" class="form-check-input" name="request_type" value="2">
+                                                Business
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-2" style="position: relative">
 
                                     <div class="d-flex justify-content-center">
                                         <input type="email" id="email" class="form-control text-center"
-                                               placeholder="Email"  required="" autocomplete="off">
+                                               oninput="document.getElementById('email_hidden').value = this.value"
+                                               placeholder="Email" required="" autocomplete="off">
                                     </div>
                                 </div>
 
@@ -314,7 +327,7 @@
                                     <button type="button" class="pbmit-btn  text-center"
                                             hx-post="{{route('frontend.send.otp')}}"
                                             hx-vals='{"_token": "{{ csrf_token() }}"}'
-                                            hx-include="[name='phone']"
+                                            hx-include="[name='phone'],[name='cloudflare_captcha']"
                                             hx-target="#contact_details_widget"
                                             hx-indicator="#loading"
                                             disabled
@@ -322,15 +335,16 @@
                                             style="z-index: 0;padding-right: 30px;min-width:150px">
                                         <span>Send Code</span>
                                     </button>
-
+                                    <p id="captcha-error" style="color: red;" class="text-center"></p>
                                 </div>
                                 <svg
-                                    id="loading"
-                                    class="htmx-indicator overlay d-done"
-                                    xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
+                                        id="loading"
+                                        class="htmx-indicator overlay d-done"
+                                        xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24">
                                     <path fill="#105dbf"
                                           d="M12,23a9.63,9.63,0,0,1-8-9.5,9.51,9.51,0,0,1,6.79-9.1A1.66,1.66,0,0,0,12,2.81h0a1.67,1.67,0,0,0-1.94-1.64A11,11,0,0,0,12,23Z">
-                                        <animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate"
+                                        <animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite"
+                                                          type="rotate"
                                                           values="0 12 12;360 12 12"/>
                                     </path>
                                 </svg>
@@ -345,8 +359,47 @@
     </div>
 </section>
 
-
+<div id="turnstile-container"></div>
+<div id="turnstile-container2"></div>
+<div id="turnstile-container3"></div>
 <script>
+    // Cloudflare captcha
+    @php
+        if(env('LOCAL_TEST')){
+              $siteKey = "1x00000000000000000000BB";
+        } else {
+             $siteKey = "{{config('milestone.CLOUDFLARE_SITE_KEY')}}";
+        }
+    @endphp
+
+    // captcha for requesting sms code
+    {{--window.onloadTurnstileCallback = function () {--}}
+    {{--    turnstile.render("#turnstile-container", {--}}
+    {{--        sitekey: "{{$siteKey}}",--}}
+    {{--        callback: function (token) {--}}
+    {{--            console.log(token)--}}
+    {{--            document.getElementById('cloudflare_captcha').value = token;--}}
+    {{--        },--}}
+    {{--    });--}}
+
+    {{--    widgetId2 = turnstile.render("#turnstile-container2", {--}}
+    {{--        sitekey: "{{$siteKey}}",--}}
+    {{--        callback: function (token) {--}}
+    {{--            console.log("Widget 2 Token:", token);--}}
+    {{--            window.lastTokenFrom2 = token; // Save if needed--}}
+    {{--        },--}}
+    {{--    });--}}
+
+    {{--    widgetId3 = turnstile.render("#turnstile-container3", {--}}
+    {{--        sitekey: "{{$siteKey}}",--}}
+    {{--        callback: function (token) {--}}
+    {{--            console.log("Widget 3 Token:", token);--}}
+    {{--            window.lastTokenFrom3 = token;--}}
+    {{--        },--}}
+    {{--    });--}}
+    {{--};--}}
+
+
     const dest_next = document.getElementById('dest_next')
     const car_details = document.getElementById('car_details_widget')
     const destination_widget = document.getElementById('destination_widget')
@@ -409,7 +462,11 @@
 
     car_details_next.addEventListener('click', () => {
         const operable = document.querySelector('[name="operable"]:checked');
-        const model = document.getElementById('model')
+        let model = document.getElementById('model')
+        if (!model) {
+            model= document.getElementById('model2')
+        }
+
 
         if (year.value.length < 4) {
             year_error.style.display = 'block'
@@ -542,7 +599,7 @@
         });
 
         new TomSelect("#make", {
-            create: false,
+            create: true,
             sortField: {
                 field: "text",
                 direction: "asc"
@@ -551,7 +608,7 @@
 
 
         new TomSelect("#model2", {
-            create: false,
+            create: true,
             sortField: {
                 field: "text",
                 direction: "asc"
@@ -569,7 +626,7 @@
         if (xhr.status === 200) {
             if (initiator.id === 'modeltarget') {
                 new TomSelect("#model", {
-                    create: false,
+                    create: true,
                     sortField: {
                         field: "text",
                         direction: "asc"
@@ -609,22 +666,29 @@
         }
 
         debounceTimer = setTimeout(() => {
-            fetch(`/placesautocomplete?address=${encodeURIComponent(query)}`)
+            fetch('/placesautocomplete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': "{{csrf_token()}}",
+                },
+                body: JSON.stringify({address: query})
+            })
                 .then(response => response.json())
                 .then(data => {
                     let suggestions = [];
-                    const suggestions_error = document.getElementById('suggestions_error')
+                    const suggestions_error = document.getElementById('suggestions_error');
 
-                    // Case 1: data is an object with suggestions
+                    // Handle both formats of returned data
                     if (data && typeof data === 'object' && !Array.isArray(data) && Array.isArray(data.suggestions)) {
                         suggestions = data.suggestions;
-                    }
-                    // Case 2: data is already an array (e.g. plain list of suggestions)
-                    else if (Array.isArray(data)) {
+                    } else if (Array.isArray(data)) {
                         suggestions = data;
                     }
+
                     // Clear previous suggestions
                     suggestionList.innerHTML = '';
+
                     if (suggestions.length > 0) {
                         suggestions.forEach(item => {
                             const prediction = item.placePrediction;
@@ -639,20 +703,17 @@
                                 document.getElementById('start_id').value = placeId;
                                 suggestionList.innerHTML = '';
                                 suggestionList.style.border = 'none';
-                                suggestions_error.style.display = 'none'
+                                suggestions_error.style.display = 'none';
                             };
 
                             suggestionList.appendChild(li);
                         });
 
-                        // Only show border if there are suggestions
-                        suggestionList.style.border = suggestions.length ? '1px solid #ccc' : 'none';
+                        suggestionList.style.border = '1px solid #ccc';
                     } else {
-                        suggestions_error.style.display = 'block'
+                        suggestions_error.style.display = 'block';
                         suggestionList.style.border = 'none';
                     }
-
-
                 });
         }, 100);
     });
@@ -671,21 +732,29 @@
         }
 
         debounceTimer2 = setTimeout(() => {
-            fetch(`/placesautocomplete?address=${encodeURIComponent(query)}`)
+            fetch('/placesautocomplete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': "{{csrf_token()}}",
+                },
+                body: JSON.stringify({address: query})
+            })
                 .then(response => response.json())
                 .then(data => {
                     let suggestions = [];
-                    // Case 1: data is an object with suggestions
+
                     if (data && typeof data === 'object' && !Array.isArray(data) && Array.isArray(data.suggestions)) {
                         suggestions = data.suggestions;
-                    }
-                    // Case 2: data is already an array (e.g. plain list of suggestions)
-                    else if (Array.isArray(data)) {
+                    } else if (Array.isArray(data)) {
                         suggestions = data;
                     }
-                    const suggestions_error2 = document.getElementById('suggestions_error2')
+
+                    const suggestions_error2 = document.getElementById('suggestions_error2');
+
                     // Clear previous suggestions
                     suggestionList.innerHTML = '';
+
                     if (suggestions.length > 0) {
                         suggestions.forEach(item => {
                             const prediction = item.placePrediction;
@@ -700,20 +769,19 @@
                                 document.getElementById('destination_id').value = placeId;
                                 suggestionList.innerHTML = '';
                                 suggestionList.style.border = 'none';
-                                suggestions_error2.style.display = 'none'
+                                suggestions_error2.style.display = 'none';
                             };
 
                             suggestionList.appendChild(li);
                         });
 
-                        // Only show border if suggestions exist
-                        suggestionList.style.border = suggestions.length ? '1px solid #ccc' : 'none';
+                        suggestionList.style.border = '1px solid #ccc';
                     } else {
-
-                        suggestions_error2.style.display = 'block'
+                        suggestions_error2.style.display = 'block';
                         suggestionList.style.border = 'none';
                     }
                 });
         }, 100);
+
     });
 </script>

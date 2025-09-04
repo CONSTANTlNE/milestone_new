@@ -18,7 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 class Blog extends Model
 {
     use HasFactory, Searchable, SoftDeletes, HasTranslations, EscapeUniCodeJson, SeoTrait, TagTrait, MultiTranslatableTrait;
@@ -29,7 +30,7 @@ class Blog extends Model
     protected array $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
+        'deleted_at'
     ];
 
     protected $fillable = [
@@ -49,7 +50,7 @@ class Blog extends Model
         'title',
         'slug',
         'slogan',
-        'content',
+        'content'
     ];
 
     protected static bool $logFillable = true;
@@ -97,6 +98,44 @@ class Blog extends Model
             ->where('position', '<', 1)
             ->where('cover', 'general')
             ->orderBy('position');
+    }
+
+    // Performance optimization scopes
+    public function scopePublished($query)
+    {
+        return $query->where('status', true)
+                    ->where(function($q) {
+                        $q->whereNull('published_at')
+                          ->orWhere('published_at', '<=', now());
+                    });
+    }
+
+    public function scopePopular($query, $limit = 10)
+    {
+        return $query->where('status', true)
+                    ->orderBy('views', 'desc')
+                    ->limit($limit);
+    }
+
+    public function scopeRecent($query, $limit = 10)
+    {
+        return $query->where('status', true)
+                    ->orderBy('created_at', 'desc')
+                    ->limit($limit);
+    }
+
+    public function scopeByCategory($query, $categoryId)
+    {
+        return $query->whereHas('categories', function($q) use ($categoryId) {
+            $q->where('blog_categories.id', $categoryId);
+        });
+    }
+
+    // Increment view count
+    public function incrementViews()
+    {
+        $this->increment('views');
+        $this->refresh();
     }
 
     public function coverStatusImages(): MorphToMany
@@ -155,5 +194,46 @@ class Blog extends Model
         }else{
             return image_file_path($this->generalImage, '1200x630');
         }
+    }
+
+    public function scopeFilter(Builder $query, Request $request): Builder
+    {
+        $locale = app()->getLocale();
+
+        return $query
+            ->when($request->filled('search'), function ($query) use ($request, $locale) {
+                $search = $request->search;
+
+                $query->where(function ($q) use ($search, $locale) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
+                });
+            })
+            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('status', $request->status);
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                in_array($request->input('sort_direction'), ['asc', 'desc']) ? $request->input('sort_direction') : 'desc'
+            );
+    }
+
+    public function scopeFilterTrash(Builder $query, Request $request): Builder
+    {
+        $locale = app()->getLocale();
+
+        return $query->onlyTrashed()
+            ->when($request->filled('search'), function ($query) use ($request, $locale) {
+                $search = $request->search;
+
+                $query->where(function ($q) use ($search, $locale) {
+                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
+                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
+                });
+            })
+            ->orderBy(
+                $request->input('sort_column', 'id'),
+                in_array($request->input('sort_direction'), ['asc', 'desc']) ? $request->input('sort_direction') : 'desc'
+            );
     }
 }

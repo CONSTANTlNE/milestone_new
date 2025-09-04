@@ -31,7 +31,7 @@
 @endsection
 
 @section('content')
-    @if(getPageById(155) !== null)
+    @if(getPageById(21) !== null)
     <section class="about-section-three" id="pbmit-about">
         <div class="container">
             <div class="row g-0">
@@ -52,22 +52,17 @@
                             </div>
                         </div>
                         <div class="about-first-img">
-                            <img src="{{asset(getPageById(155)->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="{{getPageById(155)->title}}">
-                        </div>
-                        <div class="about-second-img">
-                            <div class="img-wrap">
-                                <img src="{{asset('assets/images/homepage-3/about-02.jpg')}}" alt="">
-                            </div>
+                            <img src="{{asset(getPageById(21)->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="{{getPageById(21)->title}}">
                         </div>
                     </div>
                 </div>
                 <div class="col-md-12 col-xl-6">
                     <div class="about-three-right-box">
                         <div class="pbmit-heading-subheading">
-                            <h4 class="pbmit-subtitle">{{getPageById(155)->title}}</h4>
-                            <h2 class="pbmit-title">{{getPageById(155)->slogan}}</h2>
+                            <h4 class="pbmit-subtitle">{{getPageById(21)->title}}</h4>
+                            <h2 class="pbmit-title">{{getPageById(21)->slogan}}</h2>
                             <div class="pbmit-heading-desc">
-                                {!! getPageById(155)->content !!}
+                                {!! getPageById(21)->content !!}
                             </div>
                         </div>
                     </div>
@@ -76,46 +71,73 @@
         </div>
     </section>
     @endif
-
-    <section class="pbmit-element-static-box-style-1 section-md" style="padding-top: 0px;">
-        <div class="container">
-            <div class="pbmit-heading-subheading text-center">
-                <h4 class="pbmit-subtitle">
-                    {{__('how_it_works')}}
-                </h4>
-                <h2 class="pbmit-title" style="max-width: 700px;margin: auto;">
-                    {{__('home_service_title_2')}}
-                </h2>
-            </div>
-            <div class="row">
-                @foreach($serviceCategories as $key => $serviceCategory)
-                    <article class="pbmit-static-box-style-1">
-                        <div class="pbmit-staticbox-wrapper">
-                            <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}});">
-                                <div class="pbmit-img">
-                                    <img src="{{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="{{$serviceCategory->title}}">
-                                </div>
-                                <div class="pbmit-box-number">{{$key < 10 ? '0'.$key+1 : $key+1}}</div>
-                                <h4 class="pbmit-static-box-title">{{$serviceCategory->title}}</h4>
-                            </div>
-                            <div class="pbmit-content-box col-md-6">
-                                <div class="pbmit-box-number">{{$key < 10 ? '0'.$key+1 : $key+1}}</div>
-                                <div class="pbmit-content-inner">
-                                    <h4 class="pbmit-static-box-title">{{$serviceCategory->title}}</h4>
-                                    <div class="pbmit-static-box-desc">{{$serviceCategory->slogan}} </div>
-                                    <div class="pbmit-static-btn">
-                                        <a class="pbmit-btn pbmit-btn-outline" href="{{ route('frontend.serviceCategories.show', ['id' => $serviceCategory->id, 'slug' => $serviceCategory->slug]) }}">
-											<span class="pbmit-button-content-wrapper">
-												<span class="pbmit-button-text">{{__('view_detail')}}</span>
-											</span>
-                                        </a>
+    @if(isset(getPageById(19)->id) or isset(getPageById(20)->id))
+        <section class="pbmit-element-static-box-style-1 section-md" style="padding-top: 0px;">
+            <div class="container">
+                <div class="pbmit-heading-subheading text-center">
+                    <h4 class="pbmit-subtitle">
+                        {{__('how_it_works')}}
+                    </h4>
+                    <h2 class="pbmit-title" style="max-width: 700px;margin: auto;">
+                        {{__('home_service_title_2')}}
+                    </h2>
+                </div>
+                <div class="row">
+                    @if(isset(getPageById(19)->id))
+                        <div class="col-md-6 mb-4">
+                            <div class="how-it-work-item position-relative overflow-hidden rounded shadow-lg hover-effect">
+                                <a href="{{ route(getPageById(19)->template) }}" class="text-decoration-none">
+                                    <div class="work-image-container position-relative">
+                                        @if(getPageById(19)->mainImageShow())
+                                            <img src="{{ asset(getPageById(19)->mainImageShow()->src) }}"
+                                                 alt="{{ getPageById(19)->getTranslation('title', app()->getLocale()) }}"
+                                                 class="img-fluid work-image">
+                                        @else
+                                            <div class="placeholder-image bg-gradient-primary d-flex align-items-center justify-content-center" style="height: 250px;">
+                                                <i class="fas fa-image text-white" style="font-size: 3rem;"></i>
+                                            </div>
+                                        @endif
                                     </div>
-                                </div>
+                                    <!-- Bottom Content -->
+                                    <div class="work-content p-4 bg-white">
+                                        <h3 class="text-dark mb-2">{{ getPageById(19)->getTranslation('title', app()->getLocale()) }}</h3>
+                                        @if(getPageById(19)->getTranslation('slogan', app()->getLocale()))
+                                            <p class="text-muted mb-0">{{ getPageById(19)->getTranslation('slogan', app()->getLocale()) }}</p>
+                                        @endif
+                                    </div>
+                                </a>
                             </div>
                         </div>
-                    </article>
-                @endforeach
+                    @endif
+
+                    @if(isset(getPageById(20)->id))
+                        <div class="col-md-6 mb-4">
+                            <div class="how-it-work-item position-relative overflow-hidden rounded shadow-lg hover-effect">
+                                <a href="{{ route(getPageById(20)->template) }}" class="text-decoration-none">
+                                    <div class="work-image-container position-relative">
+                                        @if(getPageById(19)->mainImageShow())
+                                            <img src="{{ asset(getPageById(20)->mainImageShow()->src) }}"
+                                                 alt="{{ getPageById(20)->getTranslation('title', app()->getLocale()) }}"
+                                                 class="img-fluid work-image">
+                                        @else
+                                            <div class="placeholder-image bg-gradient-primary d-flex align-items-center justify-content-center" style="height: 250px;">
+                                                <i class="fas fa-image text-white" style="font-size: 3rem;"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <!-- Bottom Content -->
+                                    <div class="work-content p-4 bg-white">
+                                        <h3 class="text-dark mb-2">{{ getPageById(20)->getTranslation('title', app()->getLocale()) }}</h3>
+                                        @if(getPageById(20)->getTranslation('slogan', app()->getLocale()))
+                                            <p class="text-muted mb-0">{{ getPageById(20)->getTranslation('slogan', app()->getLocale()) }}</p>
+                                        @endif
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 @endsection

@@ -77,11 +77,26 @@
         if(reqType === 'manual-otp'){
             if (response.includes('invalid') || response.includes('timeout')) {
                 document.getElementById('code-invalid').innerHTML = response;
-            } else {
-                // document.querySelector('#contact_details_widget').innerHTML = response;
-                document.getElementById('adresses').innerHTML = response;
+            } else if(response.includes('business')){
+                document.getElementById('code-invalid-business').innerHTML = response;
+
+            }
+
+            else if(response.includes('validation')){
+                document.getElementById('captcha-error').innerHTML = response;
+            } else if(response.includes('resend')){
+                document.getElementById('captcha-error-business').innerHTML = response;
             }
         }
+
+        if(reqType === 'bsiness-otp-success'){
+            document.getElementById('business_otp_target').innerHTML = response;
+        }
+
+        if(reqType === 'ind-quotation-success'){
+            document.getElementById('adresses').innerHTML = response;
+        }
+
     });
 
     // Consultation Drawer Functionality
@@ -118,29 +133,29 @@
         // Handle form submission
         $('.pbmit-consultation-form').on('submit', function(e) {
             e.preventDefault();
-            
+
             // Get form data
             var formData = $(this).serialize();
-            
+
             // Show loading state
             var submitBtn = $(this).find('button[type="submit"]');
             var originalText = submitBtn.find('.pbmit-button-text').text();
             submitBtn.find('.pbmit-button-text').text('Submitting...');
             submitBtn.prop('disabled', true);
-            
+
             // Simulate form submission (replace with actual AJAX call)
             setTimeout(function() {
                 // Reset button
                 submitBtn.find('.pbmit-button-text').text(originalText);
                 submitBtn.prop('disabled', false);
-                
+
                 // Show success message
                 alert('Thank you! Your consultation request has been submitted. We will contact you soon.');
-                
+
                 // Close drawer
                 $('#consultation-drawer').removeClass('active');
                 $('body').removeClass('drawer-open');
-                
+
                 // Reset form
                 $('.pbmit-consultation-form')[0].reset();
             }, 2000);

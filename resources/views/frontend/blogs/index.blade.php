@@ -4,85 +4,44 @@
     @include('components.frontend.socials.seo', ['data' => $page])
 @endsection
 @section('header_background')
-    <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($page->src ?: config('filemanager.default_backend_image'))}});">
-        <div class="container">
-            <div class="pbmit-title-bar-content">
-                <div class="pbmit-title-bar-content-inner">
-                    <div class="pbmit-tbar">
-                        <div class="pbmit-tbar-inner container">
-                            <h1 class="pbmit-tbar-title">{{$page->title}}</h1>
-                        </div>
-                    </div>
-                    <div class="pbmit-breadcrumb">
-                        <div class="pbmit-breadcrumb-inner">
-								<span>
-									<a title="" href="#" class="home"><span>{{__('page')}}</span></a>
-								</span>
-                            <span class="sep">
-									<i class="pbmit-base-icon-angle-right"></i>
-								</span>
-                            <span><span class="post-root post post-post current-item"> {{$page->title}}</span></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    @include('components.frontend.header-banner', ['data' => $page])
 @endsection
-
-
 @section('content')
-
-    <!-- Blog Classic -->
     <section class="site-content">
         <div class="container">
             <div class="row">
                 <div class="col-md-12 col-xl-9 blog-left-col">
                     <div class="row pbmit-element-posts-wrapper">
                         @foreach($blogs as $blog)
-                        <article class="post blog-classic">
-                            <div class="pbmit-img-wrapper">
-                                <div class="pbmit-featured-img-wrapper">
-                                    <div class="pbmit-featured-wrapper">
-                                        <a href="{{ route('frontend.blogs.show', ['id'=> $blog->id, 'slug'=> $blog->slug, ]) }}">
-                                            <img src="{{asset($blog->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="">
-                                        </a>
+                            <article class="pbmit-ele pbmit-ele-blog pbmit-blog-style-1 col-md-6 col-lg-6 strategy pbmit-term-27 pbmit-odd pbmit-col-odd"><div class="post-item">
+                                    <div class="pbminfotech-box-content">
+                                        <div class="pbmit-date-wraper d-flex align-items-center">
+                                            <div class="pbmit-meta-category-wrapper pbmit-meta-line">
+                                                <div class="pbmit-meta-category"><a href="#" rel="category tag">Strategy</a></div>
+                                            </div>
+                                            <div class="pbmit-date-author-wrapper">
+                                                <div class="pbmit-meta-author pbmit-meta-line">
+                                                    <span class="pbmit-post-author">category</span>
+                                                </div>
+                                                <div class="pbmit-meta-date-wrapper pbmit-meta-line">
+                                                    <div class="pbmit-meta-date">
+                                                        <span class="pbmit-post-date">27  Dec, 2024</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="pbmit-featured-container">
+                                            <div class="pbmit-featured-img-wrapper"><div class="pbmit-featured-wrapper"><img fetchpriority="high" decoding="async" src="https://shipex-demo.pbminfotech.com/demo1/wp-content/uploads/sites/2/2025/01/blog-img-01-800x540.jpg" class="attachment-pbmit-img-800x540 size-pbmit-img-800x540 wp-post-image" alt="blog-img-01"></div></div>
+                                        </div>
+                                        <div class="pbmit-content-wrapper">
+                                            <h3 class="pbmit-post-title"><a href="#">The Guide On How to Ship Oversize Loads</a></h3>
+                                            <div class="pbmit-blog-button">
+                                                <a class="pbmit-button-inner" href="#" title="The Guide On How to Ship Oversize Loads"><span class="pbmit-button-icon">Read More</span></a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <span class="pbmit-meta pbmit-meta-cat">
-										<i class="pbmit-base-icon-calendar-3"></i>
-										<a href="{{ route('frontend.blogs.show', ['id'=> $blog->id, 'slug'=> $blog->slug, ]) }}" rel="category tag">Strategy</a>
-									</span>
-                            </div>
-                            <div class="pbmit-blog-classic-inner">
-                                <div class="pbmit-blog-meta pbmit-blog-meta-top">
-                                    <div class="pbmit-meta pbmit-meta-cat">
-                                        <a href="{{ route('frontend.blogs.show', ['id'=> $blog->id, 'slug'=> $blog->slug, ]) }}" rel="category tag">Strategy</a>
-                                    </div>
-                                    <span class="pbmit-meta pbmit-meta-date">
-											<i class="pbmit-base-icon-calendar-3"></i>
-											<a href="blog-single-details.html" rel="bookmark">
-												<span class="entry-date">27 Dec, 2024</span>
-											</a>
-										</span>
-                                </div>
-                                <h3 class="pbmit-post-title">
-                                    <a href="{{ route('frontend.blogs.show', ['id'=> $blog->id, 'slug'=> $blog->slug, ]) }}">{{$blog->title}}</a>
-                                </h3>
-                                <div class="pbmit-entry-content">
-                                    <div class="pbmit-entry-content">
-                                        <p>{{$blog->slogan}}</p>
-                                    </div>
-                                    <div class="pbmit-read-more-link">
-                                        <a class="pbmit-btn" href="{{ route('frontend.blogs.show', ['id'=> $blog->id, 'slug'=> $blog->slug, ]) }}">
-												<span class="pbmit-button-content-wrapper">
-													<span class="pbmit-button-text">{{__('read_more')}}</span>
-												</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
+                            </article>
                         @endforeach
                     </div>
                 </div>

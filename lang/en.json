@@ -1,6 +1,7 @@
 {
     "about_page_number": "25",
     "about_us": "Know About Us",
+    "accounts": "For onboarding B2B accounts at Milestone Brokers",
     "all_rights_reserved": "All Rights Reserved",
     "book": "Book Consult",
     "business": "Business",
@@ -37,6 +38,7 @@
     "number_digits": "Phone number must be 10 digits",
     "open": "Open",
     "operable": "Is it operable?",
+    "our_b2b_forms": "Our B2B Forms",
     "our_blog": "Our Blog",
     "our_experience": "Our experience",
     "our_location": "Our Location",

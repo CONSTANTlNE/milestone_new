@@ -1,8 +1,5 @@
 <?php
 
-use App\Http\Controllers\Backend\Projects\FaqController;
-use App\Http\Controllers\Backend\Projects\ServiceCategoryController;
-use App\Http\Controllers\Backend\Projects\ServiceController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\FileManagerController;
 use App\Http\Controllers\Backend\LanguageTranslationController;
@@ -12,13 +9,19 @@ use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\PermissionController;
 use App\Http\Controllers\Backend\Projects\BlogCategoryController;
 use App\Http\Controllers\Backend\Projects\BlogController;
+use App\Http\Controllers\Backend\Projects\FaqController;
 use App\Http\Controllers\Backend\Projects\PortfolioController;
+use App\Http\Controllers\Backend\Projects\ServiceCategoryController;
+use App\Http\Controllers\Backend\Projects\ServiceController;
 use App\Http\Controllers\Backend\Projects\SliderController;
+use App\Http\Controllers\Backend\QuotationChargeController;
 use App\Http\Controllers\Backend\RoleController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\SocialController;
 use App\Http\Controllers\Backend\SubscriberController;
 use App\Http\Controllers\Backend\UserController;
+use App\Http\Controllers\Frontend\Quotationb2bController;
+use App\Http\Controllers\Frontend\QuotationController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -40,7 +43,6 @@ use Laravel\Fortify\Http\Controllers\TwoFactorSecretKeyController;
 use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 use Laravel\Fortify\RoutePath;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
-use App\Http\Controllers\Frontend\QuotationController;
 
 
 //admins auth routes
@@ -583,21 +585,111 @@ Route::group(
 //        Route::any('cover/{id}/{cover}/cover', 'ImageController@cover');
 
     Route::controller(QuotationController::class)->group(function () {
-        Route::get('quotations','index')->name('quotations.index');
-        Route::post('/quotation/delete', 'delete')->name('quotations.delete');
-        Route::post('/calculate/distance', 'calculateDistance')->name('quotations.calculatedistance');
-        route::post('/quotation/request/ai/data', 'requestAiData')->name('quotations.airequest');
+        route::prefix('quotations')->name('quotations.')->group(function () {
+            Route::get('index', 'index')->name('index');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('distance', 'calculateDistance')->name('calculatedistance');
+            route::post('request/ai/data', 'requestAiData')->name('airequest');
+            route::post('cost/calculate', 'costCalculate')->name('calculatecost');
+            route::post('charge/update', 'updateCharge')->name('update-charge');
+            route::post('charge/delete', 'deleteCharge')->name('delete-charge');
+            route::post('approve', 'approve')->name('approve');
+            route::post('offer/send', 'sendQuotationOffer')->name('sendoffer');;
+            route::post('notify/users', 'notifyUsers')->name('notify-users');
+        });
     });
-//    Route::controller(ServiceController::class)->group(function () {
-//        route::get('/service/create', 'createService')->name('service.create');
-//        route::post('/service/store', 'storeService')->name('service.store');
-//        route::get('/service/all', 'adminAllService')->name('service.all');
-//        route::get('/service/edit/{service}', 'editService')->name('service.edit');
-//        route::post('/service/update', 'updateService')->name('service.update');
-//        route::post('/service/delete', 'deleteService')->name('service.delete');
-//        route::get('/service/get/htmx', 'getServiceHtmx')->name('service.get.htmx');
-//        route::post('/service/upload/image/htmx', 'uploadImageHtmx')->name('service.upload.image.htmx');
-//    });
+
+    Route::controller(Quotationb2bController::class)->group(function () {
+        route::prefix('b2b/quotations')->name('b2b_quotations.')->group(function () {
+            Route::get('index', 'index')->name('index');
+            Route::post('delete', 'delete')->name('delete');
+            Route::post('distance', 'calculateDistance')->name('calculatedistance');
+            route::post('request/ai/data', 'requestAiData')->name('airequest');
+            route::post('cost/calculate', 'costCalculate')->name('calculatecost');
+            route::post('charge/update', 'updateCharge')->name('update-charge');
+            route::post('charge/delete', 'deleteCharge')->name('delete-charge');
+            route::post('approve', 'approve')->name('approve');
+            route::post('offer/send', 'sendQuotationOffer')->name('sendoffer');
+            route::post('notify/users', 'notifyUsers')->name('notify-users');
+
+        });
+    });
+
+    Route::controller(QuotationChargeController::class)->group(function () {
+        route::prefix('quotation/charges')->name('quotation_charge.')->group(function () {
+            route::get('show', 'index')->name('index');
+            route::post('store', 'store')->name('store');
+            route::post('update', 'update')->name('update');
+            route::post('activate', 'activate')->name('activate');
+
+        });
+    });
+
+    // Auto Auctions
+    Route::controller(App\Http\Controllers\Backend\Projects\AutoAuctionController::class)->group(function () {
+        route::prefix('autoAuctions')->name('autoAuctions.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('export', 'export')->name('export');
+            Route::get('{id}', 'show')->name('show');
+            Route::post('delete/{id}', 'destroy')->name('delete');
+            Route::post('massDestroy', 'massDestroy')->name('massDestroy');
+        });
+    });
+
+    // Auto Dealers
+    Route::controller(App\Http\Controllers\Backend\Projects\AutoDealerController::class)->group(function () {
+        route::prefix('autoDealers')->name('autoDealers.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('export', 'export')->name('export');
+            Route::get('{id}', 'show')->name('show');
+            Route::post('delete/{id}', 'destroy')->name('delete');
+            Route::post('massDestroy', 'massDestroy')->name('massDestroy');
+        });
+    });
+
+    // Car Retailers
+    Route::controller(App\Http\Controllers\Backend\Projects\CarRetailerController::class)->group(function () {
+        route::prefix('carRetailers')->name('carRetailers.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('export', 'export')->name('export');
+            Route::get('{id}', 'show')->name('show');
+            Route::post('delete/{id}', 'destroy')->name('delete');
+            Route::post('massDestroy', 'massDestroy')->name('massDestroy');
+        });
+    });
+
+    // Vehicle Manufacturers
+    Route::controller(App\Http\Controllers\Backend\Projects\VehicleManufacturerController::class)->group(function () {
+        route::prefix('vehicleManufacturers')->name('vehicleManufacturers.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('export', 'export')->name('export');
+            Route::get('{id}', 'show')->name('show');
+            Route::post('delete/{id}', 'destroy')->name('delete');
+            Route::post('massDestroy', 'massDestroy')->name('massDestroy');
+        });
+    });
+
+    // Corporate Government Fleets
+    Route::controller(App\Http\Controllers\Backend\Projects\CorporateGovernmentFleetController::class)->group(function () {
+        route::prefix('corporateGovernmentFleets')->name('corporateGovernmentFleets.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('export', 'export')->name('export');
+            Route::get('{id}', 'show')->name('show');
+            Route::post('delete/{id}', 'destroy')->name('delete');
+            Route::post('massDestroy', 'massDestroy')->name('massDestroy');
+        });
+    });
+
+    // Carrier Dispatchers
+    Route::controller(\App\Http\Controllers\Backend\Projects\CarrierDispatcherController::class)->group(function () {
+        route::prefix('carrierDispatchers')->name('carrierDispatchers.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('export', 'export')->name('export');
+            Route::get('{id}', 'show')->name('show');
+            Route::post('delete/{id}', 'destroy')->name('delete');
+            Route::post('massDestroy', 'massDestroy')->name('massDestroy');
+        });
+    });
 
     Route::post('/logout', [DashboardController::class, 'logout'])->name('logout');
 });

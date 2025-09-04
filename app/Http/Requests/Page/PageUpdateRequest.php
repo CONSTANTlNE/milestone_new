@@ -23,7 +23,7 @@ class PageUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'status' => ['required', 'string'],
             'parent_id' => ['nullable', 'exists:pages,id'],
             'published_at' => ['nullable'],
@@ -37,6 +37,17 @@ class PageUpdateRequest extends FormRequest
             'mainImage_id' => ['integer'],
             'cover' => ['array'],
         ];
+
+        $locales = array_keys(json_decode(file_get_contents(lang_path('config_locales.json')), true));
+
+        foreach ($locales as $locale) {
+            $rules["tier_title_{$locale}"] = ['nullable', 'array'];
+            $rules["tier_title_{$locale}.*"] = ['nullable', 'string'];
+            $rules["tier_content_{$locale}"] = ['nullable', 'array'];
+            $rules["tier_content_{$locale}.*"] = ['nullable', 'string'];
+        }
+
+        return $rules;
     }
 
     /**

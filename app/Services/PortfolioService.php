@@ -27,23 +27,8 @@ class PortfolioService implements PortfolioInterface
 
     public function index(PortfolioIndexRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Portfolio::query()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Portfolio::select(['id', 'title', 'src', 'created_at', 'status'])
+            ->filter($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
@@ -158,20 +143,8 @@ class PortfolioService implements PortfolioInterface
     // Archive Function Method
     public function trash(PortfolioTrashRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Portfolio::onlyTrashed()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Portfolio::select(['id', 'title', 'created_at'])
+            ->filterTrash($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }

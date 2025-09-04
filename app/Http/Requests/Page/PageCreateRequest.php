@@ -24,8 +24,7 @@ class PageCreateRequest extends FormRequest
      */
     public function rules(): array
     {
-
-        return [
+        $rules = [
             'status' => ['required', 'string'],
             'parent_id' => ['nullable', 'exists:pages,id'],
             'published_at' => ['nullable'],
@@ -50,6 +49,14 @@ class PageCreateRequest extends FormRequest
                 },
             ],
         ];
+
+        $locales = array_keys(json_decode(file_get_contents(lang_path('config_locales.json')), true));
+        foreach ($locales as $locale) {
+            $rules["tier_title_{$locale}"] = ['nullable', 'array'];
+            $rules["tier_content_{$locale}"] = ['nullable', 'array'];
+        }
+
+        return $rules;
     }
 
     /**

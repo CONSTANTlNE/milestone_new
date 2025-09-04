@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="pbmit-consultation-content">
-            @include('components.frontend.index_quotation')
+            {{--            @include('components.frontend.index_quotation')--}}
         </div>
     </div>
-</div> 
+</div>

@@ -1380,6 +1380,113 @@ return [
         "guard_name" => "web",
         "name" => "backend.services.massRemove"
     ],
+
+    // service.categories
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიების ნახვა",
+            "en" => "View service categories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.index"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის დეტალები",
+            "en" => "View service category details"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.show"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის შექმნა",
+            "en" => "Create service category"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.create"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის შენახვა",
+            "en" => "Store service category"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.store"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის რედაქტირება",
+            "en" => "Edit service category"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.edit"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის განახლება",
+            "en" => "Update service category"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.update"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის წაშლა",
+            "en" => "Delete service category"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.destroy"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის სტატუსის შეცვლა",
+            "en" => "Change service category status"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.status"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის ნაგავში გადატანა",
+            "en" => "Move service category to trash"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.trash"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის აღდგენა",
+            "en" => "Restore service category"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.restore"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიის სრული წაშლა",
+            "en" => "Permanently remove service category"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.remove"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიების მასიური წაშლა",
+            "en" => "Mass delete service categories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.massDestroy"
+    ],
+    [
+        "title" => [
+            "ka" => "სერვის კატეგორიების ერთდროული სრული წაშლა",
+            "en" => "Mass remove service categories"
+        ],
+        "guard_name" => "web",
+        "name" => "backend.serviceCategories.massRemove"
+    ],
+
     //  faqs
     [
         "title" => [

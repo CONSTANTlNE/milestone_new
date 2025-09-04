@@ -13,6 +13,9 @@
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset(config('filemanager.favicons.32')) }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset(config('filemanager.favicons.16')) }}">
     <link rel="apple-touch-icon" href="{{ asset(config('filemanager.favicons.apple')) }}">
+    @if(request()->routeIs('backend.quotations.*') || request()->routeIs('backend.b2b_quotations.*') )
+        <link rel="stylesheet" href="{{ asset('backend/assets/css/quotation.css') }}">
+    @endif
     <meta name="theme-color" content="#ffffff">
 
     @vite('public/css/admin-app.css')
@@ -20,18 +23,17 @@
 
 </head>
 <body>
-    <div id="loader" >
-        <img src="{{ asset('backend/assets/images/loader.svg') }}" alt="{{ __('config.admin_title') }} - loader">
-    </div>
+<div id="loader" >
+    <img src="{{ asset('backend/assets/images/loader.svg') }}" alt="{{ __('config.admin_title') }} - loader">
+</div>
 
-    <div class="page">
-        @include('backend.layouts.header')
-        @include('backend.layouts.sidebar')
-        @yield('content')
-        @include('backend.layouts.footer')
-    </div>
-
-    @vite('public/js/admin-app.js')
-    @stack('scripts')
+<div class="page">
+    @include('backend.layouts.header')
+    @include('backend.layouts.sidebar')
+    @yield('content')
+    @include('backend.layouts.footer')
+</div>
+@vite('public/js/admin-app.js')
+@stack('scripts')
 </body>
 </html>

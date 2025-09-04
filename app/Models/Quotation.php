@@ -13,6 +13,7 @@ class Quotation extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'specs_links' => 'array',
+        'surcharges' => 'array',
     ];
 
     public function carbrand(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -23,5 +24,10 @@ class Quotation extends Model
     public function carmodel(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return   $this->hasMany(CarModel::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'sent_by_id');
     }
 }

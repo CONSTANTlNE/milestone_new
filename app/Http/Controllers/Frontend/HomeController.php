@@ -16,13 +16,28 @@ class HomeController extends Controller
 {
     public function index(): View
     {
-        $sliders = Slider::all();
+        $sliders = Slider::select(['id', 'title', 'src', 'slogan', 'url', 'content', 'status'])
+            ->where('status', true)
+            ->orderby('position', 'asc')
+            ->limit(3)
+            ->get();
+
         $serviceCategories = ServiceCategory::all();
-        $services = Service::all();
-        $blogs = Blog::all();
+        $formPages = Page::where('parent_id', 12)
+            ->where('status', true)
+            ->orderby('id', 'asc')
+            ->get();
+
+        $blogs = Blog::select(['id', 'title', 'slug', 'src', 'status', 'created_at'])
+            ->where('status', true)
+            ->orderby('id', 'desc')
+            ->limit(6)
+            ->get();
+
         $page = Page::where('template', 'frontend.index')->first();
 
-        return view('frontend.index', compact('sliders', 'blogs', 'page', 'services', 'serviceCategories'));
+
+        return view('frontend.index', compact('sliders', 'blogs', 'page', 'formPages', 'serviceCategories'));
     }
 
     public function under(): View

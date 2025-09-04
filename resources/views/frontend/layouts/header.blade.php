@@ -31,13 +31,13 @@
                                 <i class="pbmit-base-icon-search-1"></i>
                             </a>
                         </div>
-                        <div class="pbmit-header-button2 pbmit-header-book-consult-btn">
-                            <a class="pbmit-btn pbmit-btn-white" href="#" id="consultation-trigger">
-                                <span class="pbmit-button-content-wrapper">
-                                    <span class="pbmit-button-text">{{__('book')}}</span>
-                                </span>
-                            </a>
-                        </div>
+{{--                        <div class="pbmit-header-button2 pbmit-header-book-consult-btn">--}}
+{{--                            <a class="pbmit-btn pbmit-btn-white" href="#" id="consultation-trigger">--}}
+{{--                                <span class="pbmit-button-content-wrapper">--}}
+{{--                                    <span class="pbmit-button-text">{{__('book')}}</span>--}}
+{{--                                </span>--}}
+{{--                            </a>--}}
+{{--                        </div>--}}
                     </div>
                 </div>
             </div>

@@ -42,4 +42,49 @@ class PageController extends Controller
         $setting = Setting::first();
         return view('frontend.pages.contact', compact('page', 'setting'));
     }
+
+    public function autoAuction(){
+        $page = Page::where('template', 'frontend.pages.auto_auction')->first();
+        return view('frontend.pages.auto_auction', compact('page'));
+    }
+
+    public function autoDealer(){
+        $page = Page::where('template', 'frontend.pages.auto_dealer')->first();
+        return view('frontend.pages.auto_dealer', compact('page'));
+    }
+
+    public function carRetailer(){
+        $page = Page::where('template', 'frontend.pages.car_retailer')->first();
+        return view('frontend.pages.car_retailer', compact('page'));
+    }
+
+    public function corporateGovernmentFleet(){
+        $page = Page::where('template', 'frontend.pages.corporate_government_fleet')->first();
+        return view('frontend.pages.corporate_government_fleet', compact('page'));
+    }
+
+    public function vehicleManufacturers(){
+        $page = Page::where('template', 'frontend.pages.vehicle_manufacturers')->first();
+        return view('frontend.pages.vehicle_manufacturers', compact('page'));
+    }
+
+    public function carrierDispatchers(){
+        $page = Page::where('template', 'frontend.pages.carrier_dispatchers')->first();
+        return view('frontend.pages.carrier_dispatchers', compact('page'));
+    }
+
+    public function b2b(){
+        $page = Page::where('template', 'frontend.pages.b2b')->first();
+        return view('frontend.pages.b2b', compact('page'));
+    }
+
+    public function b2bQuotation(){
+        $page = Page::where('template', 'frontend.pages.b2b_quotation')->first();
+        return view('frontend.pages.b2b_quotation', compact('page'));
+    }
+
+    public function b2cQuotation(){
+        $page = Page::where('template', 'frontend.pages.b2c_quotation')->first();
+        return view('frontend.pages.b2c_quotation', compact('page'));
+    }
 }

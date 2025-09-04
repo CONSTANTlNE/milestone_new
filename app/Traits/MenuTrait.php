@@ -51,7 +51,8 @@ trait MenuTrait
     /**
      * Encode the given value as JSON.
      *
-     * @param $data
+     * @param $title
+     * @param $slug
      * @return void
      */
     public function setMenuTranslations($title, $slug): void

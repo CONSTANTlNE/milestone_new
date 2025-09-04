@@ -69,7 +69,7 @@
                     </div>
                 </article>
                 @endif
-                @if(!empty(clear($setting->address)))
+                @if(isset($setting->address) and !empty(clear($setting->address)))
                 <article class="pbmit-miconheading-style-5 col-md-6 col-lg-4 col-xl-3">
                     <div class="pbmit-ihbox-style-5">
                         <div class="pbmit-ihbox-headingicon">

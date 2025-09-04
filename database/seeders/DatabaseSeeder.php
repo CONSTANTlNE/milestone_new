@@ -19,7 +19,13 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             SettingSeeder::class,
             FolderSeeder::class,
-            AvailabilitySeeder::class
+            AvailabilitySeeder::class,
+            ChargeSeeder::class,
+            AutoDealerSeeder::class,
+            AutoAuctionSeeder::class,
+            VehicleManufacturerSeeder::class,
+            CarRetailerSeeder::class,
+            CorporateGovernmentFleetSeeder::class
         ]);
     }
 }

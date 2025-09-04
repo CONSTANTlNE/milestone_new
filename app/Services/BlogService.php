@@ -21,30 +21,22 @@ use App\Models\Blog;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Requests\Blog\BlogIndexRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class BlogService implements BlogInterface
 {
     use ImageUploadTrait, MultiTranslatableTrait;
 
+    private const CACHE_TTL = 3600; // 1 hour
+    private const CACHE_PREFIX = 'blogs';
+
     public function index(BlogIndexRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Blog::query()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Blog::select(['id', 'title', 'src', 'created_at', 'status'])
+            //->with(['categories:id,title,slug', 'reporter:id,name,title'])
+            ->filter($request)
+            ->orderBy('created_at', 'desc')
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
@@ -56,181 +48,283 @@ class BlogService implements BlogInterface
 
     public function changeStatus(BlogChangeStatusRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        Cache::forget('blogs');
+        try {
+            DB::beginTransaction();
 
-        $blog = Blog::find($data['id']);
+            $data = $request->validated();
 
-        if (!$blog) {
+            $blog = Blog::findOrFail($data['id']);
+            $blog->update(['status' => $data['status']]);
+
+            DB::commit();
+
             return response()->json([
-                'message' => 'Blog not found',
+                'message' => __('strings.Status changed successfully'),
+                'alert-type' => 'success',
+                //'blog' => BlogResource::make($blog)
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failed to change blog status: ' . $e->getMessage(),
                 'alert-type' => 'error'
-            ], 404);
+            ], 500);
         }
-
-        $blog->update(['status' => $data['status']]);
-
-        return response()->json([
-            'message' => __('strings.Status changed successfully'),
-            'alert-type' => 'success'
-        ]);
     }
 
     public function store(BlogCreateRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        Cache::forget('blogs');
+        try {
+            DB::beginTransaction();
 
-        $blog = new Blog();
-        $blog->setMultiTranslations($data);
-        $blog->status = $data['status'];
-        $blog->created_at = $data['published_at'] ?? now();
-        $blog->save();
+            $data = $request->validated();
 
-        if (isset($data['category'])) {
-            $blog->categories()->sync($data['category']);
+            $blog = new Blog();
+            $blog->setMultiTranslations($data);
+            $blog->status = $data['status'];
+            $blog->created_at = $data['published_at'] ?? now();
+
+            //if (isset($data['user_id'])) $blog->user_id = $data['user_id'];
+
+            $blog->save();
+
+            if (isset($data['category'])) {
+                $blog->categories()->sync($data['category']);
+            }
+
+            $blog->setSeoTranslations($data);
+            $this->processAndSaveImages($data, $blog, true);
+            $blog->fresh();
+
+            DB::commit();
+
+            return response()->json([
+                'blog' => BlogResource::make($blog),
+                'message' => __('strings.Added Successfully')
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failed to create blog: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ], 500);
         }
-
-        $blog->setSeoTranslations($data);
-        $this->processAndSaveImages($data, $blog, true);
-        $blog->fresh();
-
-        return response()->json([
-            'blog' => BlogResource::make($blog),
-            'message' => __('strings.Added Successfully')
-        ], 201);
     }
 
     public function show(Blog $blog): JsonResponse|Blog
     {
-        return $blog;
+         return $blog->load(['categories', 'reporter', 'images', 'seo']);
     }
 
     public function edit(Blog $blog): Blog
     {
-        return $blog;
+        return $blog->load(['categories', 'reporter', 'images', 'seo']);
     }
 
     public function update(BlogUpdateRequest $request, Blog $blog): JsonResponse
     {
-        $data = $request->validated();
-        Cache::forget('blogs');
-        $blog->setMultiTranslations($data);
-        $blog->status = $data['status'];
-        $blog->created_at = $data['published_at'] ?? now();
-        $blog->save();
+        try {
+            DB::beginTransaction();
 
-        if (isset($data['category'])) {
-            $blog->categories()->sync($data['category']);
-        }else{
-            $blog->categories()->detach();
+            $data = $request->validated();
+
+            $blog->setMultiTranslations($data);
+            $blog->status = $data['status'];
+            $blog->created_at = $data['published_at'] ?? now();
+
+            // Update new fields if available
+//            if (isset($data['user_id'])) $blog->user_id = $data['user_id'];
+
+            $blog->save();
+
+            if (isset($data['category'])) {
+                $blog->categories()->sync($data['category']);
+            } else {
+                $blog->categories()->detach();
+            }
+
+            $blog->setSeoTranslations($data);
+            $this->processAndSaveImages($data, $blog, true);
+            $blog->fresh();
+
+            DB::commit();
+
+            return response()->json([
+                'blog' => BlogResource::make($blog),
+                'message' => __('strings.Updated Successfully')
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failed to update blog: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ], 500);
         }
-
-        // Set SEO translations if available
-        $blog->setSeoTranslations($data);
-        $this->processAndSaveImages($data, $blog, true);
-        $blog->fresh();
-
-        return response()->json([
-            'blog' => BlogResource::make($blog),
-            'message' => __('strings.Updated Successfully')
-        ], 201);
     }
 
     public function destroy(BlogDestroyRequest $request): JsonResponse
     {
-        Cache::forget('blogs');
-        $blog = Blog::find($request->id);
-        if (!$blog) {
-            return response()->json([
-                'message' => 'Blog not found',
-                'alert-type' => 'error'
-            ], 404);
-        }
-        $blog->delete();
+        try {
+            $blog = Blog::findOrFail($request->id);
+            $blog->delete();
 
-        return response()->json([
-            'message' => __('strings.Deleted Successfully'),
-            'alert-type' => 'success'
-        ]);
+            return response()->json([
+                'message' => __('strings.Deleted Successfully'),
+                'alert-type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to delete blog: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ], 500);
+        }
     }
 
     public function massDestroy(BlogMassDestroyRequest $request): JsonResponse
     {
-        Cache::forget('blogs');
-
-        Blog::whereIn('id', $request->ids)->delete();
-
-        return response()->json([
-            'message' => __('strings.massDestroy Successfully'),
-        ], 204);
+        try {
+            $blogIds = $request->ids;
+            Blog::whereIn('id', $blogIds)->delete();
+            return response()->json([
+                'message' => __('strings.massDestroy Successfully'),
+                'deleted_count' => count($blogIds)
+            ], 204);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to mass delete blogs: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ], 500);
+        }
     }
 
     // Archive Function Method
     public function trash(BlogTrashRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Blog::onlyTrashed()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Blog::select(['id', 'title', 'created_at', 'deleted_at'])
+            ->withTrashed()
+            ->filterTrash($request)
+            ->orderBy('deleted_at', 'desc')
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
 
     public function restore(BlogRestoreRequest $request): JsonResponse
     {
-        Cache::forget('blogs');
-        $blog = Blog::where('id', $request->id)->withTrashed()->first();
-        $blog->restore();
-        $blog->fresh();
-
-        return response()->json([
-            'message' => __('strings.Restored Successfully from Archive'),
-            'alert-type' => 'success'
-        ]);
+        try {
+            $blog = Blog::where('id', $request->id)->withTrashed()->firstOrFail();
+            $blog->restore();
+            $blog->fresh();
+            return response()->json([
+                'message' => __('strings.Restored Successfully from Archive'),
+                'alert-type' => 'success',
+                //'blog' => BlogResource::make($blog)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to restore blog: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ], 500);
+        }
     }
 
     public function remove(BlogRemoveRequest $request): JsonResponse
     {
-        Cache::forget('blogs');
-        $blogId = $request->id;
-        $data = Blog::where('id', $blogId)->withTrashed()->first();
-        $data->seo()->forceDelete();
-        $data->images()->detach();
-        $data->forceDelete();
-        $data->fresh();
+        try {
+            DB::beginTransaction();
+            $blog = Blog::where('id', $request->id)->withTrashed()->firstOrFail();
 
-        return response()->json([
-            'message' => __('strings.Deleted Successfully from Archive'),
-            'alert-type' => 'success'
-        ]);
+            // Force delete all relationships
+            $blog->seo()->forceDelete();
+            $blog->images()->detach();
+            $blog->categories()->detach();
+            $blog->forceDelete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => __('strings.Deleted Successfully from Archive'),
+                'alert-type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Failed to permanently delete blog: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ], 500);
+        }
     }
 
     public function massRemove(BlogMassRemoveRequest $request): JsonResponse
     {
-        Cache::forget('blogs');
-        $blogs = Blog::withTrashed()->whereIn('id', $request->ids)->get();
+        try {
+            DB::beginTransaction();
 
-        foreach ($blogs as $blog) {
-            $blog->seo()->forceDelete();
-            $blog->images()->detach();
+            $blogIds = $request->ids;
+
+            $blogs = Blog::withTrashed()->whereIn('id', $blogIds)->get();
+
+            foreach ($blogs as $blog) {
+                $blog->seo()->forceDelete();
+                $blog->images()->detach();
+                $blog->categories()->detach();
+            }
+
+            Blog::whereIn('id', $blogIds)->withTrashed()->forceDelete();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => __('strings.Mass Deleted Successfully from Archive'),
+                'deleted_count' => count($blogIds)
+            ], 204);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to mass permanently delete blogs: ' . $e->getMessage(),
+                'alert-type' => 'error'
+            ], 500);
         }
+    }
 
-        Blog::whereIn('id', $request->ids)->withTrashed()->forceDelete();
+    // Performance optimization methods
+    public function getFeaturedBlogs($limit = 5)
+    {
+        $cacheKey = $this->getCacheKey('featured', $limit);
 
-        return response()->json([
-            'message' => __('strings.Mass Deleted Successfully from Archive'),
-            'alert-type' => 'success'
-        ]);
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($limit) {
+            return Blog::featured()
+                ->with(['categories:id,title,slug', 'reporter:id,name,title'])
+                ->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->get();
+        });
+    }
+
+    public function getPopularBlogs($limit = 10)
+    {
+        $cacheKey = $this->getCacheKey('popular', $limit);
+
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($limit) {
+            return Blog::popular($limit)
+                ->with(['categories:id,title,slug', 'reporter:id,name,title'])
+                ->get();
+        });
+    }
+
+    public function getRecentBlogs($limit = 10)
+    {
+        $cacheKey = $this->getCacheKey('recent', $limit);
+
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($limit) {
+            return Blog::recent($limit)
+                ->with(['categories:id,title,slug', 'reporter:id,name,title'])
+                ->get();
+        });
+    }
+
+    public function incrementViews(Blog $blog): void
+    {
+        $blog->incrementViews();
     }
 }

@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Blade;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Cache;
+use Opcodes\LogViewer\Facades\LogViewer;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -74,20 +76,58 @@ class AppServiceProvider extends ServiceProvider
 //            return $view->with(compact('mainMenus'));
 //        });
 
-view()->composer('frontend.layouts.mainMenu', function($view){
-    $mainMenus = MenuItem::where('menu_id', 3)
-            ->where('parent_id', 0)
-            ->where('status', 1)
-            ->with('children') // Ensure 'children' is cached too
-            ->orderBy('sort', 'asc')
-            ->get();
-    return $view->with(compact('mainMenus'));
-});
-view()->composer('components.frontend.index_quotation', function($view){
-    $cars = CarBrand::all();
-    $availabilities = Availability::all();
+        LogViewer::auth(function ($request) {
+            return $request->user()
+                && in_array($request->user()->email, [
+                    'gmta.constantine@gmail.com',
+                    'borisi.barabadze@gmail.com'
+                ]);
+        });
 
-    return $view->with(compact('cars', 'availabilities'));
-});
+        view()->composer('frontend.layouts.mainMenu', function($view){
+            $mainMenus = MenuItem::where('menu_id', 1)
+                ->where('parent_id', 0)
+                ->where('status', 1)
+                ->with('children') // Ensure 'children' is cached too
+                ->orderBy('sort', 'asc')
+                ->get();
+            return $view->with(compact('mainMenus'));
+        });
+
+        view()->composer('frontend.layouts.footer', function($view){
+            $servicesMenus = MenuItem::where('menu_id', 5)
+                ->where('parent_id', 0)
+                ->where('status', 1)
+                ->with('children') // Ensure 'children' is cached too
+                ->orderBy('sort', 'asc')
+                ->get();
+            $linksMenus = MenuItem::where('menu_id', 6)
+                ->where('parent_id', 0)
+                ->where('status', 1)
+                ->with('children') // Ensure 'children' is cached too
+                ->orderBy('sort', 'asc')
+                ->get();
+            return $view->with(compact('servicesMenus', 'linksMenus'));
+        });
+
+//        view()->composer('components.frontend.index_quotation', function($view){
+//            $cars = CarBrand::all();
+//            $availabilities = Availability::all();
+//
+//            return $view->with(compact('cars', 'availabilities'));
+//        });
+
+        view()->composer(
+            [
+                'components.frontend.index_quotation',
+                'frontend.pages.b2b_quotation',
+                'frontend.pages.b2c_quotation'
+            ],
+            function($view) {
+                $cars = CarBrand::all();
+                $availabilities = Availability::all();
+                $view->with(compact('cars', 'availabilities'));
+            }
+        );
     }
 }

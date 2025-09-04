@@ -112,31 +112,63 @@ class MenuManager {
         let placeholder = null;
         let dropTarget = null;
         let dropPosition = null;
+        let isDragging = false;
+        let startY = 0;
+        let startX = 0;
+        
+        // Set global dragging state
+        window.isDragging = false;
 
-        menuContainer.addEventListener('dragstart', (e) => {
-            if (e.target.classList.contains('menu-item')) {
-                draggedElement = e.target;
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/html', e.target.outerHTML);
-                
-                // Create placeholder
-                placeholder = document.createElement('li');
-                placeholder.className = 'sortable-placeholder';
-                placeholder.style.height = draggedElement.offsetHeight + 'px';
-                placeholder.style.border = '2px dashed #ccc';
-                placeholder.style.backgroundColor = '#f9f9f9';
-                placeholder.style.margin = '5px 0';
-                
-                setTimeout(() => {
-                    draggedElement.style.opacity = '0.5';
-                }, 0);
+        // Enhanced drag start with better touch support
+        const handleDragStart = (e) => {
+            const target = e.target.closest('.menu-item');
+            if (!target) return;
+
+            // Prevent dragging if clicking on controls
+            if (e.target.closest('.item-controls') || e.target.closest('.menu-item-settings')) {
+                return;
             }
-        });
 
-        menuContainer.addEventListener('dragend', (e) => {
+            draggedElement = target;
+            isDragging = true;
+            window.isDragging = true;
+            
+            // Store initial position for touch devices
+            if (e.type === 'touchstart') {
+                startY = e.touches[0].clientY;
+                startX = e.touches[0].clientX;
+            }
+
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', target.outerHTML);
+            
+            // Create enhanced placeholder
+            placeholder = document.createElement('li');
+            placeholder.className = 'sortable-placeholder';
+            placeholder.style.height = (draggedElement.offsetHeight + 16) + 'px';
+            placeholder.style.margin = '8px 0';
+            
+            // Add dragging class for visual feedback
+            draggedElement.classList.add('ui-sortable-helper');
+            
+            setTimeout(() => {
+                draggedElement.style.opacity = '0.8';
+            }, 0);
+
+            // Prevent text selection during drag
+            document.body.style.userSelect = 'none';
+            document.body.style.webkitUserSelect = 'none';
+        };
+
+        // Enhanced drag end
+        const handleDragEnd = (e) => {
             if (draggedElement) {
                 draggedElement.style.opacity = '';
+                draggedElement.classList.remove('ui-sortable-helper');
                 draggedElement = null;
+                isDragging = false;
+                window.isDragging = false;
+                
                 if (placeholder && placeholder.parentNode) {
                     placeholder.parentNode.removeChild(placeholder);
                 }
@@ -144,54 +176,156 @@ class MenuManager {
                 dropTarget = null;
                 dropPosition = null;
             }
-        });
 
-        menuContainer.addEventListener('dragover', (e) => {
+            // Restore text selection
+            document.body.style.userSelect = '';
+            document.body.style.webkitUserSelect = '';
+
+            // Clear all drop indicators
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('drop-before', 'drop-after', 'drop-child');
+            });
+        };
+
+        // Enhanced drag over with better drop zone detection
+        const handleDragOver = (e) => {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
             
-            if (!draggedElement) return;
+            if (!draggedElement || !isDragging) return;
             
             const target = e.target.closest('.menu-item');
-            if (!target || target === draggedElement || this.isDescendant(draggedElement, target)) return;
+            if (!target || target === draggedElement || this.isDescendant(draggedElement, target)) {
+                // Clear drop indicators if not over a valid target
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    item.classList.remove('drop-before', 'drop-after', 'drop-child');
+                });
+                return;
+            }
             
             const rect = target.getBoundingClientRect();
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            
             const midpoint = rect.top + rect.height / 2;
             const targetDepth = this.getMenuDepth(target);
             const draggedDepth = this.getMenuDepth(draggedElement);
             
-            // Determine drop position
-            if (e.clientY < midpoint) {
-                dropPosition = 'before';
-            } else {
-                dropPosition = 'after';
+            // Determine drop position with improved logic
+            let newDropPosition = 'after';
+            if (clientY < midpoint) {
+                newDropPosition = 'before';
             }
             
             // Check if we can nest (drop into as child)
             const canNest = this.canNestAsChild(draggedElement, target);
-            const nestThreshold = rect.left + 20; // 20px from left edge for nesting
+            const nestThreshold = rect.left + 30; // Increased threshold for easier nesting
             
-            if (canNest && e.clientX > nestThreshold && dropPosition === 'after') {
-                dropPosition = 'child';
+            if (canNest && clientX > nestThreshold && newDropPosition === 'after') {
+                newDropPosition = 'child';
             }
             
-            dropTarget = target;
-            
-            // Update visual feedback
-            this.updateDropVisualFeedback(target, dropPosition);
-        });
+            // Only update if position changed
+            if (dropTarget !== target || dropPosition !== newDropPosition) {
+                dropTarget = target;
+                dropPosition = newDropPosition;
+                
+                // Update visual feedback
+                this.updateDropVisualFeedback(target, newDropPosition);
+            }
+        };
 
-        menuContainer.addEventListener('drop', (e) => {
+        // Enhanced drop handling
+        const handleDrop = (e) => {
             e.preventDefault();
             if (draggedElement && dropTarget && dropPosition) {
                 this.performDrop(draggedElement, dropTarget, dropPosition);
                 this.updateMenuStructure();
             }
-        });
+        };
 
-        // Make menu items draggable
+        // Touch event handlers for mobile devices
+        const handleTouchStart = (e) => {
+            const target = e.target.closest('.menu-item');
+            if (!target) return;
+
+            // Prevent dragging if clicking on controls
+            if (e.target.closest('.item-controls') || e.target.closest('.menu-item-settings')) {
+                return;
+            }
+
+            startY = e.touches[0].clientY;
+            startX = e.touches[0].clientX;
+            
+            // Set a timer to start dragging after a short delay
+            const dragTimer = setTimeout(() => {
+                if (Math.abs(e.touches[0].clientY - startY) > 10 || 
+                    Math.abs(e.touches[0].clientX - startX) > 10) {
+                    handleDragStart(e);
+                }
+            }, 200);
+
+            // Store timer reference to clear if touch ends quickly
+            target._dragTimer = dragTimer;
+        };
+
+        const handleTouchMove = (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            handleDragOver(e);
+        };
+
+        const handleTouchEnd = (e) => {
+            if (isDragging) {
+                handleDrop(e);
+                handleDragEnd(e);
+            } else {
+                // Clear drag timer if touch ended quickly
+                const target = e.target.closest('.menu-item');
+                if (target && target._dragTimer) {
+                    clearTimeout(target._dragTimer);
+                    target._dragTimer = null;
+                }
+            }
+        };
+
+        // Mouse event listeners
+        menuContainer.addEventListener('dragstart', handleDragStart);
+        menuContainer.addEventListener('dragend', handleDragEnd);
+        menuContainer.addEventListener('dragover', handleDragOver);
+        menuContainer.addEventListener('drop', handleDrop);
+
+        // Touch event listeners for mobile support
+        menuContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+        menuContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+        menuContainer.addEventListener('touchend', handleTouchEnd, { passive: false });
+
+        // Make menu items draggable with enhanced handle detection
+        this.makeItemsDraggable();
+    }
+
+    makeItemsDraggable() {
         document.querySelectorAll('.menu-item').forEach(item => {
             item.draggable = true;
+            
+            // Add visual feedback for draggable items
+            const handle = item.querySelector('.menu-item-handle');
+            if (handle) {
+                handle.style.cursor = 'grab';
+                
+                // Add hover effect to indicate draggable area
+                handle.addEventListener('mouseenter', () => {
+                    if (!window.isDragging) {
+                        handle.style.cursor = 'grabbing';
+                    }
+                });
+                
+                handle.addEventListener('mouseleave', () => {
+                    if (!window.isDragging) {
+                        handle.style.cursor = 'grab';
+                    }
+                });
+            }
         });
     }
 
@@ -246,6 +380,12 @@ class MenuManager {
     performDrop(draggedElement, target, position) {
         const targetContainer = target.closest('ul');
         const targetDepth = this.getMenuDepth(target);
+        const draggedDepth = this.getMenuDepth(draggedElement);
+        
+        // Remove the dragged element from its current position
+        if (draggedElement.parentNode) {
+            draggedElement.parentNode.removeChild(draggedElement);
+        }
         
         if (position === 'before') {
             targetContainer.insertBefore(draggedElement, target);
@@ -255,17 +395,32 @@ class MenuManager {
             this.updateMenuDepth(draggedElement, targetDepth);
         } else if (position === 'child') {
             // Create submenu container if it doesn't exist
-            let submenu = target.querySelector('ul.menu');
+            let submenu = target.querySelector('ul.menu.submenu');
             if (!submenu) {
                 submenu = document.createElement('ul');
                 submenu.className = 'menu submenu';
-                submenu.style.marginLeft = '20px';
+                submenu.style.marginLeft = '25px';
+                submenu.style.borderLeft = '3px solid #e0e0e0';
+                submenu.style.paddingLeft = '20px';
                 target.appendChild(submenu);
             }
             
             submenu.appendChild(draggedElement);
             this.updateMenuDepth(draggedElement, targetDepth + 1);
         }
+        
+        // Ensure the dragged element is still draggable
+        draggedElement.draggable = true;
+        
+        // Rebind events for the moved element
+        this.rebindEvents();
+        
+        // Add visual feedback for successful drop
+        draggedElement.style.transition = 'all 0.3s ease';
+        draggedElement.style.transform = 'scale(1.02)';
+        setTimeout(() => {
+            draggedElement.style.transform = 'scale(1)';
+        }, 300);
     }
 
     updateMenuDepth(element, newDepth) {
@@ -297,6 +452,12 @@ class MenuManager {
         
         // Update visual indentation - use CSS classes instead of inline styles
         element.style.marginLeft = '';
+        
+        // Add smooth transition for depth changes
+        element.style.transition = 'all 0.3s ease';
+        setTimeout(() => {
+            element.style.transition = '';
+        }, 300);
     }
 
     initializeMenuStructure() {
@@ -806,10 +967,54 @@ class MenuManager {
         // Rebind events for dynamically added elements
         this.bindEvents();
         
-        // Make new menu items draggable
+        // Make new menu items draggable and add visual feedback
+        this.makeItemsDraggable();
+        
+        // Ensure all menu items have proper event handlers
         document.querySelectorAll('.menu-item').forEach(item => {
             if (!item.draggable) {
                 item.draggable = true;
+            }
+            
+            // Re-add event listeners for controls
+            const editBtn = item.querySelector('.item-edit');
+            const deleteBtn = item.querySelector('.item-delete-quick');
+            const cancelBtn = item.querySelector('.item-cancel');
+            const updateBtn = item.querySelector('.updatemenu');
+            
+            if (editBtn && !editBtn._bound) {
+                editBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const id = editBtn.id.split('-')[1];
+                    this.toggleEdit(id);
+                });
+                editBtn._bound = true;
+            }
+            
+            if (deleteBtn && !deleteBtn._bound) {
+                deleteBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const id = deleteBtn.id.split('-')[2];
+                    this.deleteMenuItem(id);
+                });
+                deleteBtn._bound = true;
+            }
+            
+            if (cancelBtn && !cancelBtn._bound) {
+                cancelBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const id = cancelBtn.id.split('-')[1];
+                    this.cancelEdit(id);
+                });
+                cancelBtn._bound = true;
+            }
+            
+            if (updateBtn && !updateBtn._bound) {
+                updateBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.getMenus();
+                });
+                updateBtn._bound = true;
             }
         });
     }
@@ -870,12 +1075,12 @@ class MenuManager {
             <div class="menu-item-settings" id="menu-item-settings-${id}" style="display: none;">
                 <input type="hidden" class="edit-menu-item-id" name="menuid_${id}" value="${id}"/>
                 <p class="field-css-classes description description-thin">
-                    <label for="edit-menu-item-classes-${id}">CSS Classes<br>
-                        <input type="text" id="clases_menu_${id}" class="widefat code edit-menu-item-classes" name="clases_menu_${id}" value="">
-                    </label>
-                </p>
-                <p class="field-css-url description description-wide">
-                    <label for="edit-menu-item-url-${id}">Prefix<br>
+                                            <label for="clases_menu_${id}">CSS Classes<br>
+                            <input type="text" id="clases_menu_${id}" class="widefat code edit-menu-item-classes" name="clases_menu_${id}" value="">
+                        </label>
+                    </p>
+                    <p class="field-css-url description description-wide">
+                        <label for="url_menu_${id}">Prefix<br>
                         <input type="text" id="url_menu_${id}" name="url_menu_${id}" class="widefat code edit-menu-item-url" value="${prefix}" disabled>
                     </label>
                 </p>

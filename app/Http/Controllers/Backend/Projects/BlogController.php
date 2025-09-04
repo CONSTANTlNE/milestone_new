@@ -57,13 +57,9 @@ class BlogController extends Controller
      */
     public function status(BlogChangeStatusRequest $request): JsonResponse
     {
-        try {
+        return $this->executeOperation(function () use ($request) {
             return $this->blogService->changeStatus($request);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while change status Blog: ' . $e->getMessage()
-            ], 500);
-        }
+        }, 'Blog Status Change');
     }
 
     /**
@@ -91,15 +87,11 @@ class BlogController extends Controller
     {
         $this->authorize('create', Blog::class);
 
-        try {
+        return $this->executeOperation(function () use ($request) {
             $this->blogService->store($request);
             return redirect()->route('backend.blogs.index')
                 ->with('success', __('strings.Added Successfully'));
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Failed while creating Blog: ' . $e->getMessage()
-            ], 500);
-        }
+        }, 'Blog Creation');
     }
 
     /**
@@ -113,15 +105,9 @@ class BlogController extends Controller
     {
         $this->authorize('view', $blog);
 
-        try {
-            return view('backend.blogs.show', [
-                'blog' => $this->blogService->show($blog)
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed to retrieve the Blog: ' . $e->getMessage()
-            ], 500);
-        }
+        return view('backend.blogs.show', [
+            'blog' => $this->blogService->show($blog)
+        ]);
     }
 
     /**
@@ -135,20 +121,14 @@ class BlogController extends Controller
     {
         $this->authorize('update', $blog);
 
-        try {
-            $reporters = User::where("status", 1)->pluck('title', 'id');
-            $blogCategories = BlogCategory::where("status", 1)->pluck('title', 'id');
-            return view('backend.blogs.edit', [
-                'blog' => $this->blogService->edit($blog),
-                'seo' => $this->blogService->getSeoFirst($blog),
-                'reporters' => $reporters,
-                'blogCategories' => $blogCategories
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed to editing the Blog: ' . $e->getMessage()
-            ], 500);
-        }
+        $reporters = User::where("status", 1)->pluck('title', 'id');
+        $blogCategories = BlogCategory::where("status", 1)->pluck('title', 'id');
+        return view('backend.blogs.edit', [
+            'blog' => $this->blogService->edit($blog),
+            'seo' => $this->blogService->getSeoFirst($blog),
+            'reporters' => $reporters,
+            'blogCategories' => $blogCategories
+        ]);
     }
 
     /**
@@ -163,15 +143,11 @@ class BlogController extends Controller
     {
         $this->authorize('update', $blog);
 
-        try {
+        return $this->executeOperation(function () use ($request, $blog) {
             $this->blogService->update($request, $blog);
             return redirect()->route('backend.blogs.index')
                 ->with('success', __('strings.Updated Successfully'));
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while updating Blog: ' . $e->getMessage()
-            ], 500);
-        }
+        }, 'Blog Update');
     }
 
     /**
@@ -181,14 +157,9 @@ class BlogController extends Controller
      */
     public function destroy(BlogDestroyRequest $request): JsonResponse
     {
-        try {
+        return $this->executeOperation(function () use ($request) {
             return $this->blogService->destroy($request);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while deleting Blog: ' . $e->getMessage()
-            ], 500);
-        }
-
+        }, 'Blog Deletion');
     }
 
     /**
@@ -240,13 +211,9 @@ class BlogController extends Controller
     {
         $this->authorize('restore', Blog::class);
 
-        try {
+        return $this->executeOperation(function () use ($request) {
             return $this->blogService->restore($request);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while restoring Blog: ' . $e->getMessage()
-            ], 500);
-        }
+        }, 'Blog Restore');
     }
 
     /**
@@ -259,13 +226,10 @@ class BlogController extends Controller
     public function remove(BlogRemoveRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('remove', Blog::class);
-        try {
+
+        return $this->executeOperation(function () use ($request) {
             return $this->blogService->remove($request);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while removing Blog: ' . $e->getMessage()
-            ], 500);
-        }
+        }, 'Blog Permanent Deletion');
     }
 
     /**
@@ -278,12 +242,18 @@ class BlogController extends Controller
     public function massRemove(BlogMassRemoveRequest $request): JsonResponse|RedirectResponse
     {
         $this->authorize('remove', Blog::class);
-        try {
-            return $this->blogService->massRemove($request);
-        } catch (Exception $e) {
-            return response()->json([
-                'message' => 'Failed while mass removing Blog: ' . $e->getMessage()
-            ], 500);
-        }
+
+        return $this->executeOperation(function () use ($request) {
+            $this->blogService->massRemove($request);
+
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json([
+                    'message' => __('strings.Mass Deleted Successfully from Archive')
+                ], 200);
+            }
+
+            return redirect()->route('backend.blogs.index')
+                ->with('success', __('strings.Mass Deleted Successfully from Archive'));
+        }, 'Blog Mass Permanent Deletion');
     }
 }

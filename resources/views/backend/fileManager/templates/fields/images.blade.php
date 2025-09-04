@@ -33,12 +33,7 @@
                                         <option value='{{$image->pivot->cover}}'>--{{$image->pivot->cover}}</option>
                                     @endif
                                     <option value='default'>Default</option>
-                                    <option value='slider'>Slider</option>
                                     <option value='cover'>Cover</option>
-                                    <option value='versus1'>Versus1</option>
-                                    <option value='versus2'>Versus2</option>
-                                    <option value='sent'>Sent</option>
-                                    <option value='received'>Received</option>
                                 </select>
                             @else
                                 <label for='covers'></label><select name='cover[]' id='covers'

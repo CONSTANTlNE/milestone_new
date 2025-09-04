@@ -28,23 +28,8 @@ class PageService implements PageInterface
 
     public function index(PageIndexRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Page::query()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                      ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Page::select(['id', 'title', 'src', 'template', 'created_at', 'status'])
+            ->filter($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
@@ -92,6 +77,21 @@ class PageService implements PageInterface
         $page->created_at = $data['published_at'] ?? now();
         $page->save();
 
+        // Save features with translations using a private function, only if data exists
+        $locales = array_keys(json_decode(file_get_contents(lang_path('config_locales.json')), true));
+        $hasTiers = false;
+
+        foreach ($locales as $locale) {
+            if (!empty($request->input("tier_title_{$locale}", []))) {
+                $hasTiers = true;
+                break;
+            }
+        }
+
+        if ($hasTiers) {
+            $this->savePageTiers($request, $page, $locales);
+        }
+
         $page->setSeoTranslations($data);
         $this->processAndSaveImages($data, $page, true);
         $page->fresh();
@@ -100,6 +100,30 @@ class PageService implements PageInterface
             'page' => PageResource::make($page),
             'message' => __('strings.Added Successfully')
         ], 201);
+    }
+
+    private function savePageTiers($request, Page $page, array $locales): void
+    {
+        $titles = [];
+        $contents = [];
+        foreach ($locales as $locale) {
+            $titles[$locale] = $request->input("tier_title_{$locale}", []);
+            $contents[$locale] = $request->input("tier_content_{$locale}", []);
+        }
+        $pageCount = count($contents[$locales[0]] ?? []);
+        for ($i = 0; $i < $pageCount; $i++) {
+            $titleTranslations = [];
+            $contentTranslations = [];
+            foreach ($locales as $locale) {
+                $titleTranslations[$locale] = $titles[$locale][$i] ?? '';
+                $contentTranslations[$locale] = $contents[$locale][$i] ?? '';
+            }
+            $page->tiers()->create([
+                'title' => $titleTranslations,
+                'content' => $contentTranslations,
+                'page_id' => $page->id,
+            ]);
+        }
     }
 
     public function show(Page $page): JsonResponse|Page
@@ -120,6 +144,8 @@ class PageService implements PageInterface
         $page->status = $data['status'];
         if(!empty($data['parent_id'])){
             $page->parent_id = $data['parent_id'];
+        }else{
+            $page->parent_id = null;
         }
         $page->created_at = $data['published_at'] ?? now();
         $page->save();
@@ -128,7 +154,27 @@ class PageService implements PageInterface
             $page->getTranslations('title'),
             $page->getTranslations('slug')
         );
-        $page->setActive($data['status']);
+        if ($data['status'] == 0){
+            $page->setActive($data['status']);
+        }
+
+        // Save features with translations using a private function, only if data exists
+        $locales = array_keys(json_decode(file_get_contents(lang_path('config_locales.json')), true));
+        $hasTiers = false;
+
+        foreach ($locales as $locale) {
+            if (!empty($request->input("tier_title_{$locale}", []))) {
+                $hasTiers = true;
+                break;
+            }
+        }
+
+        if ($hasTiers) {
+            $page->tiers()->delete();
+            $this->savePageTiers($request, $page, $locales);
+        }
+
+
         // Set SEO translations if available
         $page->setSeoTranslations($data);
         $this->processAndSaveImages($data, $page, true);
@@ -176,20 +222,8 @@ class PageService implements PageInterface
     // Archive Function Method
     public function trash(PageTrashRequest $request): LengthAwarePaginator
     {
-        $locale = app()->getLocale();
-
-        return Page::onlyTrashed()
-            ->when($request->filled('search'), function ($query) use ($request, $locale) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search, $locale) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title->>? ILIKE ?", [$locale, '%' . $search . '%']);
-                });
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Page::select(['id', 'title', 'created_at'])
+            ->filterTrash($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
@@ -215,6 +249,7 @@ class PageService implements PageInterface
         $data = Page::where('id', $pageId)->withTrashed()->first();
         $data->seo()->forceDelete();
         $data->images()->detach();
+        $data->tiers()->delete();
         $data->setForceDelete(true);
         $data->forceDelete();
         $data->fresh();
@@ -233,6 +268,7 @@ class PageService implements PageInterface
         foreach ($pages as $page) {
             $page->seo()->forceDelete();
             $page->setForceDelete(true);
+            $page->tiers()->delete();
             $page->images()->detach();
         }
 
@@ -242,5 +278,13 @@ class PageService implements PageInterface
             'message' => __('strings.Mass Deleted Successfully from Archive'),
             'alert-type' => 'success'
         ]);
+    }
+
+    public function getPagesParent($excludePageId = null)
+    {
+        return Page::whereNull('parent_id')
+            ->where('status', true)
+            ->when($excludePageId, fn($query) => $query->where('id', '!=', $excludePageId))
+            ->get();
     }
 }

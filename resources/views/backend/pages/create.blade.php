@@ -36,7 +36,7 @@
               'errors' => $errors,
             ])
 
-            <form method="post" action="{{ route('backend.pages.store') }}" novalidate enctype="multipart/form-data">
+            <form id="form" method="post" action="{{ route('backend.pages.store') }}" novalidate enctype="multipart/form-data">
                 @csrf
                 <div class="grid grid-cols-12 gap-6 white-bg">
                     <div class="xl:col-span-9 col-span-12">
@@ -51,13 +51,19 @@
                                             role="tabpanel"
                                             aria-labelledby="locale-item-{{$lang->code}}"
                                         >
-                                            @include('backend.layouts.includes.seoLangTabComponent', ['code' => $lang->code])
+                                            @include('backend.layouts.includes.seoLangTabComponent', ['code' => $lang->code, 'page' => true])
                                                 @include('backend.layouts.includes.contentComponent', [
                                                     'lang' => $lang,
                                                     'code' => $lang->code,
                                                     'data' => null
                                                 ])
                                                 @include('backend.layouts.includes.seoComponent', [
+                                                    'lang' => $lang,
+                                                    'code' => $lang->code,
+                                                    'data' => null
+                                                ])
+
+                                                @include('backend.layouts.includes.tierComponent', [
                                                     'lang' => $lang,
                                                     'code' => $lang->code,
                                                     'data' => null
@@ -91,6 +97,18 @@
                                         :staticData="false"
                                         width="12"
                                     />
+
+                                @if(count($pages))
+                                    <div class="mb-3">
+                                        <label for="choices-multiple-remove-button" class="px-3 block text-sm text-gray-600 font-medium dark:text-white font-second-geo">{{ __('admin.main_page') }}</label>
+                                        <select class="form-control ti-form-select rounded-sm !py-2 !px-3" name="parent_id" id="choices-multiple-remove-button">
+                                            <option value="">{{ __('admin.choose_main_page') }}</option>
+                                            @foreach($pages as $page)
+                                                <option value="{{$page->id}}">{{$page->title}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
 
                                 <x-backend.selectStatic
                                     :data="config('crm.status')"
@@ -134,4 +152,41 @@
 @push('scripts')
     @vite('public/js/quill-editor.js')
     @include('backend.fileManager.templates.filemanager', ['indexRoute' => route('backend.files.index')])
+
+    <script>
+        let locales = @json(getLocalesCode());
+
+        // Tier
+        let tierCount = 0;
+
+        function addTier() {
+            tierCount++
+            locales.forEach((abbr, index) => {
+
+                const tiertemplate = document.getElementById('tierTemplate' + abbr);
+                if (!tiertemplate) return; // or handle error
+                const tiercontainer = document.getElementById('tierContainer' + abbr);
+                const tierclone = tiertemplate.content.cloneNode(true);
+
+                // Add dynamic class to the button
+                const tierbutton = tierclone.querySelector('button.removetier');
+                tierbutton.dataset.removetier = tierCount;
+
+                tiercontainer.appendChild(tierclone);
+
+                const removetierbtns = document.querySelectorAll('.removetier')
+
+                removetierbtns.forEach((btn) => {
+                    btn.addEventListener('click', () => {
+                        const tierdataset = btn.dataset
+                        const tierselector = `[data-removetier="${tierdataset.removetier}"]`;
+                        const tierremovables = document.querySelectorAll(tierselector);
+                        tierremovables.forEach((removable) => {
+                            removable.parentElement.remove()
+                        })
+                    })
+                })
+            });
+        }
+    </script>
 @endpush

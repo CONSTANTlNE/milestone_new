@@ -31,29 +31,8 @@ class LocaleService implements LocaleInterface
 
     public function index(LocaleIndexRequest $request): LengthAwarePaginator
     {
-        return Locale::query()
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title ILIKE ?", ['%' . $search . '%']);
-                });
-            })
-            ->when($request->filled('status') && $request->status !== 'all', function ($query) use ($request) {
-                $query->where('status', $request->status);
-            })
-            ->when(
-                $request->filled('sort_column'),
-                function ($q) use ($request) {
-                    $q->orderBy(
-                        $request->input('sort_column'),
-                        $request->input('sort_direction', 'asc')
-                    );
-                },
-                function ($q) {
-                    $q->orderBy('position', 'asc');
-                }
-            )
+        return Locale::select(['id', 'title', 'code', 'src', 'created_at', 'status'])
+            ->filter($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }
@@ -180,19 +159,8 @@ class LocaleService implements LocaleInterface
     // Archive Function Method
     public function trash(LocaleTrashRequest $request): LengthAwarePaginator
     {
-        return Locale::onlyTrashed()
-            ->with('generalImage')
-            ->when($request->filled('search'), function ($query) use ($request) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->whereRaw('CAST(id AS TEXT) ILIKE ?', ['%' . $search . '%'])
-                        ->orWhereRaw("title ILIKE ?", ['%' . $search . '%']);
-                });
-            })
-            ->orderBy(
-                $request->input('sort_column', 'id'),
-                $request->input('sort_direction', 'desc')
-            )
+        return Locale::select(['id', 'title', 'created_at'])
+            ->filterTrash($request)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
     }

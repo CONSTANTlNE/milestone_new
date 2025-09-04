@@ -73,7 +73,9 @@ class PageController extends Controller
     public function create(): View
     {
         $this->authorize('create', Page::class);
-        return view('backend.pages.create');
+        return view('backend.pages.create', [
+            'pages' => $this->pageService->getPagesParent()
+        ]);
     }
 
     /**
@@ -134,7 +136,8 @@ class PageController extends Controller
         try {
             return view('backend.pages.edit', [
                 'page' => $this->pageService->edit($page),
-                'seo' => $this->pageService->getSeoFirst($page)
+                'seo' => $this->pageService->getSeoFirst($page),
+                'pages' => $this->pageService->getPagesParent($page->id)
             ]);
         } catch (Exception $e) {
             return response()->json([

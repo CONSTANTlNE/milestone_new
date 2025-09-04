@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('src')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->index('deleted_at');
         });
     }
 

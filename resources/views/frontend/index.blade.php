@@ -45,39 +45,39 @@
     </div>
 @endsection
 @section('content')
-    @if(isset(getPageById(156)->id))
+    @if(isset(getPageById(22)->id))
     <section style="padding: 100px 0 130px 0;">
         <div class="container">
             <div class="row g-0">
                 <div class="col-md-4 about-one-col1">
-                    <div class="about-one-img" style="background-image: url({{getPageById(156)->src ?: config('filemanager.default_backend_image')}})">
+                    <div class="about-one-img" style="background-image: url({{getPageById(22)->src ?: config('filemanager.default_backend_image')}})">
                     </div>
                 </div>
-                <div class="col-md-3 about-one-col2">
-                    <div class="about-one-center-box pbmit-bg-color-white">
-                        <div class="pbmit-custom-heading">
-                            <h2>{{getPageById(156)->title}}</h2>
-                        </div>
-                        <div class="align-self-end">
-                            <div class="pbminfotech-ele-fid-style-3">
-                                <div class="pbmit-fld-contents">
-                                    <div class="pbmit-fld-wrap">
-                                        <h4 class="pbmit-fid-inner">
-                                            <span class="pbmit-fid-before"></span>
-                                            <span class="pbmit-number-rotate numinate" data-appear-animation="animateDigits" data-from="0" data-to="{{__('home_about_number')}}" data-interval="10" data-before="" data-before-style="" data-after="" data-after-style="">{{__('home_about_number')}}</span>
-                                            <span class="pbmit-fid"><span>+</span></span>
-                                        </h4>
-                                        <span class="pbmit-fid-title">{{getPageById(156)->slogan}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-5 about-one-col3">
+{{--                <div class="col-md-3 about-one-col2">--}}
+{{--                    <div class="about-one-center-box pbmit-bg-color-white">--}}
+{{--                        <div class="pbmit-custom-heading">--}}
+{{--                            <h2>{{getPageById(156)->title}}</h2>--}}
+{{--                        </div>--}}
+{{--                        <div class="align-self-end">--}}
+{{--                            <div class="pbminfotech-ele-fid-style-3">--}}
+{{--                                <div class="pbmit-fld-contents">--}}
+{{--                                    <div class="pbmit-fld-wrap">--}}
+{{--                                        <h4 class="pbmit-fid-inner">--}}
+{{--                                            <span class="pbmit-fid-before"></span>--}}
+{{--                                            <span class="pbmit-number-rotate numinate" data-appear-animation="animateDigits" data-from="0" data-to="{{__('home_about_number')}}" data-interval="10" data-before="" data-before-style="" data-after="" data-after-style="">{{__('home_about_number')}}</span>--}}
+{{--                                            <span class="pbmit-fid"><span>+</span></span>--}}
+{{--                                        </h4>--}}
+{{--                                        <span class="pbmit-fid-title">{{getPageById(156)->slogan}}</span>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+                <div class="col-md-8 about-one-col4">
                     <div class="ps-xl-5">
-                        {!! getPageById(156)->content !!}
-                        <a class="pbmit-btn pbmit-btn-outline mt-4" href="{{route('frontend.pages.about')}}">
+                        {!! getPageById(22)->content !!}
+                        <a class="pbmit-btn pbmit-btn-outline mt-2" href="{{route('frontend.pages.about')}}">
                             <span class="pbmit-button-content-wrapper">
                                 <span class="pbmit-button-text">{{__('about_us')}}</span>
                             </span>
@@ -95,7 +95,7 @@
                 <div class="col-md-8">
                     <div class="pbmit-heading-subheading">
                         <h4 class="pbmit-subtitle">
-                            {{__('our_experience')}}
+                            {{__('our_b2b_forms')}}
                         </h4>
                         <h2 class="pbmit-title">
                             {{__('home_service_title_1')}}
@@ -110,7 +110,7 @@
         <div class="container-fluid">
             <div class="swiper-slider pbmit-element-service-style-3" data-columns="4" data-loop="true" data-autoplay="false" data-arrows="true" data-dots="false" data-arrows-class="service-arrow" data-margin="40" data-effect="slide">
                 <div class="swiper-wrapper">
-                    @foreach($services as $service)
+                    @foreach($formPages as $formPage)
                         <article class="pbmit-service-style-3 swiper-slide">
                             <div class="pbminfotech-post-item">
                                 <div class="pbminfotech-box-content-desc-wraper">
@@ -118,7 +118,7 @@
                                         <div class="pbmit-content-box">
                                             <div class="pbmit-serv-cat"></div>
                                             <h3 class="pbmit-service-title">
-                                                <a href="{{route('frontend.services.show', ['id' => $service->id, 'slug' => $service->slug])}}">{{$service->title}}</a>
+                                                <a href="{{route($formPage->template)}}">{{$formPage->title}}</a>
                                             </h3>
                                         </div>
                                         <div class="pbmit-service-icon">
@@ -126,13 +126,13 @@
                                         </div>
                                     </div>
                                     <div class="pbmit-service-description">
-                                        <p>{{$service->slogan}}</p>
+                                        <p>{{$formPage->slogan}}</p>
                                     </div>
                                 </div>
                                 <div class="pbmit-service-image-wrapper">
                                     <div class="pbmit-featured-img-wrapper">
                                         <div class="pbmit-featured-wrapper">
-                                            <img src="{{asset($service->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid w-100" alt="{{$service->title}}">
+                                            <img src="{{asset($formPage->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid w-100" alt="{{$formPage->title}}">
                                         </div>
                                     </div>
                                 </div>
@@ -144,6 +144,7 @@
         </div>
     </section>
 
+    @if(isset(getPageById(19)->id) or isset(getPageById(20)->id))
     <section class="pbmit-element-static-box-style-1 section-md">
         <div class="container">
             <div class="pbmit-heading-subheading text-center">
@@ -155,37 +156,64 @@
                 </h2>
             </div>
             <div class="row">
-                @foreach($serviceCategories as $key => $serviceCategory)
-                    <article class="pbmit-static-box-style-1">
-                        <div class="pbmit-staticbox-wrapper">
-                            <div class="pbmit-bg-imgbox col-md-6" style="background-image: url({{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}});">
-                                <div class="pbmit-img">
-                                    <img src="{{asset($serviceCategory->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="{{$serviceCategory->title}}">
+                @if(isset(getPageById(19)->id))
+                    <div class="col-md-6 mb-4">
+                        <div class="how-it-work-item position-relative overflow-hidden rounded shadow-lg hover-effect">
+                            <a href="{{ route(getPageById(19)->template) }}" class="text-decoration-none">
+                                <div class="work-image-container position-relative">
+                                    @if(getPageById(19)->mainImageShow())
+                                        <img src="{{ getPageById(19)->mainImageShow()->src }}"
+                                             alt="{{ getPageById(19)->getTranslation('title', app()->getLocale()) }}"
+                                             class="img-fluid work-image">
+                                    @else
+                                        <div class="placeholder-image bg-gradient-primary d-flex align-items-center justify-content-center" style="height: 250px;">
+                                            <i class="fas fa-image text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                    @endif
                                 </div>
-                                <div class="pbmit-box-number">{{$key < 10 ? '0'.$key+1 : $key+1}}</div>
-                                <h4 class="pbmit-static-box-title">{{$serviceCategory->title}}</h4>
-                            </div>
-                            <div class="pbmit-content-box col-md-6">
-                                <div class="pbmit-box-number">{{$key < 10 ? '0'.$key+1 : $key+1}}</div>
-                                <div class="pbmit-content-inner">
-                                    <h4 class="pbmit-static-box-title">{{$serviceCategory->title}}</h4>
-                                    <div class="pbmit-static-box-desc">{{$serviceCategory->slogan}} </div>
-                                    <div class="pbmit-static-btn">
-                                        <a class="pbmit-btn pbmit-btn-outline" href="{{ route('frontend.serviceCategories.show', ['id' => $serviceCategory->id, 'slug' => $serviceCategory->slug]) }}">
-											<span class="pbmit-button-content-wrapper">
-												<span class="pbmit-button-text">{{__('view_detail')}}</span>
-											</span>
-                                        </a>
-                                    </div>
+                                <!-- Bottom Content -->
+                                <div class="work-content p-4 bg-white">
+                                    <h3 class="text-dark mb-2">{{ getPageById(19)->getTranslation('title', app()->getLocale()) }}</h3>
+                                    @if(getPageById(19)->getTranslation('slogan', app()->getLocale()))
+                                        <p class="text-muted mb-0">{{ getPageById(19)->getTranslation('slogan', app()->getLocale()) }}</p>
+                                    @endif
                                 </div>
-                            </div>
+                            </a>
                         </div>
-                    </article>
-                @endforeach
+                    </div>
+                @endif
+
+                @if(isset(getPageById(20)->id))
+                    <div class="col-md-6 mb-4">
+                        <div class="how-it-work-item position-relative overflow-hidden rounded shadow-lg hover-effect">
+                            <a href="{{ route(getPageById(20)->template) }}" class="text-decoration-none">
+                                <div class="work-image-container position-relative">
+                                    @if(getPageById(19)->mainImageShow())
+                                        <img src="{{ getPageById(20)->mainImageShow()->src }}"
+                                             alt="{{ getPageById(20)->getTranslation('title', app()->getLocale()) }}"
+                                             class="img-fluid work-image">
+                                    @else
+                                        <div class="placeholder-image bg-gradient-primary d-flex align-items-center justify-content-center" style="height: 250px;">
+                                            <i class="fas fa-image text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                    @endif
+                                </div>
+                                <!-- Bottom Content -->
+                                <div class="work-content p-4 bg-white">
+                                    <h3 class="text-dark mb-2">{{ getPageById(20)->getTranslation('title', app()->getLocale()) }}</h3>
+                                    @if(getPageById(20)->getTranslation('slogan', app()->getLocale()))
+                                        <p class="text-muted mb-0">{{ getPageById(20)->getTranslation('slogan', app()->getLocale()) }}</p>
+                                    @endif
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </section>
-
+    @endif
+    @if(count($blogs))
     <section class="section-lg" style="padding-top: 0 !important;">
         <div class="container">
             <div class="row align-items-center">
@@ -248,6 +276,174 @@
             </div>
         </div>
     </section>
+    @endif
 @endsection
 @push('scripts')
 @endpush
+
+@push('styles')
+<style>
+    /* How It Works Section Styles */
+    .how-it-work-item {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .how-it-work-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+    }
+
+    .work-image-container {
+        position: relative;
+        overflow: hidden;
+        height: 250px;
+    }
+
+    .work-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .how-it-work-item:hover .work-image {
+        transform: scale(1.1);
+    }
+
+    .image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 100%);
+        opacity: 0;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(2px);
+    }
+
+    .how-it-work-item:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .overlay-content {
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+
+    .how-it-work-item:hover .overlay-content {
+        transform: translateY(0);
+    }
+
+    .step-number .badge {
+        font-size: 1.2rem;
+        font-weight: bold;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 3px solid rgba(255,255,255,0.3);
+    }
+
+    .overlay-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .overlay-description {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .overlay-arrow {
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: all 0.3s ease;
+    }
+
+    .how-it-work-item:hover .overlay-arrow {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .overlay-arrow i {
+        font-size: 1.2rem;
+        background: rgba(255,255,255,0.2);
+        padding: 8px 12px;
+        border-radius: 50%;
+        backdrop-filter: blur(5px);
+    }
+
+    .work-content {
+        border-top: 1px solid #f0f0f0;
+        transition: background-color 0.3s ease;
+    }
+
+    .how-it-work-item:hover .work-content {
+        background-color: #f8f9fa !important;
+    }
+
+    .work-content h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    .how-it-work-item:hover .work-content h3 {
+        color: #007bff !important;
+    }
+
+    .placeholder-image {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .work-image-container {
+            height: 200px;
+        }
+
+        .overlay-title {
+            font-size: 1.1rem;
+        }
+
+        .overlay-description {
+            font-size: 0.9rem;
+        }
+
+        .step-number .badge {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+    }
+
+    /* Animation for page load */
+    .how-it-work-item {
+        animation: fadeInUp 0.6s ease forwards;
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    .how-it-work-item:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .how-it-work-item:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+@endpush
+

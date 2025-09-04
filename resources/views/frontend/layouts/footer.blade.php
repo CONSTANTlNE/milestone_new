@@ -8,24 +8,29 @@
                         <aside class="widget">
                             <div class="pbmit-footer-logo" style="width: 100% !important;">
                                 <img src="{{asset('assets/images/logo.png')}}" class="img-fluid" alt="">
-                            </div><br>
-                            <ul class="pbmit-social-links">
-                                @foreach(getSocials() as $social)
-                                <li class="pbmit-social-li pbmit-social-{{$social->title}}">
-                                    <a title="{{$social->title}}" href="{{$social->link}}" target="_blank">
-                                        <span><i class="{{$social->icon}}"></i></span>
-                                    </a>
-                                </li>
-                                @endforeach
-                            </ul>
+                            </div>
+                            <h3 style="color: #fff">Milestone <br> Brokers</h3>
                         </aside>
                     </div>
                     <div class="pbmit-footer-widget-col-2 col-md-4">
                         <aside class="widget">
-                            <h2 class="widget-title">Say Hello</h2>
+                            <h2 class="widget-title">Contact Information</h2>
                             <div class="pbmit-contact-widget-lines">
-                                <div class="pbmit-contact-widget-line pbmit-base-icon-phone">+1-800123-456-789</div>
-                                <div class="pbmit-contact-widget-line pbmit-base-icon-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb9594d6899e8b9782bb8b999692959d948f9e9893d5989496">[email&#160;protected]</a></div>
+                                <div class="pbmit-contact-widget-line pbmit-base-icon-phone"><span><i class="pbmit-base-icon-email"></i></span> pbminfotech@gmail.com</div>
+                                <div class="pbmit-contact-widget-line pbmit-base-icon-phone"><span><i class="pbmit-base-icon-email"></i></span> no-reply@pbminfotech.com</div>
+                                <div class="pbmit-contact-widget-line pbmit-base-icon-phone"><span><i class="pbmit-base-icon-phone"></i></span> +001 236-895-4732</div>
+                                <div class="pbmit-contact-widget-line pbmit-base-icon-phone"><span><i class="pbmit-base-icon-phone"></i></span> +001 236-895-4732 </div>
+                                <div class="pbmit-contact-widget-line mt-3">
+                                    <ul class="pbmit-social-links">
+                                        @foreach(getSocials() as $social)
+                                            <li class="pbmit-social-li pbmit-social-{{$social->title}}">
+                                                <a title="{{$social->title}}" href="{{$social->link}}" target="_blank">
+                                                    <span><i class="{{$social->icon}}"></i></span>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
                             </div>
                         </aside>
                     </div>
@@ -33,23 +38,19 @@
                         <aside class="widget">
                             <h2 class="widget-title">{{__('useful_link')}}</h2>
                             <ul class="menu">
-                                <li><a href="#">About</a></li>
-                                <li><a href="#">Our Service</a></li>
-                                <li><a href="#">Company</a></li>
-                                <li><a href="#">News & Media</a></li>
-                                <li><a href="#">Team</a></li>
+                                @foreach($linksMenus as $linksMenu)
+                                    <li><a href="{{ route($linksMenu->route) }}">{{$linksMenu->title}}</a></li>
+                                @endforeach
                             </ul>
                         </aside>
                     </div>
                     <div class="pbmit-footer-widget-col-4 col-md-2">
                         <aside class="widget widget_text">
-                            <h2 class="widget-title">Our Services</h2>
+                            <h2 class="widget-title">{{__('our_services')}}</h2>
                             <ul class="menu">
-                                <li><a href="#">Logistics</a></li>
-                                <li><a href="#">Manufacturing</a></li>
-                                <li><a href="#">Production</a></li>
-                                <li><a href="#">Transportation</a></li>
-                                <li><a href="#">Warehouse</a></li>
+                                @foreach($servicesMenus as $servicesMenu)
+                                    <li><a href="{{ route($servicesMenu->route) }}">{{$servicesMenu->title}}</a></li>
+                                @endforeach
                             </ul>
                         </aside>
                     </div>
@@ -62,7 +63,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="pbmit-footer-copyright-text-area">
-                                Copyright © 2025, All Rights Reserved.
+                                Copyright © {{date('Y')}}, All Rights Reserved.
                             </div>
                         </div>
                     </div>
