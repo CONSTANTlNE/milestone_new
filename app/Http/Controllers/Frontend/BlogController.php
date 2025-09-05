@@ -16,7 +16,7 @@ class BlogController extends Controller
         ->where('slug->'. app()->getLocale(), "!=", '')
         ->where('status', 1)
         ->orderBy('id', 'DESC')
-        ->paginate(15);
+        ->paginate(6);
 
         $blogCategories = BlogCategory::where('status', 1)->orderBy('id', 'DESC')->get();
 
@@ -34,7 +34,7 @@ class BlogController extends Controller
             ->where('slug->'. app()->getLocale(), "!=", '')
             ->where('status', 1)
             ->orderBy('id', 'DESC')
-            ->paginate(15);
+            ->paginate(6);
 
         return view('frontend.blogCategories.show', compact('page', 'categoryBlogs', 'blogCategories'));
     }

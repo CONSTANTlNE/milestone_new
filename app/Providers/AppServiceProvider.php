@@ -17,6 +17,7 @@ use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Cache;
 use Opcodes\LogViewer\Facades\LogViewer;
+use Illuminate\Pagination\Paginator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Paginator::useBootstrap();
+
         Blade::if('fortifyFeature', function ($feature) {
             return Features::enabled($feature);
         });

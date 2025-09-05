@@ -13,30 +13,32 @@
                 <div class="col-md-12 col-xl-9 blog-left-col">
                     <div class="row pbmit-element-posts-wrapper">
                         @foreach($blogs as $blog)
-                            <article class="pbmit-ele pbmit-ele-blog pbmit-blog-style-1 col-md-6 col-lg-6 strategy pbmit-term-27 pbmit-odd pbmit-col-odd"><div class="post-item">
+                            <article class="pbmit-ele pbmit-ele-blog pbmit-blog-style-1 col-md-6 col-lg-6 strategy pbmit-term-27 pbmit-odd pbmit-col-odd">
+                                <div class="post-item">
                                     <div class="pbminfotech-box-content">
                                         <div class="pbmit-date-wraper d-flex align-items-center">
                                             <div class="pbmit-meta-category-wrapper pbmit-meta-line">
-                                                <div class="pbmit-meta-category"><a href="#" rel="category tag">Strategy</a></div>
+                                                <div class="pbmit-meta-category"><a href="{{ route('frontend.blogs.show', ['id' => $blog->id, 'slug' => $blog->slug]) }}" rel="category tag">{{$blog->categories->first()->title ?? "N/A"}}</a></div>
                                             </div>
                                             <div class="pbmit-date-author-wrapper">
-                                                <div class="pbmit-meta-author pbmit-meta-line">
-                                                    <span class="pbmit-post-author">category</span>
-                                                </div>
-                                                <div class="pbmit-meta-date-wrapper pbmit-meta-line">
-                                                    <div class="pbmit-meta-date">
-                                                        <span class="pbmit-post-date">27  , 2024</span>
-                                                    </div>
+                                                <div class="pbmit-meta-date">
+                                                    <span class="pbmit-post-date">{{$blog->created_at->format('d/m/Y')}}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="pbmit-featured-container">
-                                            <div class="pbmit-featured-img-wrapper"><div class="pbmit-featured-wrapper"><img fetchpriority="high" decoding="async" src="https://shipex-demo.pbminfotech.com/demo1/wp-content/uploads/sites/2/2025/01/blog-img-01-800x540.jpg" class="attachment-pbmit-img-800x540 size-pbmit-img-800x540 wp-post-image" alt="blog-img-01"></div></div>
+                                            <div class="pbmit-featured-img-wrapper">
+                                                <div class="pbmit-featured-wrapper">
+                                                    <img fetchpriority="high" decoding="async" src="{{asset($blog->src ?: config('filemanager.default_backend_image'))}}" class="attachment-pbmit-img-800x540 size-pbmit-img-800x540 wp-post-image" alt="{{$blog->title}}">
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="pbmit-content-wrapper">
-                                            <h3 class="pbmit-post-title"><a href="#">The Guide On How to Ship Oversize Loads</a></h3>
+                                            <h3 class="pbmit-post-title"><a href="{{ route('frontend.blogs.show', ['id' => $blog->id, 'slug' => $blog->slug]) }}">{{$blog->title}}</a></h3>
                                             <div class="pbmit-blog-button">
-                                                <a class="pbmit-button-inner" href="#" title="The Guide On How to Ship Oversize Loads"><span class="pbmit-button-icon">Read More</span></a>
+                                                <a class="pbmit-button-inner" href="{{ route('frontend.blogs.show', ['id' => $blog->id, 'slug' => $blog->slug]) }}" title="{{$blog->title}}">
+                                                    <span class="pbmit-button-icon">{{__('read_more')}}</span>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -44,6 +46,7 @@
                             </article>
                         @endforeach
                     </div>
+                    {{$blogs->links()}}
                 </div>
                 <div class="col-md-12 col-xl-3 blog-right-col">
                     <aside class="sidebar">
