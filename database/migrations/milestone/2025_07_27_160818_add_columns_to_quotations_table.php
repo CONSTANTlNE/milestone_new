@@ -17,7 +17,7 @@ return new class extends Migration
             $table->json('surcharges')->nullable()->after('luxury');
             $table->float('calculated_cost')->nullable()->after('ai_response');
             $table->string('comment')->nullable()->after('calculated_cost');
-            $table->enum('request_type',['individual','business'])->default('comment');
+            $table->enum('request_type',['individual','business'])->default('individual');
             $table->boolean('approved')->default(false)->after('request_type');
             $table->boolean('quotation_sent')->default(false)->after('approved');
             $table->dateTime('quotation_sent_date')->nullable()->after('quotation_sent');

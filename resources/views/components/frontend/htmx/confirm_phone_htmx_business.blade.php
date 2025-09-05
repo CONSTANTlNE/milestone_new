@@ -49,7 +49,7 @@
 
 
     confirm_otp2.addEventListener('click', function (e) {
-        const code = codeInput.value.trim();
+        const code = codeInput2.value.trim();
         if (!/^\d{6}$/.test(code)) {
             errorDiv2.textContent = 'Please enter a valid 6-digit code.';
             codeInput2.focus();

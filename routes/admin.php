@@ -587,6 +587,7 @@ Route::group(
     Route::controller(QuotationController::class)->group(function () {
         route::prefix('quotations')->name('quotations.')->group(function () {
             Route::get('index', 'index')->name('index');
+            Route::get('export', 'export')->name('export');
             Route::post('delete', 'delete')->name('delete');
             Route::post('distance', 'calculateDistance')->name('calculatedistance');
             route::post('request/ai/data', 'requestAiData')->name('airequest');
@@ -602,6 +603,7 @@ Route::group(
     Route::controller(Quotationb2bController::class)->group(function () {
         route::prefix('b2b/quotations')->name('b2b_quotations.')->group(function () {
             Route::get('index', 'index')->name('index');
+            Route::get('export', 'export')->name('export');
             Route::post('delete', 'delete')->name('delete');
             Route::post('distance', 'calculateDistance')->name('calculatedistance');
             route::post('request/ai/data', 'requestAiData')->name('airequest');
