@@ -113,6 +113,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="justify-between">
+                            <div class="box-title box-show-number gap-5">
+                                <a href="{{ route('backend.quotations.export') }}"
+                                   class="ti-btn bg-success text-white !font-medium font-second-geo">
+                                    <i class="fas fa-file-excel me-1"></i>
+                                    {{ __('admin.export_excel') }}
+                                </a>
+                            </div>
+                        </div>
                 </div>
             </div>
             <!-- Page Header Close -->

@@ -660,4 +660,99 @@ class Quotationb2bController extends Controller
         return view('components.frontend.htmx.hmxspinner');
     }
 
+    /**
+     * Export B2B quotations to Excel (CSV format).
+     *
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function export(): \Symfony\Component\HttpFoundation\StreamedResponse
+    {
+        $quotations = Quotationb2b::with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $filename = 'b2b_quotations_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function() use ($quotations) {
+            $file = fopen('php://output', 'w');
+
+            // Add headers
+            fputcsv($file, [
+                'ID',
+                'Date',
+                'Unique ID',
+                'Request Type',
+                'Start Address',
+                'End Address',
+                'Distance (Miles)',
+                'Transportation Type',
+                'Operable',
+                'Vehicle',
+                'Width (inch)',
+                'Height (inch)',
+                'Length (inch)',
+                'Weight (lbs)',
+                'Vehicle Type',
+                'Vehicle Specs Links',
+                'Availability',
+                'Email',
+                'Phone',
+                'SUV',
+                'Luxury',
+                'Calculated Cost ($)',
+                'Quotation Sent Date',
+                'Quotation Sent By',
+                'Created At',
+                'Updated At'
+            ]);
+
+            // Add data rows
+            foreach ($quotations as $quotation) {
+                // Handle specs links array
+                $specsLinks = '';
+                if ($quotation->specs_links && is_array($quotation->specs_links)) {
+                    $specsLinks = implode('; ', $quotation->specs_links);
+                }
+
+                fputcsv($file, [
+                    $quotation->id,
+                    $quotation->created_at ? $quotation->created_at->format('d/m/Y') : '',
+                    $quotation->quotation_identifier,
+                    $quotation->request_type,
+                    $quotation->start_address,
+                    $quotation->destination_address,
+                    $quotation->distance_mile,
+                    $quotation->transport_type,
+                    $quotation->operable,
+                    $quotation->vehicle,
+                    $quotation->width,
+                    $quotation->height,
+                    $quotation->length,
+                    $quotation->body_weight,
+                    $quotation->car_type,
+                    $specsLinks,
+                    $quotation->availability,
+                    $quotation->email,
+                    $quotation->phone,
+                    $quotation->suv ? 'Yes' : 'No',
+                    $quotation->luxury ? 'Yes' : 'No',
+                    $quotation->calculated_cost ? round($quotation->calculated_cost) : '',
+                    $quotation->quotation_sent_date,
+                    $quotation->user ? $quotation->user->name : '',
+                    $quotation->created_at ? $quotation->created_at->format('Y-m-d H:i:s') : '',
+                    $quotation->updated_at ? $quotation->updated_at->format('Y-m-d H:i:s') : ''
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
 }
