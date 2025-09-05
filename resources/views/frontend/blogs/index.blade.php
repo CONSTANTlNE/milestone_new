@@ -25,7 +25,7 @@
                                                 </div>
                                                 <div class="pbmit-meta-date-wrapper pbmit-meta-line">
                                                     <div class="pbmit-meta-date">
-                                                        <span class="pbmit-post-date">27  Dec, 2024</span>
+                                                        <span class="pbmit-post-date">27  , 2024</span>
                                                     </div>
                                                 </div>
                                             </div>
