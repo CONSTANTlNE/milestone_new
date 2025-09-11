@@ -1,0 +1,33 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+/* Bigger and darker scrollbars for tables on this page */
+.table-responsive {
+    /* Firefox */
+    scrollbar-width: auto; /* could be thin, auto */
+    scrollbar-color: #4b5563 #e5e7eb; /* thumb, track */
+}
+.table-responsive::-webkit-scrollbar {
+    width: 14px;   /* vertical scrollbar width */
+    height: 14px;  /* horizontal scrollbar height */
+}
+.table-responsive::-webkit-scrollbar-track {
+    background: #e5e7eb; /* gray-200 */
+}
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: #4b5563; /* gray-600 */
+    border-radius: 8px;
+    border: 3px solid #e5e7eb; /* creates some padding around thumb */
+}
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background-color: #374151; /* gray-700 on hover */
+}

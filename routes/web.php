@@ -70,3 +70,17 @@ route::get('testmail', function(){
         ->send(new \App\Mail\NewB2bQuotationEmail($quotations->first()->email,$quotations));
     return 'email sent';
 });
+
+route::get('testmail2', function(){
+    $user=\App\Models\User::where('email','gmta.constantine@gmail.com')->first();
+    $quotations=Quotation::first();
+    Mail::to($user->email)
+        ->cc('michael@milestonebrokers.us')
+        ->send(new \App\Mail\NewQuotationEmail($quotations->email,$quotations));
+    return 'email sent';
+});
+
+
+
+
+
