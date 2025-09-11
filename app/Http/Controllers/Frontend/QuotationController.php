@@ -451,6 +451,8 @@ class QuotationController extends Controller
 
             return back()->with('success', 'AI data added successfully');
         }
+
+        return back()->with('error', 'Failed to fetch AI data');
     }
 
     public function costCalculate(Request $request)

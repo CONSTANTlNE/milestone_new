@@ -147,7 +147,7 @@
                                     class="contact-form-rightbox pbmit-bg-color-white"
                                     style="padding-left: 10px;padding-right: 10px">
                                     <div class="contact-form">
-                                        <div style="gap: 50px"
+                                        <div style="gap: 50px" id="add_vehicles"
                                              class="d-flex flex-column flex-sm-row justify-content-center">
                                             {{--   start and destination --}}
                                             <div style="display: block;">
@@ -548,6 +548,59 @@
                 const validationBox = document.getElementById('required_fields');
                 const otpTarget = document.getElementById('business_otp_target');
 
+                // Clears all inputs and selects within #add_vehicles
+                function clearVehicleInputs() {
+                    const container = document.getElementById('add_vehicles');
+                    if (!container) return;
+
+                    // Clear text/number/email/tel/hidden inputs and textareas
+                    container.querySelectorAll('input[type="text"], input[type="number"], input[type="email"], input[type="tel"], input[type="hidden"], textarea').forEach(el => {
+                        el.value = '';
+                    });
+
+                    // Uncheck radios and checkboxes
+                    container.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => {
+                        el.checked = false;
+                    });
+
+                    // Reset selects, including TomSelect instances
+                    container.querySelectorAll('select').forEach(sel => {
+                        const ts = sel.tomselect;
+                        if (ts && typeof ts.clear === 'function') {
+                            try { ts.clear(true); } catch (e) {}
+                        } else {
+                            sel.selectedIndex = 0;
+                            sel.value = '';
+                            try { sel.dispatchEvent(new Event('change')); } catch (e) {}
+                        }
+                    });
+
+                    // If htmx replaced model select (#model), clear it as well
+                    const modelTarget2 = document.getElementById('modeltarget2');
+                    if (modelTarget2) {
+                        const modelSel = modelTarget2.querySelector('select#model');
+                        if (modelSel) {
+                            const mts = modelSel.tomselect;
+                            if (mts && typeof mts.clear === 'function') {
+                                try { mts.clear(true); } catch (e) {}
+                            } else {
+                                modelSel.selectedIndex = 0;
+                                modelSel.value = '';
+                            }
+                        }
+                    }
+
+                    // Clear suggestion lists and hide their error messages
+                    const list3 = document.getElementById('suggestions3');
+                    if (list3) { list3.innerHTML = ''; list3.style.border = 'none'; }
+                    const list4 = document.getElementById('suggestions4');
+                    if (list4) { list4.innerHTML = ''; list4.style.border = 'none'; }
+                    const err3 = document.getElementById('suggestions_error3');
+                    if (err3) err3.style.display = 'none';
+                    const err4 = document.getElementById('suggestions_error4');
+                    if (err4) err4.style.display = 'none';
+                }
+
                 function toggleOtpVisibility() {
                     if (!otpTarget) return;
                     const hasRows = tbody && tbody.querySelectorAll('tr').length > 0;
@@ -710,6 +763,8 @@
                         tbody.appendChild(tr);
                         attachRemoveHandlers(tr);
                         toggleOtpVisibility();
+                        // Clear the form fields inside #add_vehicles after successfully adding the row
+                        clearVehicleInputs();
                     });
 
                     // Attach remove to any pre-existing rows if present

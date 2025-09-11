@@ -260,7 +260,7 @@
                                                     id="availability">
                                                 <option value="">Select Availability</option>
                                                 @foreach($availabilities as $availability)
-                                                    <option value="{{$availability->id}}">{{$availability->name}}</option>
+                                                    <option value="{{$availability->id}}">{{$availability->title}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -283,22 +283,22 @@
                             {{--   Contact details--}}
                             <div style="display: none;position: relative" id="contact_details_widget">
                                 <p class="text-center">Please fill in contact information *</p>
-                                <div class="row mb-2" style="position: relative">
-                                    <div class="d-flex justify-content-center">
-                                        <div style="gap: 20px" class="d-flex justify-content-center mb-3">
-                                            <p class="mb-0">Request Type</p>
-                                            <label>
-                                                <input type="radio" class="form-check-input" name="request_type"
-                                                       value="1">
-                                                Individual
-                                            </label>
-                                            <label>
-                                                <input type="radio" class="form-check-input" name="request_type" value="2">
-                                                Business
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
+{{--                                <div class="row mb-2" style="position: relative">--}}
+{{--                                    <div class="d-flex justify-content-center">--}}
+{{--                                        <div style="gap: 20px" class="d-flex justify-content-center mb-3">--}}
+{{--                                            <p class="mb-0">Request Type</p>--}}
+{{--                                            <label>--}}
+{{--                                                <input type="radio" class="form-check-input" name="request_type"--}}
+{{--                                                       value="1">--}}
+{{--                                                Individual--}}
+{{--                                            </label>--}}
+{{--                                            <label>--}}
+{{--                                                <input type="radio" class="form-check-input" name="request_type" value="2">--}}
+{{--                                                Business--}}
+{{--                                            </label>--}}
+{{--                                        </div>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
                                 <div class="row mb-2" style="position: relative">
 
                                     <div class="d-flex justify-content-center">

@@ -224,7 +224,7 @@ class Quotationb2bController extends Controller
             ]);
         }
 
-        $quotations=Quotationb2b::where('identifier',$identifier)->get();
+        $quotations=Quotationb2b::where('quotation_identifier',$identifier)->get();
         $users=User::all();
         foreach ($users as $user){
             if($user->send_quotation==1){
