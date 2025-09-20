@@ -1444,6 +1444,7 @@
     -webkit-box-orient: vertical;
     text-transform: capitalize;
     word-break: break-all;
+    color: var(--pbmit-heading-color);
 }
 .pbmit-service-style-1 .pbmit-service-description p{
     margin-bottom: 20px;

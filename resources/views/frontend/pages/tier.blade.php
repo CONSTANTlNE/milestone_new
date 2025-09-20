@@ -1,5 +1,5 @@
-<div class="payment-logic-section"  style="padding-bottom: 70px;    overflow: hidden;">
-    <h4>💳 Payment Logic</h4>
+<div class="payment-logic-section mt-5"  style="padding-bottom: 70px;    overflow: hidden;">
+    <h4>💳 Payment Logic - {{$title ?? 'no title'}}</h4>
     <div class="payment-tiers">
         @foreach($data as $tier)
                 <article class="tier pbmit-service-style-1 col-md-12" style="float: left; margin: 5px">
