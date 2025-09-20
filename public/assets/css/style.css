@@ -2608,34 +2608,38 @@ form .form-row-group textarea.form-control {
     background: #f8f9fa;
 }
 
-.auto-auction-form {
+.b2b-form {
     margin-bottom: 40px;
 }
 
-.auto-auction-form button.accordion-button.collapsed {
+.b2b-form button.accordion-button {
     padding: 20px 50px 10px 50px;
     background: var(--pbmit-global-color);
     border-radius: 10px !important;
 }
 
-.auto-auction-form h3 {
+.b2b-form h3 {
     color: #fff;
 }
 
-.auto-auction-form p.form-subtitle {
+.b2b-form p.form-subtitle {
     margin: 0px;
     color: #ababab;
 }
 
-.auto-auction-form .accordion-item {
+.b2b-form .accordion-item {
     border-bottom: 0px;
 }
 
-.auto-auction-form .accordion-button {
+.b2b-form .accordion-button {
     padding: 20px 50px !important;
 }
 
-.auto-auction-form .pbmit-accordion-icon.pbmit-btn {
+.b2b-form .accordion .accordion-body {
+    padding: 0 10px;
+}
+
+.b2b-form .pbmit-accordion-icon.pbmit-btn {
     color: var(--pbmit-global-color);
     background-color: #ffff;
     border-radius: 10px;
@@ -2705,6 +2709,17 @@ form .form-row-group textarea.form-control {
         right: 5px;
     }
 
+    .b2b-form .accordion-body {
+        padding: 0;
+    }
+    .b2b-form .accordion-button {
+        display: block;
+    }
+
+    .b2b-form .pbmit-accordion-icon.pbmit-btn {
+        margin-left: 0;
+        margin-top: 20px;
+    }
 }
 
 @media (max-width: 480px) {

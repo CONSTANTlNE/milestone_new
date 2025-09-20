@@ -184,11 +184,7 @@
                     </div>
 
                     <div class="pbmit-content">
-                        <div class="car-retailer-form">
-                            <div class="form-header">
-                                <h3>{{$page->slogan}}</h3>
-                                <p class="form-subtitle">{{ __('accounts') }}</p>
-                            </div>
+                        <div class="b2b-form">
 
                             @if(session('success'))
                                 <div class="alert alert-success">
@@ -215,334 +211,374 @@
                                 </div>
                             @endif
 
-                            <form class="retailer-form" method="POST" action="{{ route('frontend.car_retailer.store') }}" enctype="multipart/form-data">
-                                @csrf
+                            <div class="accordion style-3" id="accordionExample2">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading1">
+                                        <button
+                                            class="accordion-button collapsed"
+                                            type="button"
+                                            data-bs-toggle="collapse"
+                                            data-bs-target="#collapse1"
+                                            aria-expanded="false"
+                                            aria-controls="collapse1"
+                                        >
+                                            <span class="pbmit-accordion-title">
+                                              <div class="form-header">
+                                                <h3>{{$page->slogan}}</h3>
+                                                <p class="form-subtitle">{{ __('accounts') }}</p>
+                                              </div>
+                                            </span>
+                                            <span class="pbmit-accordion-icon pbmit-btn">
+                                              {{ __('calculate') }} <span class="pbmit-accordion-icon-opened" style="padding-left: 10px">
+                                                 <i
+                                                     class="pbmit-shipex-icon pbmit-shipex-icon-levels"
+                                                 ></i>
+                                              </span>
+                                               <span class="pbmit-accordion-icon-closed" style="padding-left: 10px">
+                                                 <i class="pbmit-shipex-icon pbmit-shipex-icon-levels"></i>
+                                              </span>
+                                            </span>
+                                        </button>
+                                    </h2>
+                                    <div
+                                        id="collapse1"
+                                        class="accordion-collapse collapse"
+                                        aria-labelledby="heading1"
+                                        data-bs-parent="#accordionExample2"
+                                    >
+                                        <div class="accordion-body">
+                                            <form class="retailer-form" method="POST" action="{{ route('frontend.car_retailer.store') }}" enctype="multipart/form-data">
+                                                @csrf
 
-                                <!-- Company Information Section -->
-                                <div class="form-section form-row-group">
-                                    <h4>Company Information</h4>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="legal_business_name">Legal Business Name *</label>
-                                                <input type="text" class="form-control" id="legal_business_name" name="legal_business_name" value="{{ old('legal_business_name') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="dba">DBA (If Any)</label>
-                                                <input type="text" class="form-control" id="dba" name="dba" value="{{ old('dba') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="years_operation">Years in Operation *</label>
-                                                <input type="number" class="form-control" id="years_operation" name="years_operation" min="0" max="100" value="{{ old('years_operation') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="website_url">Website URL</label>
-                                                <input type="url" class="form-control" id="website_url" name="website_url" placeholder="https://example.com" value="{{ old('website_url') }}">
-                                            </div>
-                                        </div>
-                                    </div>
+                                                <!-- Company Information Section -->
+                                                <div class="form-section form-row-group">
+                                                    <h4>Company Information</h4>
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="legal_business_name">Legal Business Name *</label>
+                                                                <input type="text" class="form-control" id="legal_business_name" name="legal_business_name" value="{{ old('legal_business_name') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="dba">DBA (If Any)</label>
+                                                                <input type="text" class="form-control" id="dba" name="dba" value="{{ old('dba') }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="years_operation">Years in Operation *</label>
+                                                                <input type="number" class="form-control" id="years_operation" name="years_operation" min="0" max="100" value="{{ old('years_operation') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="website_url">Website URL</label>
+                                                                <input type="url" class="form-control" id="website_url" name="website_url" placeholder="https://example.com" value="{{ old('website_url') }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="business_type">Business Type (LLC, Corp, etc.) *</label>
-                                                <input type="text" class="form-control" id="business_type" name="business_type" placeholder="e.g., LLC, Corporation, Sole Proprietorship" value="{{ old('business_type') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Platform Type *</label>
-                                                <div class="checkbox-group">
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="platform_type[]" value="marketplace" {{ in_array('marketplace', old('platform_type', [])) ? 'checked' : '' }}> Marketplace (e.g., Carvana, Vroom)
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="platform_type[]" value="direct_seller" {{ in_array('direct_seller', old('platform_type', [])) ? 'checked' : '' }}> Direct Seller
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="platform_type[]" value="hybrid" {{ in_array('hybrid', old('platform_type', [])) ? 'checked' : '' }}> Hybrid
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="platform_type[]" value="other" {{ in_array('other', old('platform_type', [])) ? 'checked' : '' }}> Other
-                                                    </label>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="business_type">Business Type (LLC, Corp, etc.) *</label>
+                                                                <input type="text" class="form-control" id="business_type" name="business_type" placeholder="e.g., LLC, Corporation, Sole Proprietorship" value="{{ old('business_type') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <div class="form-group">
+                                                                <label>Platform Type *</label>
+                                                                <div class="checkbox-group">
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="platform_type[]" value="marketplace" {{ in_array('marketplace', old('platform_type', [])) ? 'checked' : '' }}> Marketplace (e.g., Carvana, Vroom)
+                                                                    </label>
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="platform_type[]" value="direct_seller" {{ in_array('direct_seller', old('platform_type', [])) ? 'checked' : '' }}> Direct Seller
+                                                                    </label>
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="platform_type[]" value="hybrid" {{ in_array('hybrid', old('platform_type', [])) ? 'checked' : '' }}> Hybrid
+                                                                    </label>
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="platform_type[]" value="other" {{ in_array('other', old('platform_type', [])) ? 'checked' : '' }}> Other
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
+
+                                                <!-- Primary Contact Section -->
+                                                <div class="form-section form-row-group">
+                                                    <h4>Primary Contact</h4>
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="contact_name">Full Name *</label>
+                                                                <input type="text" class="form-control" id="contact_name" name="contact_name" value="{{ old('contact_name') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="contact_title">Title/Position *</label>
+                                                                <input type="text" class="form-control" id="contact_title" name="contact_title" value="{{ old('contact_title') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="contact_phone">Phone Number *</label>
+                                                                <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="contact_email">Email Address *</label>
+                                                                <input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ old('contact_email') }}" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Logistics & Operations Section -->
+                                                <div class="form-section form-row-group">
+                                                    <h4>Logistics & Operations</h4>
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="fulfillment_address">Main Auction Address *</label>
+                                                                <input type="text" class="form-control" id="fulfillment_address" name="fulfillment_address" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Inventory API/Webhook Access? *</label>
+                                                                <div class="radio-group">
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="inventory_api_access" value="yes" {{ old('inventory_api_access') == 'yes' ? 'checked' : '' }} required> Yes
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="inventory_api_access" value="no" {{ old('inventory_api_access') == 'no' ? 'checked' : '' }} required> No (If Yes, attach API URL/Docs)
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="api_url_docs">API URL or Documentation (if applicable)</label>
+                                                                <input type="text" class="form-control" id="api_url_docs" name="api_url_docs" placeholder="https://api.example.com or attach documentation" value="{{ old('api_url_docs') }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="vehicle_list">Upload a file with the list of Vehicles</label>
+                                                                <input type="file" class="form-control" id="vehicle_list" name="vehicle_list" accept=".pdf,.doc,.docx,.xls,.xlsx" style="margin-bottom: 0">
+                                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, EXCEL</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Do You Have Multiple Warehouses? *</label>
+                                                                <div class="radio-group">
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="multiple_warehouses" value="yes" {{ old('multiple_warehouses') == 'yes' ? 'checked' : '' }} required> Yes
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="multiple_warehouses" value="no" {{ old('multiple_warehouses') == 'no' ? 'checked' : '' }} required> No
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="shipping_nodes">If Yes, List All Shipping Nodes</label>
+                                                                <textarea class="form-control" id="shipping_nodes" name="shipping_nodes" rows="3">{{ old('shipping_nodes') }}</textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Transport Preferences Section -->
+                                                <div class="form-section form-row-group">
+                                                    <h4>Transport Preferences</h4>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="cars_shipped">Avg. # of Cars Shipped/Month *</label>
+                                                                <input type="number" class="form-control" id="cars_shipped" name="cars_shipped" min="1" value="{{ old('cars_shipped') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label>Vehicle Types *</label>
+                                                                <div class="checkbox-group">
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="vehicle_types[]" value="new" {{ in_array('new', old('vehicle_types', [])) ? 'checked' : '' }}> New
+                                                                    </label>
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="vehicle_types[]" value="used" {{ in_array('used', old('vehicle_types', [])) ? 'checked' : '' }}> Used
+                                                                    </label>
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="vehicle_types[]" value="evs" {{ in_array('evs', old('vehicle_types', [])) ? 'checked' : '' }}> EVs
+                                                                    </label>
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="vehicle_types[]" value="luxury" {{ in_array('luxury', old('vehicle_types', [])) ? 'checked' : '' }}> Luxury
+                                                                    </label>
+                                                                    <label class="checkbox-item">
+                                                                        <input type="checkbox" name="vehicle_types[]" value="oversized" {{ in_array('oversized', old('vehicle_types', [])) ? 'checked' : '' }}> Oversized
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Transport Type *</label>
+                                                                <div class="radio-group">
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="transport_type" value="open" {{ old('transport_type') == 'open' ? 'checked' : '' }} required> Open
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="transport_type" value="enclosed" {{ old('transport_type') == 'enclosed' ? 'checked' : '' }} required> Enclosed
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Preferred Delivery *</label>
+                                                                <div class="radio-group">
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="preferred_delivery" value="door_to_door" {{ old('preferred_delivery') == 'door_to_door' ? 'checked' : '' }} required> Door-to-Door
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="preferred_delivery" value="terminal_to_terminal" {{ old('preferred_delivery') == 'terminal_to_terminal' ? 'checked' : '' }} required> Terminal-to-Terminal
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>Can Vehicles be Picked up Unattended (Key Box)? *</label>
+                                                                <div class="radio-group">
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="unattended_pickup" value="yes" {{ old('unattended_pickup') == 'yes' ? 'checked' : '' }} required> Yes
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="unattended_pickup" value="no" {{ old('unattended_pickup') == 'no' ? 'checked' : '' }} required> No
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Billing & Payment Section -->
+                                                <div class="form-section form-row-group">
+                                                    <h4>Billing & Payment</h4>
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="billing_contact">Billing Contact Name *</label>
+                                                                <input type="text" class="form-control" id="billing_contact" name="billing_contact" value="{{ old('billing_contact') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="billing_email">Billing Email *</label>
+                                                                <input type="email" class="form-control" id="billing_email" name="billing_email" value="{{ old('billing_email') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label for="vendor_platforms">Do You Use Vendor Platforms?</label>
+                                                                <input type="text" class="form-control" id="vendor_platforms" name="vendor_platforms" placeholder="e.g., QuickBooks, BILL, PayPal" value="{{ old('vendor_platforms') }}">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <div class="form-group">
+                                                                <label>Preferred Payment Method *</label>
+                                                                <div class="radio-group">
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="payment_method" value="ach" {{ old('payment_method') == 'ach' ? 'checked' : '' }} required> ACH
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="payment_method" value="credit_card" {{ old('payment_method') == 'credit_card' ? 'checked' : '' }} required> Credit Card
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="payment_method" value="check" {{ old('payment_method') == 'check' ? 'checked' : '' }} required> Check
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="payment_method" value="other" {{ old('payment_method') == 'other' ? 'checked' : '' }} required> Other
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Verification Documents Section -->
+                                                <div class="form-section form-row-group">
+                                                    <h4>🔹 Verification Documents</h4>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="ein_tax_id">EIN or Federal Tax ID *</label>
+                                                                <input type="text" class="form-control" id="ein_tax_id" name="ein_tax_id" placeholder="XX-XXXXXXX" value="{{ old('ein_tax_id') }}" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="form-group">
+                                                                <label for="trade_references">Trade References</label>
+                                                                <input type="text" class="form-control" id="trade_references" name="trade_references" placeholder="List any trade references" value="{{ old('trade_references') }}">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="w9_upload">W9 Upload *</label>
+                                                                <input type="file" class="form-control" id="w9_upload" name="w9_upload" accept=".pdf,.doc,.docx" required>
+                                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label for="insurance_certificate">Insurance Certificate Upload</label>
+                                                                <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.doc,.docx">
+                                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <div class="form-group">
+                                                                <label>NDA/Service Agreement Required? *</label>
+                                                                <div class="radio-group">
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="nda_required" value="yes" {{ old('nda_required') == 'yes' ? 'checked' : '' }} required> Yes
+                                                                    </label>
+                                                                    <label class="radio-item">
+                                                                        <input type="radio" name="nda_required" value="no" {{ old('nda_required') == 'no' ? 'checked' : '' }} required> No
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Submit Button -->
+                                                <div class="form-section text-center mb-4">
+                                                    <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Primary Contact Section -->
-                                <div class="form-section form-row-group">
-                                    <h4>Primary Contact</h4>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="contact_name">Full Name *</label>
-                                                <input type="text" class="form-control" id="contact_name" name="contact_name" value="{{ old('contact_name') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="contact_title">Title/Position *</label>
-                                                <input type="text" class="form-control" id="contact_title" name="contact_title" value="{{ old('contact_title') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="contact_phone">Phone Number *</label>
-                                                <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="contact_email">Email Address *</label>
-                                                <input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ old('contact_email') }}" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Logistics & Operations Section -->
-                                <div class="form-section form-row-group">
-                                    <h4>Logistics & Operations</h4>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="fulfillment_address">Main Auction Address *</label>
-                                                <input type="text" class="form-control" id="fulfillment_address" name="fulfillment_address" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Inventory API/Webhook Access? *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="inventory_api_access" value="yes" {{ old('inventory_api_access') == 'yes' ? 'checked' : '' }} required> Yes
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="inventory_api_access" value="no" {{ old('inventory_api_access') == 'no' ? 'checked' : '' }} required> No (If Yes, attach API URL/Docs)
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="api_url_docs">API URL or Documentation (if applicable)</label>
-                                                <input type="text" class="form-control" id="api_url_docs" name="api_url_docs" placeholder="https://api.example.com or attach documentation" value="{{ old('api_url_docs') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="vehicle_list">Upload a file with the list of Vehicles</label>
-                                                <input type="file" class="form-control" id="vehicle_list" name="vehicle_list" accept=".pdf,.doc,.docx,.xls,.xlsx" style="margin-bottom: 0">
-                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, EXCEL</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Do You Have Multiple Warehouses? *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="multiple_warehouses" value="yes" {{ old('multiple_warehouses') == 'yes' ? 'checked' : '' }} required> Yes
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="multiple_warehouses" value="no" {{ old('multiple_warehouses') == 'no' ? 'checked' : '' }} required> No
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="shipping_nodes">If Yes, List All Shipping Nodes</label>
-                                                <textarea class="form-control" id="shipping_nodes" name="shipping_nodes" rows="3">{{ old('shipping_nodes') }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Transport Preferences Section -->
-                                <div class="form-section form-row-group">
-                                    <h4>Transport Preferences</h4>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="cars_shipped">Avg. # of Cars Shipped/Month *</label>
-                                                <input type="number" class="form-control" id="cars_shipped" name="cars_shipped" min="1" value="{{ old('cars_shipped') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Vehicle Types *</label>
-                                                <div class="checkbox-group">
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="vehicle_types[]" value="new" {{ in_array('new', old('vehicle_types', [])) ? 'checked' : '' }}> New
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="vehicle_types[]" value="used" {{ in_array('used', old('vehicle_types', [])) ? 'checked' : '' }}> Used
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="vehicle_types[]" value="evs" {{ in_array('evs', old('vehicle_types', [])) ? 'checked' : '' }}> EVs
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="vehicle_types[]" value="luxury" {{ in_array('luxury', old('vehicle_types', [])) ? 'checked' : '' }}> Luxury
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="vehicle_types[]" value="oversized" {{ in_array('oversized', old('vehicle_types', [])) ? 'checked' : '' }}> Oversized
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Transport Type *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="transport_type" value="open" {{ old('transport_type') == 'open' ? 'checked' : '' }} required> Open
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="transport_type" value="enclosed" {{ old('transport_type') == 'enclosed' ? 'checked' : '' }} required> Enclosed
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Preferred Delivery *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="preferred_delivery" value="door_to_door" {{ old('preferred_delivery') == 'door_to_door' ? 'checked' : '' }} required> Door-to-Door
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="preferred_delivery" value="terminal_to_terminal" {{ old('preferred_delivery') == 'terminal_to_terminal' ? 'checked' : '' }} required> Terminal-to-Terminal
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Can Vehicles be Picked up Unattended (Key Box)? *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="unattended_pickup" value="yes" {{ old('unattended_pickup') == 'yes' ? 'checked' : '' }} required> Yes
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="unattended_pickup" value="no" {{ old('unattended_pickup') == 'no' ? 'checked' : '' }} required> No
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Billing & Payment Section -->
-                                <div class="form-section form-row-group">
-                                    <h4>Billing & Payment</h4>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="billing_contact">Billing Contact Name *</label>
-                                                <input type="text" class="form-control" id="billing_contact" name="billing_contact" value="{{ old('billing_contact') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="billing_email">Billing Email *</label>
-                                                <input type="email" class="form-control" id="billing_email" name="billing_email" value="{{ old('billing_email') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="vendor_platforms">Do You Use Vendor Platforms?</label>
-                                                <input type="text" class="form-control" id="vendor_platforms" name="vendor_platforms" placeholder="e.g., QuickBooks, BILL, PayPal" value="{{ old('vendor_platforms') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Preferred Payment Method *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="payment_method" value="ach" {{ old('payment_method') == 'ach' ? 'checked' : '' }} required> ACH
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="payment_method" value="credit_card" {{ old('payment_method') == 'credit_card' ? 'checked' : '' }} required> Credit Card
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="payment_method" value="check" {{ old('payment_method') == 'check' ? 'checked' : '' }} required> Check
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="payment_method" value="other" {{ old('payment_method') == 'other' ? 'checked' : '' }} required> Other
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Verification Documents Section -->
-                                <div class="form-section form-row-group">
-                                    <h4>🔹 Verification Documents</h4>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="ein_tax_id">EIN or Federal Tax ID *</label>
-                                                <input type="text" class="form-control" id="ein_tax_id" name="ein_tax_id" placeholder="XX-XXXXXXX" value="{{ old('ein_tax_id') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="trade_references">Trade References</label>
-                                                <input type="text" class="form-control" id="trade_references" name="trade_references" placeholder="List any trade references" value="{{ old('trade_references') }}">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="w9_upload">W9 Upload *</label>
-                                                <input type="file" class="form-control" id="w9_upload" name="w9_upload" accept=".pdf,.doc,.docx" required>
-                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="insurance_certificate">Insurance Certificate Upload</label>
-                                                <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.doc,.docx">
-                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>NDA/Service Agreement Required? *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="nda_required" value="yes" {{ old('nda_required') == 'yes' ? 'checked' : '' }} required> Yes
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="nda_required" value="no" {{ old('nda_required') == 'no' ? 'checked' : '' }} required> No
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Submit Button -->
-                                <div class="form-section text-center mb-4">
-                                    <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
-                                </div>
-                            </form>
+                            </div>
 
                             @if(count($page->tiers))
                                 @include('frontend.pages.tier', ['data' => $page->tiers])
