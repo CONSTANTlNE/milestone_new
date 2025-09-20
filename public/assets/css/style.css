@@ -2398,3 +2398,327 @@ form .form-row-group textarea.form-control {
     resize: none;
     height: 130px;
 }
+/*new721*/
+.clients-mobile{
+    display: none;
+}
+.clients{
+    float: right;
+    margin-right: 35px;
+    max-width: 233px;
+    width: 233px;
+}
+
+.clients-buttons{
+    max-width: 190px;
+    width: 190px;
+}
+
+.clients .pbmit-btn{
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+.clients-buttons .pbmit-btn {
+    border-radius: 5px;
+    font-size: 15px;
+    padding: 14px 50px 14px 10px;
+}
+
+.clients-buttons .pbmit-btn .pbmit-button-text:before {
+    content: '\e8d2';
+    font-family: "pbminfotech-base-icons";
+    position: absolute;
+    font-size: 14px;
+    right: 5px;
+    top: 6px;
+    left: auto;
+    width: 40px;
+    height: 40px;
+    background-color: var(--pbmit-white-color);
+    color: var(--pbmit-blackish-color);
+    border-radius: 50%;
+    line-height: 40px;
+    text-align: center;
+    -webkit-transition: all .3s
+    ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    transition: all .3s
+    ease-in-out;
+}
+.clients .pbmit-button,
+.clients .pbmit-button a,
+.clients-buttons .pbmit-button,
+.clients-buttons .pbmit-button a{
+    width: 100%;
+}
+.clients .business{
+    background-color: rgba(var(--pbmit-white-color-rgb), .25);
+    width: 190px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-right: 40px;
+    margin-top: 15px;
+    border: 2px solid var(--pbmit-blackish-color);
+    text-align: center;
+}
+.clients .business{
+    background-color: rgba(var(--pbmit-white-color-rgb), .25);
+    width: 190px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-right: 40px;
+    margin-top: 15px;
+    border: 2px solid var(--pbmit-blackish-color);
+    text-align: center;
+}
+.clients .individual{
+    background-color: rgba(var(--pbmit-white-color-rgb), .25);
+    width: 190px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-right: 40px;
+    margin-top: 15px;
+    border: 2px solid var(--pbmit-blackish-color);
+    text-align: center;
+}
+.clients a{
+    color: #fff;
+}
+/* Header Tooltip Styles */
+.pbmit-tooltip-container {
+    position: relative;
+}
+
+.pbmit-custom-tooltip {
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    display: none;
+    z-index: 10000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.pbmit-custom-tooltip:before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-bottom-color: #333;
+}
+
+/* Floating Quotation Buttons Styles */
+.pbmit-floating-quotation-buttons {
+    position: fixed;
+    right: 35px;
+    bottom: 85px;
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+
+.pbmit-quotation-button {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.pbmit-quotation-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+}
+
+.pbmit-quotation-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    text-decoration: none;
+}
+
+.pbmit-quotation-icon {
+    width: 35px;
+    height: auto;
+    object-fit: contain;
+}
+
+.pbmit-quotation-tooltip {
+    position: absolute;
+    right: 70px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #333;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    display: none;
+    z-index: 10000;
+}
+
+.pbmit-quotation-tooltip:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-left-color: #333;
+}
+
+/* B2C Button specific styling */
+.pbmit-b2c-button {
+    border: 2px solid #007bff;
+}
+
+.pbmit-b2c-button:hover {
+    border-color: #0056b3;
+    background: #f8f9fa;
+}
+
+/* B2B Button specific styling */
+.pbmit-b2b-button {
+    border: 2px solid #28a745;
+}
+
+.pbmit-b2b-button:hover {
+    border-color: #1e7e34;
+    background: #f8f9fa;
+}
+
+.auto-auction-form {
+    margin-bottom: 40px;
+}
+
+.auto-auction-form button.accordion-button.collapsed {
+    padding: 20px 50px 10px 50px;
+    background: var(--pbmit-global-color);
+    border-radius: 10px !important;
+}
+
+.auto-auction-form h3 {
+    color: #fff;
+}
+
+.auto-auction-form p.form-subtitle {
+    margin: 0px;
+    color: #ababab;
+}
+
+.auto-auction-form .accordion-item {
+    border-bottom: 0px;
+}
+
+.auto-auction-form .accordion-button {
+    padding: 20px 50px !important;
+}
+
+.auto-auction-form .pbmit-accordion-icon.pbmit-btn {
+    color: var(--pbmit-global-color);
+    background-color: #ffff;
+    border-radius: 10px;
+    font-size: 18px;
+    text-transform: uppercase;
+    padding: 18px 30px 18px 30px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .pbmit-floating-quotation-buttons {
+        right: 20px;
+        bottom: 100px;
+        gap: 10px;
+    }
+
+    .pbmit-quotation-button {
+        width: 50px;
+        height: 50px;
+    }
+
+    .pbmit-quotation-icon {
+        width: 28px;
+    }
+
+    .pbmit-quotation-tooltip {
+        right: 60px;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    .clients{
+        display: none;
+    }
+    .clients-mobile{
+        display: block;
+    }
+    .clients-mobile .pbmit-btn {
+        width: 100%;
+        font-size: 20px;
+        border-radius: 5px;
+    }
+    .pbmit-floating-quotation-buttons.clients-buttons.clients-mobile-buttons {
+        bottom: 15px;
+        /* display: flex
+    ; */
+        max-width: 100%;
+        width: 75%;
+        justify-content: space-between;
+        left: 40px;
+        flex-direction: row;
+    }
+
+    .clients-mobile-buttons .pbmit-button.transform-bottom.transform-delay-4 {
+        width: 50%;
+    }
+
+    .clients-mobile-buttons .pbmit-btn {
+        border-radius: 5px;
+        font-size: 14px;
+        padding: 10px;
+    }
+    .clients-mobile-buttons .pbmit-btn .pbmit-button-text:before{
+        display: none;
+    }
+
+    .pbmit-backtotop.active {
+        right: 5px;
+    }
+
+}
+
+@media (max-width: 480px) {
+    .pbmit-floating-quotation-buttons {
+        right: 15px;
+        bottom: 90px;
+    }
+
+    .pbmit-quotation-button {
+        width: 45px;
+        height: 45px;
+    }
+
+    .pbmit-quotation-icon {
+        width: 25px;
+    }
+}
