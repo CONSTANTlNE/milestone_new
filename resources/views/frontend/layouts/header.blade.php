@@ -31,15 +31,31 @@
                                 <i class="pbmit-base-icon-search-1"></i>
                             </a>
                         </div>
-{{--                        <div class="pbmit-header-button2 pbmit-header-book-consult-btn">--}}
-{{--                            <a class="pbmit-btn pbmit-btn-white" href="#" id="consultation-trigger">--}}
-{{--                                <span class="pbmit-button-content-wrapper">--}}
-{{--                                    <span class="pbmit-button-text">{{__('book')}}</span>--}}
-{{--                                </span>--}}
-{{--                            </a>--}}
-{{--                        </div>--}}
                     </div>
                 </div>
             </div>
         </div>
+
+        @if(getPageById(20) !== null or getPageById(19) !== null)
+            <div class="clients">
+                @if(getPageById(19) !== null)
+                    <div class="pbmit-button transform-bottom transform-delay-4 mt-3">
+                        <a class="pbmit-btn" href="{{ route(getPageById(19)->template) }}">
+                        <span class="pbmit-button-content-wrapper">
+                            <span class="pbmit-button-text">{{getPageById(19)->title}}</span>
+                        </span>
+                        </a>
+                    </div>
+                @endif
+                @if(getPageById(20) !== null)
+                    <div class="pbmit-button transform-bottom transform-delay-4 mt-3">
+                        <a class="pbmit-btn" href="{{ route(getPageById(20)->template) }}">
+                            <span class="pbmit-button-content-wrapper">
+                                <span class="pbmit-button-text">{{getPageById(20)->title}}</span>
+                            </span>
+                        </a>
+                    </div>
+                @endif
+            </div>
+        @endif
     </div>

@@ -37,6 +37,29 @@
     </div>
 </div>
 
+@if(getPageById(20) !== null or getPageById(19) !== null)
+    <div class="pbmit-floating-quotation-buttons clients-buttons clients-mobile-buttons">
+        @if(getPageById(19) !== null)
+            <div class="pbmit-button transform-bottom transform-delay-4 mt-3">
+                <a class="pbmit-btn" href="{{ route(getPageById(19)->template) }}">
+                    <span class="pbmit-button-content-wrapper">
+                        <span class="pbmit-button-text">{{getPageById(19)->title}}</span>
+                    </span>
+                </a>
+            </div>
+        @endif
+        @if(getPageById(20) !== null)
+            <div class="pbmit-button transform-bottom transform-delay-4 mt-3">
+                <a class="pbmit-btn" href="{{ route(getPageById(20)->template) }}">
+                    <span class="pbmit-button-content-wrapper">
+                            <span class="pbmit-button-text">{{getPageById(20)->title}}</span>
+                    </span>
+                </a>
+            </div>
+        @endif
+    </div>
+@endif
+
 @include('frontend.layouts.consultation-drawer')
 <div id="htmx-validation-errors"></div>
 <script src="{{asset('assets/js/jquery.min.js')}}"></script>
@@ -162,4 +185,47 @@
         });
     });
 
+    // Floating Quotation Buttons Functionality
+    $(document).ready(function() {
+        var $quotationButtons = $('.pbmit-floating-quotation-buttons');
+        var $window = $(window);
+        var headerHeight = $('header').outerHeight() || 100;
+
+        // Initially hide the buttons
+        $quotationButtons.hide();
+
+        // Show/hide buttons on scroll
+        $window.scroll(function() {
+            if ($window.scrollTop() > headerHeight) {
+                $quotationButtons.fadeIn();
+            } else {
+                $quotationButtons.fadeOut();
+            }
+        });
+
+        // Tooltip functionality
+        $('.pbmit-quotation-button').hover(
+            function() {
+                $(this).find('.pbmit-quotation-tooltip').fadeIn(200);
+            },
+            function() {
+                $(this).find('.pbmit-quotation-tooltip').fadeOut(200);
+            }
+        );
+    });
+
+    // Header Tooltip Functionality
+    $(document).ready(function() {
+        $('.pbmit-tooltip-container').hover(
+            function() {
+                $(this).find('.pbmit-custom-tooltip').fadeIn(200);
+            },
+            function() {
+                $(this).find('.pbmit-custom-tooltip').fadeOut(200);
+            }
+        );
+    });
+
 </script>
+
+@yield('scripts')
