@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="clients-mobile mt-2">
                     @if(getPageById(19) !== null)
-                        <div class="pbmit-button transform-bottom transform-delay-4 mt-2">
+                        <div class="pbmit-button">
                             <a class="pbmit-btn" href="{{ route(getPageById(19)->template) }}">
                             <span class="pbmit-button-content-wrapper">
                                 <span class="pbmit-button-text">{{getPageById(19)->title}}</span>
@@ -35,7 +35,7 @@
                         </div>
                     @endif
                     @if(getPageById(20) !== null)
-                    <div class="pbmit-button">
+                    <div class="pbmit-button mt-2">
                         <a class="pbmit-btn" href="{{ route(getPageById(20)->template) }}">
                             <span class="pbmit-button-content-wrapper">
                                 <span class="pbmit-button-text">{{getPageById(20)->title}}</span>
