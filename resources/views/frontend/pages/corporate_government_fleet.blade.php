@@ -597,7 +597,7 @@
                                 </div>
 
                             @if(count($page->tiers))
-                                @include('frontend.pages.tier', ['data' => $page->tiers])
+                                    @include('frontend.pages.tier', ['data' => $page->tiers, 'title' => $page->title])
                             @endif
                         </div>
                     </div>
