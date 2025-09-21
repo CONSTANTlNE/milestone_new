@@ -71,6 +71,13 @@
                         <div class="table-responsive pt-3">
                             <form action="{{route('frontend.b2b.quotation.store')}}" method="post">
                                 @csrf
+                                @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
+                                    <div
+                                        class="cf-turnstile"
+                                        data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
+                                        data-callback="javascriptCallback"
+                                    ></div>
+                                @endif
                                 <input type="hidden" name="turnstile" id="turnstile_hidden" />
                                 <table class="table table-bordered table-striped table-hover table-sm">
                                     <thead class="thead-dark">

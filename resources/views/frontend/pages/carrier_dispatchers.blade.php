@@ -217,7 +217,13 @@
 
                             <form method="POST" action="{{ route('frontend.carrier_dispatcher.store') }}" class="carrier-dispatcher-form" enctype="multipart/form-data">
                                 @csrf
-
+                                @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
+                                    <div
+                                        class="cf-turnstile"
+                                        data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
+                                        data-callback="javascriptCallback"
+                                    ></div>
+                                @endif
                                 <div class="form-section form-row-group">
                                     <h4>Basic Information</h4>
                                     <div class="row">

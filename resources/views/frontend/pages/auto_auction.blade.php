@@ -249,7 +249,13 @@
                                                 <div class="accordion-body">
                                                     <form class="auction-form" method="POST" action="{{ route('frontend.auto_auction.store') }}" enctype="multipart/form-data">
                                                         @csrf
-
+                                                        @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
+                                                            <div
+                                                                class="cf-turnstile"
+                                                                data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
+                                                                data-callback="javascriptCallback"
+                                                            ></div>
+                                                        @endif
                                                         <!-- Company Information Section -->
                                                         <div class="form-section form-row-group">
                                                             <h4>Company Information</h4>

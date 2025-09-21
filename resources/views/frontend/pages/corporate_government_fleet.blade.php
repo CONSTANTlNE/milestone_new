@@ -217,7 +217,13 @@
 
                             <form class="fleet-form" method="POST" action="{{ route('frontend.corporate_government_fleet.store') }}" enctype="multipart/form-data">
                                 @csrf
-
+                                @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
+                                    <div
+                                        class="cf-turnstile"
+                                        data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
+                                        data-callback="javascriptCallback"
+                                    ></div>
+                                @endif
                                 <!-- Organization Information Section -->
                                 <div class="form-section  form-row-group">
                                     <h4>Organization Information</h4>

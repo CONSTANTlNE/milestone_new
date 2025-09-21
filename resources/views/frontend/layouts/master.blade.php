@@ -13,8 +13,8 @@
     @include('frontend.layouts.head')
     @vite('resources/js/app.js')
     @yield('seo')
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" defer></script>
-    {{--    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>--}}
+{{--    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onloadTurnstileCallback" defer></script>--}}
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body >
 <div class="page-wrapper" id="page">

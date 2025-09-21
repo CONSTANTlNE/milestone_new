@@ -217,7 +217,13 @@
 
                             <form class="retailer-form" method="POST" action="{{ route('frontend.car_retailer.store') }}" enctype="multipart/form-data">
                                 @csrf
-
+                                @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
+                                    <div
+                                        class="cf-turnstile"
+                                        data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
+                                        data-callback="javascriptCallback"
+                                    ></div>
+                                @endif
                                 <!-- Company Information Section -->
                                 <div class="form-section form-row-group">
                                     <h4>Company Information</h4>
@@ -315,7 +321,7 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="fulfillment_address">Main Auction Address *</label>
-                                                <input type="text" class="form-control" id="fulfillment_address" name="fulfillment_address" required>
+                                                <input type="text" class="form-control" id="fulfillment_address" name="fulfillment_address" required value="{{old('fulfillment_address')}}">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -553,4 +559,21 @@
             </div>
         </div>
     </section>
+    <script>
+        document.querySelector('.retailer-form').addEventListener("submit", function(e) {
+            const checkboxes = document.querySelectorAll("input[name='platform_type[]']:checked");
+            if (checkboxes.length === 0) {
+                e.preventDefault();
+                alert("Please select at least one platform type.");
+                return;
+            }
+
+            const checkboxes2 = document.querySelectorAll("input[name='vehicle_types[][]']:checked");
+            if (checkboxes2.length === 0) {
+                e.preventDefault();
+                alert("Please select at least one Vehicle Type");
+                return;
+            }
+        });
+    </script>
 @endsection

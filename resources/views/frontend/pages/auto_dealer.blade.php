@@ -216,7 +216,13 @@
 
                             <form class="dealer-form" method="POST" action="{{ route('frontend.auto_dealer.store') }}" enctype="multipart/form-data">
                                 @csrf
-
+                                @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
+                                    <div
+                                        class="cf-turnstile"
+                                        data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
+                                        data-callback="javascriptCallback"
+                                    ></div>
+                                @endif
                                 <!-- Company Information Section -->
                                 <div class="form-section form-row-group">
                                     <h4>Company Information</h4>
@@ -314,7 +320,7 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Can Vehicles be Picked up Unattended (Key Box)? </label>
+                                                <label>Can Vehicles be Picked up Unattended (Key Box)?* </label>
                                                 <div class="radio-group">
                                                     <label class="radio-item">
                                                         <input type="radio" name="inventory_system" value="yes" required> Yes
@@ -327,8 +333,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Upload a file with the list of Vehicles (Optional)</label>
-                                                <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.doc,.docx" required>
+                                                <label>Upload a file with the list of Vehicles *</label>
+                                                <input type="file" class="form-control" id="vehicle_list" name="vehicle_list" accept=".pdf,.doc,.docx" required>
                                                 <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
                                             </div>
                                         </div>

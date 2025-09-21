@@ -54,7 +54,6 @@
             errorDiv2.textContent = 'Please enter a valid 6-digit code.';
             codeInput2.focus();
         } else {
-
             htmx.ajax('POST', '{{route('frontend.confirm.otp.business')}}', {
                 swap: 'none',
                 headers: {
