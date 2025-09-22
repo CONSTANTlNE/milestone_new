@@ -184,7 +184,7 @@
                     </div>
 
                     <div class="pbmit-content">
-                        <div class="auto-auction-form">
+                        <div class="b2b-forms">
                             @if(session('success'))
                                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                                     {{ session('success') }}
@@ -263,25 +263,25 @@
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label for="legal_business_name">Legal Business Name *</label>
-                                                                        <input type="text" class="form-control" id="legal_business_name" name="legal_business_name" required>
+                                                                        <input type="text" class="form-control" id="legal_business_name" name="legal_business_name" value="{{ old('legal_business_name') }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label for="dba">DBA (If Any)</label>
-                                                                        <input type="text" class="form-control" id="dba" name="dba">
+                                                                        <input type="text" class="form-control" id="dba" name="dba" value="{{ old('dba') }}">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label for="years_operation">Years in Operation *</label>
-                                                                        <input type="number" class="form-control" id="years_operation" name="years_operation" min="0" max="100" required>
+                                                                        <input type="number" class="form-control" id="years_operation" name="years_operation" value="{{ old('years_operation') }}" min="0" max="100" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label for="website_url">Website URL</label>
-                                                                        <input type="url" class="form-control" id="website_url" name="website_url" placeholder="https://example.com">
+                                                                        <input type="url" class="form-control" id="website_url" name="website_url" value="{{ old('website_url') }}" placeholder="https://example.com">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -292,11 +292,11 @@
                                                                         <label for="business_type">Business Type (LLC, Corp, etc.) *</label>
                                                                         <select class="form-control" id="business_type" name="business_type" required>
                                                                             <option value="">Select Business Type</option>
-                                                                            <option value="LLC">LLC</option>
-                                                                            <option value="Corporation">Corporation</option>
-                                                                            <option value="Sole Proprietorship">Sole Proprietorship</option>
-                                                                            <option value="Partnership">Partnership</option>
-                                                                            <option value="Other">Other</option>
+                                                                            <option value="LLC" @selected(old('business_type')=='LLC')>LLC</option>
+                                                                            <option value="Corporation" @selected(old('business_type')=='Corporation')>Corporation</option>
+                                                                            <option value="Sole Proprietorship" @selected(old('business_type')=='Sole Proprietorship')>Sole Proprietorship</option>
+                                                                            <option value="Partnership" @selected(old('business_type')=='Partnership')>Partnership</option>
+                                                                            <option value="Other" @selected(old('business_type')=='Other')>Other</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -305,13 +305,13 @@
                                                                         <label>Auction Platform Type *</label>
                                                                         <div class="checkbox-group">
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="platform_type[]" value="physical"> Physical
+                                                                                <input type="checkbox" name="platform_type[]" value="physical" @checked(in_array('physical', old('platform_type', [])))> Physical
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="platform_type[]" value="online"> Online
+                                                                                <input type="checkbox" name="platform_type[]" value="online" @checked(in_array('online', old('platform_type', [])))> Online
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="platform_type[]" value="hybrid"> Hybrid
+                                                                                <input type="checkbox" name="platform_type[]" value="hybrid" @checked(in_array('hybrid', old('platform_type', [])))> Hybrid
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -328,25 +328,25 @@
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label for="contact_name">Full Name *</label>
-                                                                        <input type="text" class="form-control" id="contact_name" name="contact_name" required>
+                                                                        <input type="text" class="form-control" id="contact_name" name="contact_name" value="{{ old('contact_name') }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label for="contact_title">Title/Position *</label>
-                                                                        <input type="text" class="form-control" id="contact_title" name="contact_title" required>
+                                                                        <input type="text" class="form-control" id="contact_title" name="contact_title" value="{{ old('contact_title') }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label for="contact_phone">Phone Number *</label>
-                                                                        <input type="tel" class="form-control" id="contact_phone" name="contact_phone" required>
+                                                                        <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-3">
                                                                     <div class="form-group">
                                                                         <label for="contact_email">Email Address *</label>
-                                                                        <input type="email" class="form-control" id="contact_email" name="contact_email" required>
+                                                                        <input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ old('contact_email') }}" required>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -359,19 +359,19 @@
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label for="main_address">Main Auction Address *</label>
-                                                                        <input type="text" class="form-control" id="main_address" name="main_address" required>
+                                                                        <input type="text" class="form-control" id="main_address" name="main_address" value="{{ old('main_address') }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label for="primary_auction_days">Primary Auction Days *</label>
-                                                                        <input type="text" class="form-control" id="primary_auction_days" name="primary_auction_days" placeholder="e.g., Monday, Wednesday, Friday" required>
+                                                                        <input type="text" class="form-control" id="primary_auction_days" name="primary_auction_days" value="{{ old('primary_auction_days') }}" placeholder="e.g., Monday, Wednesday, Friday" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-4">
                                                                     <div class="form-group">
                                                                         <label for="lot_numbers">Typical Lot Numbers per Auction *</label>
-                                                                        <input type="number" class="form-control" id="lot_numbers" name="lot_numbers" min="1" required>
+                                                                        <input type="number" class="form-control" id="lot_numbers" name="lot_numbers" value="{{ old('lot_numbers') }}" min="1" required>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -382,10 +382,10 @@
                                                                         <label>Do You Operate Multiple Locations? *</label>
                                                                         <div class="radio-group">
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="multiple_locations" value="yes" required> Yes
+                                                                                <input type="radio" name="multiple_locations" value="yes" @checked(old('multiple_locations')=='yes') required> Yes
                                                                             </label>
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="multiple_locations" value="no" required> No
+                                                                                <input type="radio" name="multiple_locations" value="no" @checked(old('multiple_locations')=='no') required> No
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -393,7 +393,7 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="additional_locations">If Yes, List Additional Locations</label>
-                                                                        <textarea class="form-control" id="additional_locations" name="additional_locations" rows="3"></textarea>
+                                                                        <textarea class="form-control" id="additional_locations" name="additional_locations" rows="3">{{ old('additional_locations') }}</textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -405,10 +405,10 @@
                                                                         <label>Inventory Management System or API Access? *</label>
                                                                         <div class="radio-group">
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="inventory_system" value="yes" required> Yes
+                                                                                <input type="radio" name="inventory_system" value="yes" @checked(old('inventory_system')=='yes') required> Yes
                                                                             </label>
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="inventory_system" value="no" required> No
+                                                                                <input type="radio" name="inventory_system" value="no" @checked(old('inventory_system')=='no') required> No
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -418,10 +418,10 @@
                                                                         <label>Can Vehicles be Picked up Unattended (Key Box)? </label>
                                                                         <div class="radio-group">
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="unattended_pickup" value="yes"> Yes
+                                                                                <input type="radio" name="unattended_pickup" value="yes" @checked(old('unattended_pickup')=='yes')> Yes
                                                                             </label>
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="unattended_pickup" value="no"> No
+                                                                                <input type="radio" name="unattended_pickup" value="no" @checked(old('unattended_pickup')=='no')> No
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -442,8 +442,8 @@
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
-                                                                        <label for="vehicles_shipped">Average Vehicles Shipped/Month (Optional) </label>
-                                                                        <input type="number" class="form-control" id="vehicles_shipped" name="vehicles_shipped" min="1" required>
+                                                                        <label for="vehicles_shipped">Average Vehicles Shipped/Month* </label>
+                                                                        <input type="number" class="form-control" id="vehicles_shipped" name="vehicles_shipped" value="{{ old('vehicles_shipped') }}" min="1" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
@@ -451,19 +451,19 @@
                                                                         <label>Vehicle Types *</label>
                                                                         <div class="checkbox-group">
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="vehicle_types[]" value="new"> New
+                                                                                <input type="checkbox" name="vehicle_types[]" value="new" @checked(in_array('new', old('vehicle_types', [])))> New
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="vehicle_types[]" value="used"> Used
+                                                                                <input type="checkbox" name="vehicle_types[]" value="used" @checked(in_array('used', old('vehicle_types', [])))> Used
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="vehicle_types[]" value="salvage"> Salvage
+                                                                                <input type="checkbox" name="vehicle_types[]" value="salvage" @checked(in_array('salvage', old('vehicle_types', [])))> Salvage
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="vehicle_types[]" value="luxury"> Luxury
+                                                                                <input type="checkbox" name="vehicle_types[]" value="luxury" @checked(in_array('luxury', old('vehicle_types', [])))> Luxury
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="vehicle_types[]" value="inoperable"> Inoperable
+                                                                                <input type="checkbox" name="vehicle_types[]" value="inoperable" @checked(in_array('inoperable', old('vehicle_types', [])))> Inoperable
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -476,10 +476,10 @@
                                                                         <label>Transport Type *</label>
                                                                         <div class="radio-group">
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="transport_type" value="open" required> Open
+                                                                                <input type="radio" name="transport_type" value="open" @checked(old('transport_type')=='open') required> Open
                                                                             </label>
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="transport_type" value="enclosed" required> Enclosed
+                                                                                <input type="radio" name="transport_type" value="enclosed" @checked(old('transport_type')=='enclosed') required> Enclosed
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -487,7 +487,7 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="pickup_protocols">Pickup Protocols (e.g., Gate Passes, Lot IDs) *</label>
-                                                                        <textarea class="form-control" id="pickup_protocols" name="pickup_protocols" rows="3" required></textarea>
+                                                                        <textarea class="form-control" id="pickup_protocols" name="pickup_protocols" rows="3" required>{{ old('pickup_protocols') }}</textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -498,10 +498,10 @@
                                                                         <label>Do Vehicles Require Condition Reports? *</label>
                                                                         <div class="radio-group">
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="condition_reports" value="yes" required> Yes
+                                                                                <input type="radio" name="condition_reports" value="yes" @checked(old('condition_reports')=='yes') required> Yes
                                                                             </label>
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="condition_reports" value="no" required> No
+                                                                                <input type="radio" name="condition_reports" value="no" @checked(old('condition_reports')=='no') required> No
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -511,10 +511,10 @@
                                                                         <label>Do You Allow Carrier Preloading? *</label>
                                                                         <div class="radio-group">
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="carrier_preloading" value="yes" required> Yes
+                                                                                <input type="radio" name="carrier_preloading" value="yes" @checked(old('carrier_preloading')=='yes') required> Yes
                                                                             </label>
                                                                             <label class="radio-item">
-                                                                                <input type="radio" name="carrier_preloading" value="no" required> No
+                                                                                <input type="radio" name="carrier_preloading" value="no" @checked(old('carrier_preloading')=='no') required> No
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -529,13 +529,13 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="billing_contact">Billing Contact Name *</label>
-                                                                        <input type="text" class="form-control" id="billing_contact" name="billing_contact" required>
+                                                                        <input type="text" class="form-control" id="billing_contact" name="billing_contact" value="{{ old('billing_contact') }}" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="billing_email">Billing Email *</label>
-                                                                        <input type="email" class="form-control" id="billing_email" name="billing_email" required>
+                                                                        <input type="email" class="form-control" id="billing_email" name="billing_email" value="{{ old('billing_email') }}" required>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -546,16 +546,16 @@
                                                                         <label>Preferred Payment Method *</label>
                                                                         <div class="checkbox-group">
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="payment_method[]" value="ach"> ACH
+                                                                                <input type="checkbox" name="payment_method[]" value="ach" @checked(in_array('ach', old('payment_method', [])))> ACH
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="payment_method[]" value="credit_card"> Credit Card
+                                                                                <input type="checkbox" name="payment_method[]" value="credit_card" @checked(in_array('credit_card', old('payment_method', [])))> Credit Card
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="payment_method[]" value="check"> Check
+                                                                                <input type="checkbox" name="payment_method[]" value="check" @checked(in_array('check', old('payment_method', [])))> Check
                                                                             </label>
                                                                             <label class="checkbox-item">
-                                                                                <input type="checkbox" name="payment_method[]" value="other"> Other
+                                                                                <input type="checkbox" name="payment_method[]" value="other" @checked(in_array('other', old('payment_method', [])))> Other
                                                                             </label>
                                                                         </div>
                                                                     </div>
@@ -563,7 +563,7 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="vendor_platforms">Do You Use Vendor Platforms (e.g. BILL, QuickBooks, PayPal)?</label>
-                                                                        <input type="text" class="form-control" id="vendor_platforms" name="vendor_platforms" placeholder="e.g., QuickBooks, BILL">
+                                                                        <input type="text" class="form-control" id="vendor_platforms" name="vendor_platforms" value="{{ old('vendor_platforms') }}" placeholder="e.g., QuickBooks, BILL">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -576,13 +576,13 @@
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="ein_tax_id">EIN or Federal Tax ID *</label>
-                                                                        <input type="text" class="form-control" id="ein_tax_id" name="ein_tax_id" placeholder="XX-XXXXXXX" required>
+                                                                        <input type="text" class="form-control" id="ein_tax_id" name="ein_tax_id" value="{{ old('ein_tax_id') }}" placeholder="XX-XXXXXXX" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <div class="form-group">
                                                                         <label for="dealer_license">Dealer/Auction License # *</label>
-                                                                        <input type="text" class="form-control" id="dealer_license" name="dealer_license" required>
+                                                                        <input type="text" class="form-control" id="dealer_license" name="dealer_license" value="{{ old('dealer_license') }}" required>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -608,7 +608,7 @@
                                                                 <div class="col-md-12">
                                                                     <div class="form-group">
                                                                         <label for="trade_references">Trade References</label>
-                                                                        <textarea class="form-control" id="trade_references" name="trade_references" rows="3" placeholder="List any trade references or business relationships"></textarea>
+                                                                        <textarea class="form-control" id="trade_references" name="trade_references" rows="3" placeholder="List any trade references or business relationships">{{ old('trade_references') }}</textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -633,4 +633,14 @@
             </div>
         </div>
     </section>
+    <script>
+        document.querySelector('.auction-form').addEventListener("submit", function(e) {
+            const checkboxes = document.querySelectorAll("input[name='payment_method[]']:checked");
+            if (checkboxes.length === 0) {
+                e.preventDefault();
+                alert("Please select at least one payment method in Billing and Payment.");
+                return;
+            }
+        });
+    </script>
 @endsection

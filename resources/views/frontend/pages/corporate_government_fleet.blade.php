@@ -231,25 +231,25 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="legal_organization_name">Legal Organization Name *</label>
-                                                <input type="text" class="form-control" id="legal_organization_name" name="legal_organization_name" required>
+                                                <input type="text" class="form-control" id="legal_organization_name" name="legal_organization_name" value="{{ old('legal_organization_name') }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="dba">DBA (If Any)</label>
-                                                <input type="text" class="form-control" id="dba" name="dba">
+                                                <input type="text" class="form-control" id="dba" name="dba" value="{{ old('dba') }}">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="years_operation">Years in Operation *</label>
-                                                <input type="number" class="form-control" id="years_operation" name="years_operation" min="0" max="100" required>
+                                                <input type="number" class="form-control" id="years_operation" name="years_operation" value="{{ old('years_operation') }}" min="0" max="100" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="website_url">Website URL</label>
-                                                <input type="url" class="form-control" id="website_url" name="website_url" placeholder="https://example.com">
+                                                <input type="url" class="form-control" id="website_url" name="website_url" value="{{ old('website_url') }}" placeholder="https://example.com">
                                             </div>
                                         </div>
                                     </div>
@@ -260,13 +260,13 @@
                                                 <label>Business Type *</label>
                                                 <div class="radio-group">
                                                     <label class="radio-item">
-                                                        <input type="radio" name="business_type" value="corporate" required> Corporate
+                                                        <input type="radio" name="business_type" value="corporate" @checked(old('business_type')=='corporate') required> Corporate
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="radio" name="business_type" value="government" required> Government
+                                                        <input type="radio" name="business_type" value="government" @checked(old('business_type')=='government') required> Government
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="radio" name="business_type" value="non_profit" required> Non-Profit
+                                                        <input type="radio" name="business_type" value="non_profit" @checked(old('business_type')=='non_profit') required> Non-Profit
                                                     </label>
                                                 </div>
                                             </div>
@@ -274,7 +274,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="department">Department (if applicable)</label>
-                                                <input type="text" class="form-control" id="department" name="department" placeholder="e.g., Fleet Management, Transportation">
+                                                <input type="text" class="form-control" id="department" name="department" value="{{ old('department') }}" placeholder="e.g., Fleet Management, Transportation">
                                             </div>
                                         </div>
                                     </div>
@@ -287,25 +287,25 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="contact_name">Full Name *</label>
-                                                <input type="text" class="form-control" id="contact_name" name="contact_name" required>
+                                                <input type="text" class="form-control" id="contact_name" name="contact_name" value="{{ old('contact_name') }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="contact_title">Title/Position *</label>
-                                                <input type="text" class="form-control" id="contact_title" name="contact_title" required>
+                                                <input type="text" class="form-control" id="contact_title" name="contact_title" value="{{ old('contact_title') }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="contact_phone">Phone Number *</label>
-                                                <input type="tel" class="form-control" id="contact_phone" name="contact_phone" required>
+                                                <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="contact_email">Email Address *</label>
-                                                <input type="email" class="form-control" id="contact_email" name="contact_email" required>
+                                                <input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ old('contact_email') }}" required>
                                             </div>
                                         </div>
                                     </div>
@@ -318,25 +318,25 @@
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="primary_garage_address">Primary Garage or Lot Address *</label>
-                                                <input type="text" class="form-control" id="primary_garage_address" name="primary_garage_address" required>
+                                                <input type="text" class="form-control" id="primary_garage_address" name="primary_garage_address" value="{{ old('primary_garage_address') }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="fleet_management_software">Fleet Management Software (if any)</label>
-                                                <input type="text" class="form-control" id="fleet_management_software" name="fleet_management_software" placeholder="e.g., Fleetio, Samsara, Geotab">
+                                                <input type="text" class="form-control" id="fleet_management_software" name="fleet_management_software" value="{{ old('fleet_management_software') }}" placeholder="e.g., Fleetio, Samsara, Geotab">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="fleet_locations">Number of Fleet Locations *</label>
-                                                <input type="number" class="form-control" id="fleet_locations" name="fleet_locations" min="1" required>
+                                                <input type="number" class="form-control" id="fleet_locations" name="fleet_locations" value="{{ old('fleet_locations') }}" min="1" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
                                                 <label for="vehicle_release_contact">Point-of-Contact for Vehicle Releases *</label>
-                                                <input type="text" class="form-control" id="vehicle_release_contact" name="vehicle_release_contact" placeholder="Name and contact info" required>
+                                                <input type="text" class="form-control" id="vehicle_release_contact" name="vehicle_release_contact" value="{{ old('vehicle_release_contact') }}" placeholder="Name and contact info" required>
                                             </div>
                                         </div>
                                     </div>
@@ -347,19 +347,19 @@
                                                 <label>Typical Usage Type *</label>
                                                 <div class="checkbox-group">
                                                     <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="law_enforcement"> Law Enforcement
+                                                        <input type="checkbox" name="usage_type[]" value="law_enforcement" @checked(in_array('law_enforcement', old('usage_type', [])))> Law Enforcement
                                                     </label>
                                                     <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="utility"> Utility
+                                                        <input type="checkbox" name="usage_type[]" value="utility" @checked(in_array('utility', old('usage_type', [])))> Utility
                                                     </label>
                                                     <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="passenger"> Passenger
+                                                        <input type="checkbox" name="usage_type[]" value="passenger" @checked(in_array('passenger', old('usage_type', [])))> Passenger
                                                     </label>
                                                     <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="construction"> Construction
+                                                        <input type="checkbox" name="usage_type[]" value="construction" @checked(in_array('construction', old('usage_type', [])))> Construction
                                                     </label>
                                                     <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="mixed"> Mixed
+                                                        <input type="checkbox" name="usage_type[]" value="mixed" @checked(in_array('mixed', old('usage_type', [])))> Mixed
                                                     </label>
                                                     <label class="checkbox-item">
                                                         <input type="checkbox" name="usage_type[]" value="mixed"> Other
@@ -372,20 +372,20 @@
                                                 <label for="vehicle_condition">Are Vehicles Mostly New or Used? *</label>
                                                 <select class="form-control" id="vehicle_condition" name="vehicle_condition" required>
                                                     <option value="">Select Option</option>
-                                                    <option value="mostly_new">Mostly New</option>
-                                                    <option value="mostly_used">Mostly Used</option>
-                                                    <option value="mixed">Mixed</option>
-                                                    <option value="varies">Varies by Department</option>
+                                                    <option value="mostly_new" @selected(old('vehicle_condition')=='mostly_new')>Mostly New</option>
+                                                    <option value="mostly_used" @selected(old('vehicle_condition')=='mostly_used')>Mostly Used</option>
+                                                    <option value="mixed" @selected(old('vehicle_condition')=='mixed')>Mixed</option>
+                                                    <option value="varies" @selected(old('vehicle_condition')=='varies')>Varies by Department</option>
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label>Upload a file with the list of Vehicles</label>
-                                                <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.doc,.docx" required style="margin-bottom: 0">
-                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, Excel</small>
-                                            </div>
-                                        </div>
+{{--                                        <div class="col-md-3">--}}
+{{--                                            <div class="form-group">--}}
+{{--                                                <label>Upload a file with the list of Vehicles</label>--}}
+{{--                                                <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.doc,.docx" required style="margin-bottom: 0">--}}
+{{--                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, Excel</small>--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
                                     </div>
                                 </div>
 
@@ -396,13 +396,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="vehicles_per_month">Estimated Vehicles Transported/Month *</label>
-                                                <input type="number" class="form-control" id="vehicles_per_month" name="vehicles_per_month" min="1" required>
+                                                <input type="number" class="form-control" id="vehicles_per_month" name="vehicles_per_month" value="{{ old('vehicles_per_month') }}" min="1" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="security_requirements">Security/Clearance Requirements (if any)</label>
-                                                <input type="text" class="form-control" id="security_requirements" name="security_requirements" placeholder="e.g., Background check, Security clearance level">
+                                                <input type="text" class="form-control" id="security_requirements" name="security_requirements" value="{{ old('security_requirements') }}" placeholder="e.g., Background check, Security clearance level">
                                             </div>
                                         </div>
 
@@ -414,13 +414,13 @@
                                                 <label>Transport Scope *</label>
                                                 <div class="radio-group">
                                                     <label class="radio-item">
-                                                        <input type="radio" name="transport_scope" value="local" required> Local
+                                                        <input type="radio" name="transport_scope" value="local" @checked(old('transport_scope')=='local') required> Local
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="radio" name="transport_scope" value="regional" required> Regional
+                                                        <input type="radio" name="transport_scope" value="regional" @checked(old('transport_scope')=='regional') required> Regional
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="radio" name="transport_scope" value="nationwide" required> Nationwide
+                                                        <input type="radio" name="transport_scope" value="nationwide" @checked(old('transport_scope')=='nationwide') required> Nationwide
                                                     </label>
                                                 </div>
                                             </div>
@@ -430,10 +430,10 @@
                                                 <label>Transport Type *</label>
                                                 <div class="radio-group">
                                                     <label class="radio-item">
-                                                        <input type="radio" name="transport_type" value="open" required> Open
+                                                        <input type="radio" name="transport_type" value="open" @checked(old('transport_type')=='open') required> Open
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="radio" name="transport_type" value="enclosed" required> Enclosed
+                                                        <input type="radio" name="transport_type" value="enclosed" @checked(old('transport_type')=='enclosed') required> Enclosed
                                                     </label>
                                                 </div>
                                             </div>
@@ -444,13 +444,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="pickup_protocols">Pickup/Drop-Off Protocols *</label>
-                                                <textarea class="form-control" id="pickup_protocols" name="pickup_protocols" rows="3" placeholder="Describe pickup and delivery procedures" required></textarea>
+                                                <textarea class="form-control" id="pickup_protocols" name="pickup_protocols" rows="3" placeholder="Describe pickup and delivery procedures" required>{{ old('pickup_protocols') }}</textarea>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="special_handling">Special Handling Instructions</label>
-                                                <textarea class="form-control" id="special_handling" name="special_handling" rows="3" placeholder="Any special requirements or instructions"></textarea>
+                                                <textarea class="form-control" id="special_handling" name="special_handling" rows="3" placeholder="Any special requirements or instructions">{{ old('special_handling') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -463,19 +463,19 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="billing_contact">Billing Contact Name *</label>
-                                                <input type="text" class="form-control" id="billing_contact" name="billing_contact" required>
+                                                <input type="text" class="form-control" id="billing_contact" name="billing_contact" value="{{ old('billing_contact') }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="billing_email">Billing Email *</label>
-                                                <input type="email" class="form-control" id="billing_email" name="billing_email" required>
+                                                <input type="email" class="form-control" id="billing_email" name="billing_email" value="{{ old('billing_email') }}" required>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="payment_platform">Payment Platform (if any)</label>
-                                                <input type="text" class="form-control" id="payment_platform" name="payment_platform" placeholder="e.g., Ariba, Coupa, Jaggaer, Other">
+                                                <input type="text" class="form-control" id="payment_platform" name="payment_platform" value="{{ old('payment_platform') }}" placeholder="e.g., Ariba, Coupa, Jaggaer, Other">
                                             </div>
                                         </div>
                                     </div>
@@ -486,16 +486,16 @@
                                                 <label>Preferred Payment Method *</label>
                                                 <div class="radio-group">
                                                     <label class="radio-item">
-                                                        <input type="checkbox" name="payment_method" value="ach" required> ACH
+                                                        <input type="checkbox" name="payment_method[]" value="ach" @checked(in_array('ach', old('payment_method', [])))> ACH
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="checkbox" name="payment_method" value="credit_card" required> Credit Card
+                                                        <input type="checkbox" name="payment_method[]" value="credit_card" @checked(in_array('credit_card', old('payment_method', [])))> Credit Card
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="checkbox" name="payment_method" value="government_po" required> Government PO
+                                                        <input type="checkbox" name="payment_method[]" value="government_po" @checked(in_array('government_po', old('payment_method', [])))> Government PO
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="checkbox" name="payment_method" value="net_terms" required> Other
+                                                        <input type="checkbox" name="payment_method[]" value="net_terms" @checked(in_array('net_terms', old('payment_method', [])))> Other
                                                     </label>
                                                 </div>
                                             </div>
@@ -505,10 +505,10 @@
                                                 <label>Do You Require Invoicing via Vendor Portal? *</label>
                                                 <div class="radio-group">
                                                     <label class="radio-item">
-                                                        <input type="radio" name="vendor_portal_invoicing" value="yes" required> Yes
+                                                        <input type="radio" name="vendor_portal_invoicing" value="yes" @checked(old('vendor_portal_invoicing')=='yes') required> Yes
                                                     </label>
                                                     <label class="radio-item">
-                                                        <input type="radio" name="vendor_portal_invoicing" value="no" required> No
+                                                        <input type="radio" name="vendor_portal_invoicing" value="no" @checked(old('vendor_portal_invoicing')=='no') required> No
                                                     </label>
                                                 </div>
                                             </div>
@@ -523,13 +523,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="government_corporate_id">Government/Corporate ID or Certification # *</label>
-                                                <input type="text" class="form-control" id="government_corporate_id" name="government_corporate_id" placeholder="e.g., DUNS, CAGE Code, Tax ID" required>
+                                                <input type="text" class="form-control" id="government_corporate_id" name="government_corporate_id" value="{{ old('government_corporate_id') }}" placeholder="e.g., DUNS, CAGE Code, Tax ID" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="purchase_order_format">Purchase Order Format or Template (if used)</label>
-                                                <input type="text" class="form-control" id="purchase_order_format" name="purchase_order_format" placeholder="e.g., Standard PO, Custom template">
+                                                <input type="text" class="form-control" id="purchase_order_format" name="purchase_order_format" value="{{ old('purchase_order_format') }}" placeholder="e.g., Standard PO, Custom template">
                                             </div>
                                         </div>
                                     </div>
@@ -555,7 +555,7 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="references_contractors">References or Past Contractors</label>
-                                                <textarea class="form-control" id="references_contractors" name="references_contractors" rows="3" placeholder="List any transportation or logistics companies you've worked with"></textarea>
+                                                <textarea class="form-control" id="references_contractors" name="references_contractors" rows="3" placeholder="List any transportation or logistics companies you've worked with">{{ old('references_contractors') }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -576,4 +576,22 @@
             </div>
         </div>
     </section>
+    <script>
+        document.querySelector('.fleet-form').addEventListener("submit", function(e) {
+            const checkboxes = document.querySelectorAll("input[name='usage_type[]']:checked");
+            if (checkboxes.length === 0) {
+                e.preventDefault();
+                alert("Please select at least one usage type in Fleet Logistics & Operations.");
+                return;
+            }
+
+            const checkboxes2 = document.querySelectorAll("input[name='payment_method[]']:checked");
+            if (checkboxes2.length === 0) {
+                e.preventDefault();
+                alert("Please select at least one payment method in Billing and Payment.");
+                return;
+            }
+
+        });
+    </script>
 @endsection
