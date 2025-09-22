@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CorporateGovernmentFleet;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,6 +20,17 @@ class CorporateGovernmentFleetController extends Controller
 
     public function store(Request $request)
     {
+        if (config('milestone.CLOUDFLARE_CAPTCHA') == true) {
+            $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => config('milestone.CLOUDFLARE_SECRET_KEY'),
+                'response' => $request->input('cf-turnstile-response'),
+            ]);
+
+            if (!$response->json('success')) {
+                return back()->withErrors(['captcha' => 'Captcha failed. Try again.']);
+            }
+        }
+
         $validator = Validator::make($request->all(), [
             'legal_organization_name' => 'required|string|max:255',
             'dba' => 'nullable|string|max:255',
@@ -30,7 +42,7 @@ class CorporateGovernmentFleetController extends Controller
             'contact_title' => 'required|string|max:255',
             'contact_phone' => 'required|string|max:20',
             'contact_email' => 'required|email|max:255',
-            'fulfillment_address' => 'required|string',
+//            'fulfillment_address' => 'required|string',
             'fleet_locations' => 'required|integer|min:1',
             'vehicle_release_contact' => 'required|string|max:255',
             'fleet_management_software' => 'nullable|string|max:255',
@@ -48,10 +60,11 @@ class CorporateGovernmentFleetController extends Controller
             'payment_method' => 'required|in:ach,credit_card,government_po,net_terms',
             'vendor_portal_invoicing' => 'required|in:yes,no',
             'payment_platform' => 'nullable|string|max:255',
-            'government_corporate_id' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'w9_upload' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'insurance_certificate' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'purchase_order_format' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+//            'government_corporate_id' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'government_corporate_id' => 'required|string|min:1|max:255 ',
+            'w9_upload' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'insurance_certificate' => 'required|file|mimes:pdf,jpg,jpeg,png|max:10240',
+            'purchase_order_format' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:10240',
             'references_contractors' => 'nullable|string',
         ]);
 

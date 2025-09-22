@@ -186,6 +186,13 @@
                         </div>
                         <p>{{__('required')}}</p>
                         <form class="contact-form" method="post" id="contact-form" action="#">
+                            @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
+                                <div
+                                    class="cf-turnstile"
+                                    data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
+                                    data-callback="javascriptCallback"
+                                ></div>
+                            @endif
                             <div class="row">
                                 <div class="col-md-6">
                                     <input type="text" class="form-control" placeholder="{{__('your_name')}}" name="name" required="">

@@ -166,14 +166,14 @@
                                 </div>
                                 <div class="row" style="position: relative">
                                     <div style="gap: 20px" class="d-flex justify-content-center">
-                                        <p>Transport type</p>
-                                        <label>
+                                        <p class="text-center">Transport type</p>
+                                        <label class="text-center">
                                             <input type="radio" class="form-check-input"
                                                    name="transport_type"
                                                    value="open">
                                             Open
                                         </label>
-                                        <label>
+                                        <label class="text-center">
                                             <input type="radio" class="form-check-input"
                                                    name="transport_type"
                                                    value="closed">
@@ -207,7 +207,6 @@
                                     </p>
                                 </div>
                                 <div class="row mb-2" style="position: relative">
-
                                     <div class="d-flex justify-content-center">
                                         <select style="width: 200px"
                                                 id="make"
@@ -269,7 +268,7 @@
                                         Please select Time
                                     </p>
                                 </div>
-                                <div class="d-flex justify-content-center gap-4">
+                                <div style="margin-left:22px " class="d-flex justify-content-center gap-4">
                                     <button id="car_details_prev" type="button" class="pbmit-btn  text-center"
                                             style="z-index: 0;padding-right: 30px;min-width:150px">
                                         <span>previous</span>

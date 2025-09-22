@@ -104,6 +104,17 @@ class Quotationb2bController extends Controller
     public function storeB2bquotation(Request $request)
     {
 
+        if (config('milestone.CLOUDFLARE_CAPTCHA') == true) {
+            $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => config('milestone.CLOUDFLARE_SECRET_KEY'),
+                'response' => $request->input('cf-turnstile-response'),
+            ]);
+
+            if (! $response->json('success')) {
+                return back()->withErrors(['captcha' => 'Captcha failed. Try again.']);
+            }
+        }
+
         $request->validate([
 //            'turnstile'=>'required|string',
             'start' => 'required|array|min:1',

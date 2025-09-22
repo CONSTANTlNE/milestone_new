@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\NewCarrierDispatcherEmail;
 use App\Models\CarrierDispatcher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -14,6 +15,16 @@ class CarrierDispatcherController extends Controller
 {
     public function store(Request $request)
     {
+        if (config('milestone.CLOUDFLARE_CAPTCHA') == true) {
+            $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => config('milestone.CLOUDFLARE_SECRET_KEY'),
+                'response' => $request->input('cf-turnstile-response'),
+            ]);
+
+            if (! $response->json('success')) {
+                return back()->withErrors(['captcha' => 'Captcha failed. Try again.']);
+            }
+        }
         // Validate the request
         $validator = Validator::make($request->all(), [
             'mc_number' => 'required|string|max:20',

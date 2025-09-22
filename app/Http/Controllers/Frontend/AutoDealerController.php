@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AutoDealer;
 use App\Models\Page;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,6 +20,16 @@ class AutoDealerController extends Controller
 
     public function store(Request $request)
     {
+        if (config('milestone.CLOUDFLARE_CAPTCHA') == true) {
+            $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+                'secret' => config('milestone.CLOUDFLARE_SECRET_KEY'),
+                'response' => $request->input('cf-turnstile-response'),
+            ]);
+
+            if (! $response->json('success')) {
+                return back()->withErrors(['captcha' => 'Captcha failed. Try again.']);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'legal_business_name' => 'required|string|max:255',
             'dba' => 'nullable|string|max:255',
