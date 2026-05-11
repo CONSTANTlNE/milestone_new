@@ -89,22 +89,22 @@
                                             <td>
                                                 <div class="flex flex-wrap gap-1">
                                                     @if($carrierDispatcher->w9_upload)
-                                                        <a href="{{ route('backend.carrier_dispatchers.download', [$carrierDispatcher->id, 'w9']) }}" class="ti-btn ti-btn-sm ti-btn-primary">
+                                                        <a href="{{ route('backend.carrierDispatchers.download', [$carrierDispatcher->id, 'w9']) }}" class="ti-btn ti-btn-sm ti-btn-primary">
                                                             W9
                                                         </a>
                                                     @endif
                                                     @if($carrierDispatcher->insurance_certificate)
-                                                        <a href="{{ route('backend.carrier_dispatchers.download', [$carrierDispatcher->id, 'insurance']) }}" class="ti-btn ti-btn-sm ti-btn-success">
+                                                        <a href="{{ route('backend.carrierDispatchers.download', [$carrierDispatcher->id, 'insurance']) }}" class="ti-btn ti-btn-sm ti-btn-success">
                                                             IN
                                                         </a>
                                                     @endif
                                                     @if($carrierDispatcher->presentation_file)
-                                                        <a href="{{ route('backend.carrier_dispatchers.download', [$carrierDispatcher->id, 'presentation']) }}" class="ti-btn ti-btn-sm ti-btn-warning">
+                                                        <a href="{{ route('backend.carrierDispatchers.download', [$carrierDispatcher->id, 'presentation']) }}" class="ti-btn ti-btn-sm ti-btn-warning">
                                                            PR
                                                         </a>
                                                     @endif
                                                     @if($carrierDispatcher->vehicle_list_file)
-                                                        <a href="{{ route('backend.carrier_dispatchers.download', [$carrierDispatcher->id, 'vehicle_list']) }}" class="ti-btn ti-btn-sm ti-btn-info">
+                                                        <a href="{{ route('backend.carrierDispatchers.download', [$carrierDispatcher->id, 'vehicle_list']) }}" class="ti-btn ti-btn-sm ti-btn-info">
                                                            VL
                                                         </a>
                                                     @endif

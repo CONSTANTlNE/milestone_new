@@ -20,7 +20,7 @@ class TwilioService
     public function otpConfirm($request){
 
         if (env('LOCAL_TEST')) {
-            $number = '+995551507697';
+            $number =env('LOCAL_TEST_NUMBER');
         } else {
             $number = $request->phone_hidden;
         }

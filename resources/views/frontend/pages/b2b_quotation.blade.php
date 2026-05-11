@@ -1,811 +1,694 @@
-@extends('frontend.layouts.master')
+@extends('frontend.layouts.master', ['class' => 'header-style-2'])
 @section('title') {{ $page->title }} - @endsection
 @section('seo')
     @include('components.frontend.socials.seo', ['data' => $page])
 @endsection
 @push('css')
-    <style>
-        .custom-input {
-            font-size: 0.85rem; /* Smaller text */
-            padding: 0.25rem 0.5rem; /* Compact padding */
-            border: 1px solid #ccc; /* Light gray border */
-            border-radius: 4px; /* Slight rounding */
-            outline: none; /* Remove focus outline */
-            width: auto; /* Shrink to content if needed */
-        }
-
-        .custom-input:focus {
-            border-color: #0056b3;
-            box-shadow: 0 0 5px rgba(0, 91, 187, 0.5);
-        }
-
-        .custom-input::placeholder {
-            color: #999;
-            font-style: italic;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/css/b2b_quotation.css') }}">
 @endpush
-@section('header_background')
-    <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($page->src ?: config('filemanager.default_backend_image'))}});">
+@section('content')
+    <section  id="b2b_quotation" class="section-md b2b_quotation">
         <div class="container">
-            <div class="pbmit-title-bar-content">
-                <div class="pbmit-title-bar-content-inner">
-                    <div class="pbmit-tbar">
-                        <div class="pbmit-tbar-inner container">
-                            <h1 class="pbmit-tbar-title">{{$page->title}}</h1>
+            <div class="row">
+                <div class="col-lg-12 col-xl-12">
+                    <div class="pbmit-heading-subheading b2b_quotation-header animation-style2">
+                        <h2 class="pbmit-title">{{$page->title}}</h2>
+                        <div class="pbmit-heading-desc">
+                            {{$page->slogan}}
                         </div>
-                    </div>
-                    <div class="pbmit-breadcrumb">
-                        <div class="pbmit-breadcrumb-inner">
-								<span>
-									<a title="" href="#" class="home"><span>{{__('page')}}</span></a>
-								</span>
-                            <span class="sep">
-									<i class="pbmit-base-icon-angle-right"></i>
-								</span>
-                            <span><span class="post-root post post-post current-item"> {{$page->title}}</span></span>
-                        </div>
+                        <p>{{ clear_content($page->content)}}</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-@endsection
-
-@section('content')
-    <!-- Services Start -->
-    <section class="section-lg b2b_quotation">
-        <div class="container">
-            <div class="pbmit-element-posts-wrapper row">
-                @if($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-                <div id="turnstile_success">
-                    <div id="cars_table" class="container contact-form-rightbox pbmit-bg-color-white p-3">
-                        <div class="table-responsive pt-3">
-                            <form action="{{route('frontend.b2b.quotation.store')}}" method="post">
-                                @csrf
-                                @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
-                                    <div
-                                        class="cf-turnstile"
-                                        data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
-                                        data-callback="javascriptCallback"
-                                    ></div>
-                                @endif
-                                <input type="hidden" name="turnstile" id="turnstile_hidden" />
-                                <table class="table table-bordered table-striped table-hover table-sm">
-                                    <thead class="thead-dark">
-                                    <tr>
-                                        <th class="text-center">#</th>
-                                        <th class="text-center">Start</th>
-                                        <th class="text-center">Destination</th>
-                                        <th class="text-center">Vehicle</th>
-                                        <th class="text-center">Transport type</th>
-                                        <th class="text-center">Operable</th>
-                                        <th class="text-center">Vehicle Amount</th>
-                                        <th class="text-center">Action</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id="cars_table_body">
-
-                                    </tbody>
-                                </table>
-                                <input type="hidden" name="phone_business" id="phone_hidden_business"/>
-
-                                <div class="d-flex justify-content-center p-0">
-                                    <button id="submit_business_quotation"
-                                            type="submit"
-                                            class="pbmit-btn  text-center"
-                                            style="z-index: 0;padding-right: 30px;min-width:150px;display:none">
-                                        <span>Add Vehicle</span>
-                                    </button>
-                                </div>
-
-                                <div class="d-flex flex-column justify-content-center align-items-center"
-                                     style="display:none">
-                                    <div class="d-flex justify-content-center">
-                                        <input type="email" id="email" name="email" class="form-control text-center"
-                                               placeholder="Email" required="" autocomplete="off">
-                                    </div>
-                                    <div class="d-flex flex-column justify-content-center align-items-center"
-                                         id="business_otp_target" style="display:none">
-
-
-                                        <div class="d-flex justify-content-center p-0">
-                                            <input style="max-width: 300px;margin-bottom: 10px" type="text"
-                                                   class="form-control text-center"
-                                                   placeholder="Phone" required="" id="phone_input_business"
-                                                   autocomplete="off">
-                                        </div>
-                                        <p class="text-center" style="color:red;display: none"
-                                           id="phone_error_business">
-                                            Phone number must be 10 digits
-                                        </p>
-                                        <button type="button" class="pbmit-btn  text-center"
-                                                hx-post="{{route('frontend.send.otp.business')}}"
-                                                hx-vals='{"_token": "{{ csrf_token() }}"}'
-                                                hx-include="[name='phone_business']"
-                                                hx-target="#business_otp_target"
-                                                hx-indicator="#loading"
-                                                disabled
-                                                id="send_code_button_business"
-                                                style="z-index: 0;padding-right: 30px;max-width:150px">
-                                            <span>Send Code</span>
-                                        </button>
-                                        <p id="captcha-error-business" style="color: red;" class="text-center"></p>
-                                    </div>
-                                </div>
-                            </form>
+            <div class="row">
+                <div class="pbmit-element-posts-wrapper row">
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
-                    </div>
+                    @endif
+                </div>
+            </div>
 
-                    <div class="container mt-3">
-                        <div id="required_fields" style="display: none" class="alert alert-danger py-2 my-2 text-center"
-                             role="alert"></div>
-                        <div class="row g-0 justify-content-center">
-                            <div>
-                                <div
-                                    class="contact-form-rightbox pbmit-bg-color-white"
-                                    style="padding-left: 10px;padding-right: 10px">
-                                    <div class="contact-form">
-                                        <div style="gap: 50px" id="add_vehicles"
-                                             class="d-flex flex-column flex-sm-row justify-content-center">
-                                            {{--   start and destination --}}
-                                            <div style="display: block;">
-                                                <p class="text-center">Please enter ZIP or City*</p>
-                                                <div class="row mb-4" style="position: relative;margin-top:30px">
-                                                    <div class="col-md-12">
-                                                        <input type="hidden" id="start_id_business">
-                                                        <input type="text" id="start" class="custom-input text-center"
-                                                               placeholder="Transport Car From"
-                                                               style="width: 100%"
-                                                               required=""
-                                                               autocomplete="off">
-                                                    </div>
-                                                    <ul id="suggestions3" class="list-group col-md-12"></ul>
-                                                    <p id="suggestions_error3" style="color:red;display: none"
-                                                       class="text-center">
-                                                        Please choose from selection
-                                                    </p>
-                                                </div>
-                                                <div class="row  mb-5" style="position: relative">
-                                                    <div class="col-md-12">
-                                                        <input type="hidden" id="destination_id_business">
-                                                        <input type="text"
-                                                               id="destination_business"
-                                                               class="custom-input text-center"
-                                                               style="width: 100%"
-                                                               placeholder="Transport Car to"
-                                                               required=""
-                                                               autocomplete="off">
-                                                    </div>
-                                                    <ul id="suggestions4" class="list-group col-md-12"></ul>
-                                                    <p id="suggestions_error4" style="color:red;display: none"
-                                                       class="text-center">Please
-                                                        choose from selection</p>
-                                                </div>
-                                                <div class="row" style="position: relative">
-                                                    <div style="gap: 20px"
-                                                         class="d-flex flex-column flex-sm-row justify-content-center">
-                                                        <p class="text-center mb-0">Transport type</p>
-                                                        <div class="d-flex justify-content-center" style="gap: 20px">
-                                                            <label>
-                                                                <input type="radio" class="form-check-input"
-                                                                       name="transport_type"
-                                                                       value="open">
-                                                                Open
-                                                            </label>
-                                                            <label>
-                                                                <input type="radio" class="form-check-input"
-                                                                       name="transport_type"
-                                                                       value="closed">
-                                                                Enclosed
-                                                            </label>
-                                                        </div>
-                                                    </div>
+            <div class="iq-container row">
+                <form action="{{ route('frontend.b2b.quotation.store') }}" method="post" id="b2b_form">
+                    @csrf
+
+                    <input type="hidden" name="phone_business" id="phone_hidden_business">
+                    <input type="hidden" name="phone" id="phone_hidden_b2b_otp">
+
+                    @if($errors->any())
+                        <div class="iqb-error-box" style="display:block">
+                            @foreach($errors->all() as $error)
+                                <p style="margin:0 0 4px">{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <div class="iq-layout">
+
+                        {{-- ===== LEFT: Form Card ===== --}}
+                        <div class="iq-form-card" id="iq_main_form_card">
+
+                            {{-- Contact wrap (steps 1 & 2) --}}
+                            <div id="iqb_contact_wrap">
+                                <div class="iq-step-head">
+                                    <h2 id="b2b_step_head_title">Contact Information</h2>
+                                    <p id="b2b_step_head_desc">Enter your business contact details</p>
+                                </div>
+
+                                <div class="iq-fields-group" id="iqb_email_group">
+                                    <div class="iq-field">
+                                        <label for="email_b2b">Email Address</label>
+                                        <input type="email" id="email_b2b" name="email" class="iq-input"
+                                               placeholder="Enter email address" required autocomplete="off">
+                                    </div>
+                                </div>
+
+                                {{-- HTMX target: Phone → OTP form → Verified state --}}
+                                <div id="business_otp_target">
+                                    <div class="iq-fields-group">
+                                        <div class="iq-field">
+                                            <label for="phone_input_business">Phone</label>
+                                            <input type="text" id="phone_input_business" class="iq-input"
+                                                   placeholder="Enter phone number" autocomplete="off">
+                                            <p class="iq-error" id="phone_error_business">Phone number must be 10 digits</p>
+                                        </div>
+                                    </div>
+
+                                    <p class="iq-htmx-error" id="captcha-error-business" style="margin-bottom: 12px"></p>
+
+                                    <div style="position:relative">
+                                        <button type="button" class="iq-btn-primary" disabled id="send_code_button_business"
+                                                hx-post="{{ route('frontend.send.otp.business') }}"
+                                                hx-vals='{"_token": "{{ csrf_token() }}"}'
+                                                hx-include="[name='phone']"
+                                                hx-target="#business_otp_target"
+                                                hx-indicator="#loading-business">
+                                            Send Code
+                                        </button>
+                                        <svg id="loading-business" class="htmx-indicator"
+                                             xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24">
+                                            <path fill="#105dbf" d="M12,23a9.63,9.63,0,0,1-8-9.5,9.51,9.51,0,0,1,6.79-9.1A1.66,1.66,0,0,0,12,2.81h0a1.67,1.67,0,0,0-1.94-1.64A11,11,0,0,0,12,23Z">
+                                                <animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/>
+                                            </path>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- END contact wrap --}}
+
+                            {{-- ===== Step 3: Vehicle section (hidden until OTP confirmed) ===== --}}
+                            <div id="vehicle_section_b2b" style="display:none">
+
+                                {{-- Two-column grid: Transport Route + Vehicle Details --}}
+                                <div class="iqb-form-grid">
+
+                                    {{-- Transport Route --}}
+                                    <div class="iqb-form-card">
+                                        <div class="iq-step-head">
+                                            <h2>Transport Route</h2>
+                                            <p>Please enter ZIP or City</p>
+                                        </div>
+
+                                        <div class="iq-fields-group">
+                                            <div class="iq-field">
+                                                <label for="start">Pickup Location</label>
+                                                <div class="iq-input-wrap" style="position:relative">
+                                                    <input type="hidden" id="start_id_business">
+                                                    <input type="text" id="start" class="iq-input"
+                                                           placeholder="City or ZIP" autocomplete="off">
+                                                    <ul id="suggestions3" class="iq-suggestions"></ul>
+                                                    <p class="iq-error" id="suggestions_error3">Please choose from selection</p>
                                                 </div>
                                             </div>
-                                            {{--  Car Detaisl --}}
-                                            <div style="display: block">
-                                                <p class="text-center">Please fill vehicle details *</p>
-                                                <div class="row mb-2" style="position: relative">
-                                                    <div class="d-flex justify-content-center">
-                                                        <select style="width: 200px" autocomplete="off" id="year2">
-                                                            <option value="">Select Year</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-2" style="position: relative">
-                                                    <div class="d-flex justify-content-center">
-                                                        <select style="width: 200px"
-                                                                id="make2"
-                                                                name="make_id"
-                                                                hx-get="{{route('frontend.htmx.car_models')}}"
-                                                                hx-trigger="change"
-                                                                hx-target="#modeltarget2"
-                                                                autocomplete="off">
-                                                            <option value="">Select Manufacturer</option>
-                                                            @foreach($cars as $make)
-                                                                <option value="{{$make->id}}">{{$make->name}}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row " style="position: relative;">
-                                                    <div class="d-flex justify-content-center " id="modeltarget2">
-                                                        <select style="width: 200px" autocomplete="off" id="model3"
-                                                                name="model">
-                                                            <option value="">Select Model</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="row" style="position: relative">
-                                                    <div style="gap: 20px" class="d-flex justify-content-center mt-3">
-                                                        <p class="mb-0">Is it operable?</p>
-                                                        <label>
-                                                            <input type="radio" class="form-check-input" name="operable"
-                                                                   value="yes">
-                                                            Yes
-                                                        </label>
-                                                        <label>
-                                                            <input type="radio" class="form-check-input" name="operable"
-                                                                   value="no">
-                                                            No
-                                                        </label>
-                                                    </div>
+
+                                            <div class="iq-swap-divider">
+                                                <div class="iq-swap-line"></div>
+                                                <button type="button" class="iq-swap-btn" aria-hidden="true" tabindex="-1" style="cursor:default">
+                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M12 5v14M12 19l-4-4M12 19l4-4" stroke="#4f6282" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                    </svg>
+                                                </button>
+                                                <div class="iq-swap-line"></div>
+                                            </div>
+
+                                            <div class="iq-field">
+                                                <label for="destination_business">Delivery Location</label>
+                                                <div class="iq-input-wrap" style="position:relative">
+                                                    <input type="hidden" id="destination_id_business">
+                                                    <input type="text" id="destination_business" class="iq-input"
+                                                           placeholder="City or ZIP" autocomplete="off">
+                                                    <ul id="suggestions4" class="iq-suggestions"></ul>
+                                                    <p class="iq-error" id="suggestions_error4">Please choose from selection</p>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="d-flex justify-content-center gap-4 mt-5">
-                                            <button id="add_car" type="button" class="pbmit-btn  text-center"
-                                                    style="z-index: 0;padding-right: 30px;min-width:150px">
-                                                <span>Add Vehicle</span>
-                                            </button>
+                                    {{-- Vehicle Details --}}
+                                    <div class="iqb-form-card">
+                                        <div class="iq-step-head">
+                                            <h2>Vehicle Details</h2>
+                                            <p>Please fill vehicle details</p>
                                         </div>
-                                        <div class="col-md-12 col-lg-12 message-status"></div>
+
+                                        <div class="iq-fields-group">
+                                            <div class="iq-field">
+                                                <label for="year2">Year</label>
+                                                <select id="year2" class="iq-select" autocomplete="off">
+                                                    <option value="">Select Year</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="iq-field">
+                                                <label for="make2">Manufacturer</label>
+                                                <select id="make2" name="make_id" class="iq-select"
+                                                        hx-get="{{ route('frontend.htmx.car_models') }}"
+                                                        hx-trigger="change"
+                                                        hx-target="#modeltarget2"
+                                                        autocomplete="off">
+                                                    <option value="">Select Manufacturer</option>
+                                                    @foreach($cars as $make)
+                                                        <option value="{{ $make->id }}">{{ $make->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <div class="iq-field">
+                                                <label for="model3">Model</label>
+                                                <div id="modeltarget2">
+                                                    <select id="model3" class="iq-select" autocomplete="off" name="model">
+                                                        <option value="">Select Model</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                {{-- END form grid --}}
+
+                                {{-- Inline controls: Transport Type + Operable + Add Vehicle --}}
+                                <p class="iq-htmx-error" id="required_fields" style="margin-bottom:8px"></p>
+                                <div class="iqb-inline-controls">
+                                    <div class="iqb-inline-left">
+                                        <div class="iqb-inline-group">
+                                            <span class="iqb-inline-label">Transport type</span>
+                                            <div class="iq-toggle">
+                                                <label class="iq-toggle-btn" id="b2b_toggle_open">
+                                                    <input type="radio" name="transport_type" value="open"> Open
+                                                </label>
+                                                <label class="iq-toggle-btn" id="b2b_toggle_closed">
+                                                    <input type="radio" name="transport_type" value="closed"> Enclosed
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="iqb-inline-divider"></div>
+                                        <div class="iqb-inline-group">
+                                            <span class="iqb-inline-label">Is it operable?</span>
+                                            <div class="iq-radio-group">
+                                                <label class="iq-radio-label">
+                                                    <input type="radio" name="operable" value="yes"> Yes
+                                                </label>
+                                                <label class="iq-radio-label">
+                                                    <input type="radio" name="operable" value="no"> No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="iqb-inline-right">
+                                        <button type="button" id="add_car" class="iqb-btn-ghost">Add Vehicle</button>
+                                    </div>
+                                </div>
+
+                                {{-- Vehicles table (shown when rows exist) --}}
+                                <div id="cars_table" style="display:none">
+                                    <div class="iqb-table-wrap">
+                                        <table class="iqb-table">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Pickup</th>
+                                                <th>Delivery</th>
+                                                <th>Vehicle</th>
+                                                <th>Transport Type</th>
+                                                <th>Operable</th>
+                                                <th>Vehicle Amount</th>
+                                                <th>Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="cars_table_body"></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="iqb-table-footer">
+                                        <button type="submit" class="iq-btn-primary iqb-submit-btn">Send Quotation Request</button>
                                     </div>
                                 </div>
 
                             </div>
+                            {{-- END vehicle_section_b2b --}}
+
                         </div>
-                    </div>
+                        {{-- END LEFT --}}
 
+                        {{-- ===== RIGHT: Progress Panel ===== --}}
+                        <div class="iq-progress-panel" id="b2b_progress_panel">
+                            <h3>Progress</h3>
+                            <p>Available after verification</p>
 
-                </div>
+                            <div class="iq-progress-steps">
+                                <div class="iq-progress-item">
+                                    <div class="iq-progress-indicator is-current" id="b2b_step1_ind">
+                                        <div class="iq-progress-circle">1</div>
+                                    </div>
+                                    <div class="iq-progress-item-text">
+                                        <p class="iq-progress-item-title">Contact Information</p>
+                                        <p class="iq-progress-item-desc">Provide your email and phone number</p>
+                                    </div>
+                                </div>
+                                <div class="iq-progress-connector"></div>
+
+                                <div class="iq-progress-item">
+                                    <div class="iq-progress-indicator" id="b2b_step2_ind">
+                                        <div class="iq-progress-circle">2</div>
+                                    </div>
+                                    <div class="iq-progress-item-text">
+                                        <p class="iq-progress-item-title">Verification</p>
+                                        <p class="iq-progress-item-desc">Confirm your identity with a code</p>
+                                    </div>
+                                </div>
+                                <div class="iq-progress-connector"></div>
+
+                                <div class="iq-progress-item">
+                                    <div class="iq-progress-indicator" id="b2b_step3_ind">
+                                        <div class="iq-progress-circle">3</div>
+                                    </div>
+                                    <div class="iq-progress-item-text">
+                                        <p class="iq-progress-item-title">Quote Request</p>
+                                        <p class="iq-progress-item-desc">Add vehicles and submit your request</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Contact + vehicle summary (shown in step 3) --}}
+                            <div id="b2b_progress_extras" style="display:none">
+                                <div class="iqb-progress-divider"></div>
+                                <div class="iqb-progress-contact">
+                                    <p class="iqb-progress-contact-title">Contact</p>
+                                    <p id="b2b_progress_phone" class="iqb-progress-contact-value"></p>
+                                    <p id="b2b_progress_email" class="iqb-progress-contact-value"></p>
+                                </div>
+                                <div class="iqb-progress-divider"></div>
+                                <div class="iqb-progress-vehicle-row">
+                                    <span class="iqb-progress-vehicle-label">Vehicle Amount</span>
+                                    <span id="b2b_vehicle_count" class="iqb-count-badge">0</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>{{-- END .iq-layout --}}
+                </form>
             </div>
         </div>
     </section>
 
+    {{-- Success modal --}}
+    @if(session('success'))
+        <div id="iq-success-modal" class="iq-modal-overlay">
+            <div class="iq-modal">
+                <div class="iq-modal-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 13l4 4L19 7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="iq-modal-body">
+                    <h3>Request Sent Successfully</h3>
+                    <p>Your business quotation request has been submitted. Our team will review it and get back to you shortly.</p>
+                </div>
+                <button class="iq-btn-secondary iq-modal-done" onclick="window.location.reload()">Done</button>
+            </div>
+        </div>
+    @endif
+@endsection
+@section('scripts')
 
-    <div id="turnstile-business"></div>
-    {{--        <div--}}
-    {{--            class="cf-turnstile"--}}
-    {{--            data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"--}}
-    {{--            data-callback="javascriptCallback"--}}
-    {{--        ></div>--}}
-    <!-- Services end -->
+    <script>
+        (function () {
 
+            /* ---- Progress update ---- */
+            window.updateB2bProgress = function (step, completed) {
+                var indicators = [
+                    document.getElementById('b2b_step1_ind'),
+                    document.getElementById('b2b_step2_ind'),
+                    document.getElementById('b2b_step3_ind'),
+                ];
+                var checkSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 13l4 4L19 7" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+                indicators.forEach(function (ind, i) {
+                    if (!ind) return;
+                    var circle = ind.querySelector('.iq-progress-circle');
+                    ind.classList.remove('is-active', 'is-current');
+                    if (circle) { circle.style.background = ''; circle.style.color = ''; circle.innerHTML = String(i + 1); }
+                    var stepNum = i + 1;
+                    if (stepNum < step) {
+                        ind.classList.add('is-active');
+                        if (circle) { circle.style.background = '#003285'; circle.style.color = '#fff'; circle.innerHTML = checkSvg; }
+                    } else if (stepNum === step) {
+                        ind.classList.add(completed ? 'is-active' : 'is-current');
+                        if (completed && circle) { circle.style.background = '#003285'; circle.style.color = '#fff'; }
+                    }
+                });
+            };
 
-    <div class="b2b_scripts">
-        {{--From Address--}}
-        <script>
-            const startYear2 = 1950;
-            const currentYear2 = new Date().getFullYear();
-            const select2 = document.getElementById('year2');
-
-
-            for (let year2 = currentYear2; year2 >= startYear2; year2--) {
-                const option2 = document.createElement('option');
-                option2.value = year2;
-                option2.text = year2;
-                select2.appendChild(option2);
+            /* ---- Year select population ---- */
+            var yearSelect = document.getElementById('year2');
+            if (yearSelect) {
+                var currentYear = new Date().getFullYear();
+                for (var y = currentYear; y >= 1950; y--) {
+                    var opt = document.createElement('option');
+                    opt.value = y; opt.text = y;
+                    yearSelect.appendChild(opt);
+                }
             }
 
-            document.addEventListener('DOMContentLoaded', () => {
-                new TomSelect("#year2", {
-                    create: false,
-                    sortField: {
-                        field: "text",
-                        direction: "desc"
-                    }
-                });
-
-                new TomSelect("#make2", {
-                    create: true,
-                    sortField: {
-                        field: "text",
-                        direction: "asc"
-                    }
-                });
-
-
-                new TomSelect("#model3", {
-                    create: true,
-                    sortField: {
-                        field: "text",
-                        direction: "asc"
-                    }
-                });
-            });
-
-            // reinitilize tom select after successful request for car models
-            document.addEventListener('htmx:afterSettle', function (event) {
-
-                let initiator = event.detail.elt;
-                const xhr = event.detail.xhr;
-                // console.log(xhr.status)
-
-                if (xhr.status === 200) {
-                    if (initiator.id === 'modeltarget2') {
-                        new TomSelect("#model", {
-                            create: true,
-                            sortField: {
-                                field: "text",
-                                direction: "asc"
-                            }
-                        });
-                    }
-                }
-            });
-
-
-        </script>
-
-        {{--  Google Places Api--}}
-        <script>
-            // google place suggestions for START address
-            let debounceTimer3;
-            document.getElementById('start').addEventListener('input', function () {
-                clearTimeout(debounceTimer3); // Clear previous timer
-
-                let query2 = this.value.trim(); // Use trimmed input
-
-                let suggestionList2 = document.getElementById('suggestions3');
-
-                if (query2.length < 2) {
-                    suggestionList2.innerHTML = '';
-                    suggestionList2.style.border = 'none';
-                    return
-                }
-
-
-                // If input is too short, clear suggestions and return early
-                if (query2.length < 3) {
-                    suggestionList2.innerHTML = '';
-                    suggestionList2.style.border = 'none';
-                    return;
-                }
-
-                debounceTimer3 = setTimeout(() => {
-                    fetch('/placesautocomplete', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': "{{csrf_token()}}",
-                        },
-                        body: JSON.stringify({address: query2})
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log(data)
-                            let suggestions3 = [];
-                            const suggestions_error3 = document.getElementById('suggestions_error3');
-
-                            // Handle both formats of returned data
-                            if (data && typeof data === 'object' && !Array.isArray(data) && Array.isArray(data.suggestions)) {
-                                suggestions3 = data.suggestions;
-                            } else if (Array.isArray(data)) {
-                                suggestions3 = data;
-                            }
-
-                            // Clear previous suggestions
-                            suggestionList2.innerHTML = '';
-
-                            if (suggestions3.length > 0) {
-                                suggestions3.forEach(item => {
-                                    const prediction3 = item.placePrediction;
-                                    const description3 = prediction3.text?.text || '';
-                                    const placeId3 = prediction3.placeId;
-
-                                    let li = document.createElement('li');
-                                    li.textContent = description3;
-                                    li.classList.add('list-group-item');
-                                    li.onclick = () => {
-                                        document.getElementById('start').value = description3;
-                                        document.getElementById('start_id_business').value = placeId3;
-                                        suggestionList2.innerHTML = '';
-                                        suggestionList2.style.border = 'none';
-                                        suggestions_error3.style.display = 'none';
-                                    };
-
-                                    suggestionList2.appendChild(li);
-                                });
-
-                                suggestionList2.style.border = '1px solid #ccc';
-                            } else {
-                                suggestions_error3.style.display = 'block';
-                                suggestionList2.style.border = 'none';
-                            }
-                        });
-                }, 100);
-            });
-
-
-            {{--google place suggestions for DESTINATION address --}}
-            let debounceTimer4;
-            document.getElementById('destination_business').addEventListener('input', function () {
-                clearTimeout(debounceTimer4);
-
-                let query = this.value.trim(); // Clean whitespace
-                let suggestionList4 = document.getElementById('suggestions4');
-
-                if (query.length < 3) {
-                    suggestionList4.innerHTML = '';
-                    suggestionList4.style.border = 'none';
-                    return;
-                }
-
-                debounceTimer4 = setTimeout(() => {
-                    fetch('/placesautocomplete', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': "{{csrf_token()}}",
-                        },
-                        body: JSON.stringify({address: query})
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            let suggestions4 = [];
-
-                            if (data && typeof data === 'object' && !Array.isArray(data) && Array.isArray(data.suggestions)) {
-                                suggestions4 = data.suggestions;
-                            } else if (Array.isArray(data)) {
-                                suggestions4 = data;
-                            }
-
-                            const suggestions_error4 = document.getElementById('suggestions_error4');
-
-                            // Clear previous suggestions
-                            suggestionList4.innerHTML = '';
-
-                            if (suggestions4.length > 0) {
-                                suggestions4.forEach(item => {
-                                    const prediction = item.placePrediction;
-                                    const description = prediction.text?.text || '';
-                                    const placeId = prediction.placeId;
-
-                                    let li = document.createElement('li');
-                                    li.textContent = description;
-                                    li.classList.add('list-group-item');
-                                    li.onclick = () => {
-                                        document.getElementById('destination_business').value = description;
-                                        document.getElementById('destination_id_business').value = placeId;
-                                        suggestionList4.innerHTML = '';
-                                        suggestionList4.style.border = 'none';
-                                        suggestions_error4.style.display = 'none';
-                                    };
-
-                                    suggestionList4.appendChild(li);
-                                });
-
-                                suggestionList4.style.border = '1px solid #ccc';
-                            } else {
-                                suggestions_error4.style.display = 'block';
-                                suggestionList4.style.border = 'none';
-                            }
-                        });
-                }, 100);
-
-            });
-        </script>
-
-        <script>
-            // Phone number validation
-            function initPhoneInputHandlersBiz() {
-                const phone_input_business = document.getElementById('phone_input_business');
-                const phoneHidden_business = document.getElementById('phone_hidden_business');
-                const sendBtn_business = document.getElementById('send_code_button_business');
-
-                if (phone_input_business) {
-                    phone_input_business.addEventListener('input', function (e) {
-                        let digits = e.target.value.replace(/\D/g, '').substring(0, 10);
-                        sendBtn_business.disabled = true;
-                        let formatted = '';
-                        if (digits.length < 4) {
-                            formatted = '(' + digits;
-                        } else if (digits.length < 7) {
-                            formatted = '(' + digits.substring(0, 3) + ') ' + digits.substring(3);
-                        } else {
-                            formatted = '(' + digits.substring(0, 3) + ') ' + digits.substring(3, 6) + '-' + digits.substring(6);
-                        }
-
-                        e.target.value = formatted;
-
-                        const phone_error = document.getElementById('phone_error_business')
-                        // Always update hidden input as E.164 (+1XXXXXXXXXX)
-                        if (digits.length === 10) {
-                            sendBtn_business.disabled = false;
-                            phoneHidden_business.value = '+1' + digits;
-                            phone_error.style.display = 'none'
-
-                        } else {
-                            phoneHidden_business.value = '';
-                            phone_error.style.display = 'block'
-                        }
-                    });
-                }
-
-            }
-
-            // Run on initial load
-            initPhoneInputHandlersBiz();
-
-            // Add Vehicle -> append a row into cars_table_body from current inputs
+            /* ---- TomSelect init ---- */
             document.addEventListener('DOMContentLoaded', function () {
-                const addBtn = document.getElementById('add_car');
-                const tbody = document.getElementById('cars_table_body');
-                const validationBox = document.getElementById('required_fields');
-                const otpTarget = document.getElementById('business_otp_target');
+                if (document.getElementById('year2')) {
+                    new TomSelect('#year2', { create: false, sortField: { field: 'text', direction: 'desc' } });
+                }
+                if (document.getElementById('make2')) {
+                    new TomSelect('#make2', { create: true, sortField: { field: 'text', direction: 'asc' } });
+                }
+                if (document.getElementById('model3')) {
+                    new TomSelect('#model3', { create: true, sortField: { field: 'text', direction: 'asc' } });
+                }
+            });
 
-                // Clears all inputs and selects within #add_vehicles
-                function clearVehicleInputs() {
-                    const container = document.getElementById('add_vehicles');
-                    if (!container) return;
+            /* ---- Re-init TomSelect after HTMX settles (model select) ---- */
+            document.addEventListener('htmx:afterSettle', function (event) {
+                var initiator = event.detail.elt;
+                if (initiator && initiator.id === 'modeltarget2') {
+                    new TomSelect('#model3', { create: true, sortField: { field: 'text', direction: 'asc' } });
+                }
+            });
 
-                    // Clear text/number/email/tel/hidden inputs and textareas
-                    container.querySelectorAll('input[type="text"], input[type="number"], input[type="email"], input[type="tel"], input[type="hidden"], textarea').forEach(el => {
-                        el.value = '';
-                    });
+            /* ---- Transport type / operable toggle ---- */
+            document.addEventListener('change', function (e) {
+                if (e.target.name === 'transport_type') {
+                    document.querySelectorAll('.iq-toggle-btn').forEach(function (btn) { btn.classList.remove('is-active'); });
+                    if (e.target.checked) e.target.closest('.iq-toggle-btn').classList.add('is-active');
+                }
+                if (e.target.name === 'operable') {
+                    var group = e.target.closest('.iq-radio-group');
+                    if (!group) return;
+                    group.querySelectorAll('.iq-radio-label').forEach(function (lbl) { lbl.classList.remove('is-active'); });
+                    if (e.target.checked) e.target.closest('.iq-radio-label').classList.add('is-active');
+                }
+            });
 
-                    // Uncheck radios and checkboxes
-                    container.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => {
-                        el.checked = false;
-                    });
+            /* ---- Phone input handler ---- */
+            window.initPhoneInputHandlersBiz = function () {
+                var phoneInput  = document.getElementById('phone_input_business');
+                var phoneHidden = document.getElementById('phone_hidden_business');
+                var phoneOtp    = document.getElementById('phone_hidden_b2b_otp');
+                var sendBtn     = document.getElementById('send_code_button_business');
+                var phoneError  = document.getElementById('phone_error_business');
+                if (!phoneInput) return;
 
-                    // Reset selects, including TomSelect instances
-                    container.querySelectorAll('select').forEach(sel => {
-                        const ts = sel.tomselect;
-                        if (ts && typeof ts.clear === 'function') {
-                            try { ts.clear(true); } catch (e) {}
-                        } else {
-                            sel.selectedIndex = 0;
-                            sel.value = '';
-                            try { sel.dispatchEvent(new Event('change')); } catch (e) {}
-                        }
-                    });
-
-                    // If htmx replaced model select (#model), clear it as well
-                    const modelTarget2 = document.getElementById('modeltarget2');
-                    if (modelTarget2) {
-                        const modelSel = modelTarget2.querySelector('select#model');
-                        if (modelSel) {
-                            const mts = modelSel.tomselect;
-                            if (mts && typeof mts.clear === 'function') {
-                                try { mts.clear(true); } catch (e) {}
-                            } else {
-                                modelSel.selectedIndex = 0;
-                                modelSel.value = '';
-                            }
-                        }
+                phoneInput.addEventListener('input', function (e) {
+                    var digits = e.target.value.replace(/\D/g, '').substring(0, 10);
+                    var formatted = '';
+                    if (digits.length < 4)      formatted = '(' + digits;
+                    else if (digits.length < 7) formatted = '(' + digits.substring(0, 3) + ') ' + digits.substring(3);
+                    else                        formatted = '(' + digits.substring(0, 3) + ') ' + digits.substring(3, 6) + '-' + digits.substring(6);
+                    e.target.value = formatted;
+                    if (digits.length === 10) {
+                        var e164 = '+1' + digits;
+                        if (phoneHidden) phoneHidden.value = e164;
+                        if (phoneOtp)    phoneOtp.value    = e164;
+                        if (sendBtn)     sendBtn.disabled  = false;
+                        if (phoneError)  phoneError.style.display = 'none';
+                    } else {
+                        if (phoneHidden) phoneHidden.value = '';
+                        if (phoneOtp)    phoneOtp.value    = '';
+                        if (sendBtn)     sendBtn.disabled  = true;
+                        if (phoneError)  phoneError.style.display = 'block';
                     }
+                });
+            };
 
-                    // Clear suggestion lists and hide their error messages
-                    const list3 = document.getElementById('suggestions3');
-                    if (list3) { list3.innerHTML = ''; list3.style.border = 'none'; }
-                    const list4 = document.getElementById('suggestions4');
-                    if (list4) { list4.innerHTML = ''; list4.style.border = 'none'; }
-                    const err3 = document.getElementById('suggestions_error3');
-                    if (err3) err3.style.display = 'none';
-                    const err4 = document.getElementById('suggestions_error4');
-                    if (err4) err4.style.display = 'none';
+            window.initPhoneInputHandlersBiz();
+
+            /* ---- Show vehicle section (called after OTP confirmation) ---- */
+            window.showB2bVehicleSection = function () {
+                var contactWrap = document.getElementById('iqb_contact_wrap');
+                if (contactWrap) contactWrap.style.display = 'none';
+
+                var formCard = document.getElementById('iq_main_form_card');
+                if (formCard) formCard.classList.add('iqb-step3-card');
+
+                var section = document.getElementById('vehicle_section_b2b');
+                if (section) section.style.display = 'block';
+
+                var titleEl = document.getElementById('b2b_step_head_title');
+                var descEl  = document.getElementById('b2b_step_head_desc');
+                if (titleEl) titleEl.textContent = 'Quote Request';
+                if (descEl)  descEl.textContent  = 'Add vehicles and submit your request';
+
+                var phoneHidden   = document.getElementById('phone_hidden_business');
+                var emailInput    = document.getElementById('email_b2b');
+                var progressPhone = document.getElementById('b2b_progress_phone');
+                var progressEmail = document.getElementById('b2b_progress_email');
+                if (progressPhone && phoneHidden) progressPhone.textContent = phoneHidden.value;
+                if (progressEmail && emailInput)  progressEmail.textContent = emailInput.value;
+
+                var extras = document.getElementById('b2b_progress_extras');
+                if (extras) extras.style.display = 'block';
+
+                if (typeof htmx !== 'undefined') {
+                    htmx.process(document.getElementById('vehicle_section_b2b'));
                 }
+            };
 
-                function toggleOtpVisibility() {
-                    if (!otpTarget) return;
-                    const hasRows = tbody && tbody.querySelectorAll('tr').length > 0;
-                    otpTarget.style.display = hasRows ? 'flex' : 'none';
+            /* ---- Google Places autocomplete ---- */
+            function attachAutocomplete(inputId, suggestionListId, errorId, hiddenId) {
+                var input       = document.getElementById(inputId);
+                var list        = document.getElementById(suggestionListId);
+                var errorEl     = document.getElementById(errorId);
+                var hiddenInput = document.getElementById(hiddenId);
+                if (!input || !list) return;
+
+                var debounce;
+                input.addEventListener('input', function () {
+                    clearTimeout(debounce);
+                    var query = this.value.trim();
+                    if (query.length < 3) { list.innerHTML = ''; list.style.border = 'none'; return; }
+                    debounce = setTimeout(function () {
+                        fetch('/placesautocomplete', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                            body: JSON.stringify({ address: query }),
+                        })
+                            .then(function (r) { return r.json(); })
+                            .then(function (data) {
+                                var suggestions = (data && !Array.isArray(data) && Array.isArray(data.suggestions))
+                                    ? data.suggestions : (Array.isArray(data) ? data : []);
+                                list.innerHTML = '';
+                                if (suggestions.length > 0) {
+                                    suggestions.forEach(function (item) {
+                                        var pred = item.placePrediction;
+                                        var description = pred.text && pred.text.text || '';
+                                        var placeId = pred.placeId;
+                                        var li = document.createElement('li');
+                                        li.textContent = description;
+                                        li.addEventListener('click', function () {
+                                            input.value = description;
+                                            if (hiddenInput) hiddenInput.value = placeId;
+                                            list.innerHTML = '';
+                                            list.style.border = 'none';
+                                            if (errorEl) errorEl.style.display = 'none';
+                                        });
+                                        list.appendChild(li);
+                                    });
+                                    list.style.border = '1px solid #ccc';
+                                } else {
+                                    if (errorEl) errorEl.style.display = 'block';
+                                    list.style.border = 'none';
+                                }
+                            });
+                    }, 150);
+                });
+            }
+
+            attachAutocomplete('start', 'suggestions3', 'suggestions_error3', 'start_id_business');
+            attachAutocomplete('destination_business', 'suggestions4', 'suggestions_error4', 'destination_id_business');
+
+            /* ---- Helpers ---- */
+            function getSelectedText(sel) {
+                if (!sel) return '';
+                var ts = sel.tomselect;
+                if (ts) {
+                    var val = ts.getValue();
+                    if (Array.isArray(val)) val = val[0] || '';
+                    if (!val) return '';
+                    if (ts.options && ts.options[val] && ts.options[val].text) return (ts.options[val].text || '').trim();
+                    var item = ts.getItem(val);
+                    if (item) return item.textContent.trim();
                 }
+                var opt = sel.selectedOptions && sel.selectedOptions[0];
+                if (opt && opt.text) return opt.text.trim();
+                return (sel.value || '').trim();
+            }
 
-                function showValidationError(text) {
-                    if (validationBox) {
-                        validationBox.textContent = text;
-                        validationBox.style.display = 'block';
-                        try {
-                            validationBox.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-                        } catch (e) {
-                        }
-                    }
+            function getRadioValue(name) {
+                var el = document.querySelector('input[name="' + name + '"]:checked');
+                return el ? el.value : '';
+            }
+
+            function transportBadge(val) {
+                if (val === 'open')   return '<span class="iqb-badge iqb-badge-blue">Open</span>';
+                if (val === 'closed') return '<span class="iqb-badge iqb-badge-default">Enclosed</span>';
+                return val || '-';
+            }
+
+            function operableBadge(val) {
+                if (val === 'yes') return '<span class="iqb-badge iqb-badge-blue">Yes</span>';
+                if (val === 'no')  return '<span class="iqb-badge iqb-badge-orange">No</span>';
+                return val || '-';
+            }
+
+            /* ---- Add Vehicle ---- */
+            document.addEventListener('DOMContentLoaded', function () {
+                var addBtn        = document.getElementById('add_car');
+                var tbody         = document.getElementById('cars_table_body');
+                var validationBox = document.getElementById('required_fields');
+
+                function showValidation(text) {
+                    if (validationBox) { validationBox.textContent = text; validationBox.style.display = 'block'; }
                 }
-
                 function clearValidation() {
-                    if (validationBox) {
-                        validationBox.textContent = '';
-                        validationBox.style.display = 'none';
-                    }
+                    if (validationBox) { validationBox.textContent = ''; validationBox.style.display = 'none'; }
                 }
 
-                // Hide validation as soon as user starts filling any relevant field
-                const hideOnInputIds = ['start', 'destination_business', 'year2', 'make2', 'model3'];
-                hideOnInputIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) {
-                        const evt = el.tagName === 'SELECT' ? 'change' : 'input';
-                        el.addEventListener(evt, clearValidation);
-                    }
-                });
-                // For radios (transport type and operable)
-                document.querySelectorAll('input[name="transport_type"], input[name="operable"]').forEach(r => {
-                    r.addEventListener('change', clearValidation);
-                });
-
-
-                function getSelectedTextFromElement(sel) {
-                    if (!sel) return '';
-                    // If TomSelect is attached, prefer its value/text
-                    const ts = sel.tomselect;
-                    if (ts) {
-                        let val = ts.getValue();
-                        if (Array.isArray(val)) val = val[0] || '';
-                        if (!val) return '';
-                        if (ts.options && ts.options[val] && ts.options[val].text) {
-                            return (ts.options[val].text || '').trim();
-                        }
-                        const item = ts.getItem(val);
-                        if (item) return item.textContent.trim();
-                    }
-                    // Fallback to native select methods
-                    const opt = sel.selectedOptions && sel.selectedOptions[0];
-                    if (opt && opt.text) return opt.text.trim();
-                    return (sel.value || '').trim();
-                }
-
-                function getRadioValue(name) {
-                    const el = document.querySelector(`input[name="${name}"]:checked`);
-                    return el ? el.value : '';
+                function syncTableVisibility() {
+                    var tableSection  = document.getElementById('cars_table');
+                    var vehicleCount  = document.getElementById('b2b_vehicle_count');
+                    var rowCount = tbody ? tbody.querySelectorAll('tr').length : 0;
+                    if (tableSection) tableSection.style.display = rowCount > 0 ? 'block' : 'none';
+                    if (vehicleCount) vehicleCount.textContent = String(rowCount);
                 }
 
                 function reindexRows() {
                     if (!tbody) return;
-                    Array.from(tbody.querySelectorAll('tr')).forEach((tr, idx) => {
-                        const firstCell = tr.querySelector('td');
-                        if (firstCell) firstCell.textContent = String(idx + 1);
+                    Array.from(tbody.querySelectorAll('tr')).forEach(function (tr, i) {
+                        var first = tr.querySelector('td');
+                        if (first) first.textContent = String(i + 1);
                     });
                 }
 
-                function attachRemoveHandlers(tr) {
-                    const removeBtn = tr.querySelector('.js-remove-row');
-                    if (removeBtn) {
-                        removeBtn.addEventListener('click', function (e) {
-                            // Prevent form/htmx handlers from processing this click on a soon-to-be-removed node
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (typeof e.stopImmediatePropagation === 'function') {
-                                e.stopImmediatePropagation();
-                            }
-                            // Defer removal so other listeners attached to the element don't run into a detached target
-                            setTimeout(() => {
-                                tr.remove();
-                                reindexRows();
-                                toggleOtpVisibility();
-                            }, 0);
-                        });
-                    }
+                function attachRemoveHandler(tr) {
+                    var btn = tr.querySelector('.js-remove-row');
+                    if (!btn) return;
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+                        setTimeout(function () { tr.remove(); reindexRows(); syncTableVisibility(); }, 0);
+                    });
+                }
+
+                function clearVehicleInputs() {
+                    var container = document.getElementById('vehicle_section_b2b');
+                    if (!container) return;
+                    container.querySelectorAll('input[type="text"]').forEach(function (el) { el.value = ''; });
+                    container.querySelectorAll('input[type="radio"]').forEach(function (el) { el.checked = false; });
+                    container.querySelectorAll('.iq-toggle-btn, .iq-radio-label').forEach(function (lbl) { lbl.classList.remove('is-active'); });
+                    container.querySelectorAll('select').forEach(function (sel) {
+                        var ts = sel.tomselect;
+                        if (ts) { try { ts.clear(true); } catch (e) {} }
+                        else    { sel.selectedIndex = 0; sel.value = ''; }
+                    });
+                    ['suggestions3','suggestions4'].forEach(function (id) {
+                        var el = document.getElementById(id);
+                        if (el) { el.innerHTML = ''; el.style.border = 'none'; }
+                    });
+                    ['suggestions_error3','suggestions_error4'].forEach(function (id) {
+                        var el = document.getElementById(id);
+                        if (el) el.style.display = 'none';
+                    });
                 }
 
                 if (addBtn && tbody) {
                     addBtn.addEventListener('click', function () {
+                        var start        = (document.getElementById('start')?.value || '').trim();
+                        var destination  = (document.getElementById('destination_business')?.value || '').trim();
+                        var year         = (document.getElementById('year2')?.value || '').trim();
+                        var makeEl       = document.getElementById('make2');
+                        var makeText     = getSelectedText(makeEl);
+                        var modelEl      = document.getElementById('model3') || document.getElementById('model');
+                        var modelText    = getSelectedText(modelEl);
+                        var transportType = getRadioValue('transport_type');
+                        var operable     = getRadioValue('operable');
 
-                        // document.getElementById('cars_table').style.display='block'
-                        const start = (document.getElementById('start')?.value || '').trim();
-                        const destination = (document.getElementById('destination_business')?.value || '').trim();
-                        const year = (document.getElementById('year2')?.value || '').trim();
-                        const makeText = getSelectedTextFromElement(document.getElementById('make2'));
-                        const modelEl = document.getElementById('model3') || document.getElementById('model');
-                        const modelText = getSelectedTextFromElement(modelEl);
-                        const transportType = getRadioValue('transport_type');
-                        const operable = getRadioValue('operable');
-
-                        // Basic validation: ensure key fields are provided
-                        if (!start || !destination || !year || !makeText || !modelText) {
-                            showValidationError('Please fill Start, Destination, Year, Make and Model to add the vehicle.');
+                        if (!start || !destination || !year || !makeText || !modelText || !transportType || !operable) {
+                            showValidation('Please fill all fields including Transport Type and Operable status.');
                             return;
                         }
+                        clearValidation();
 
-                        const vehicle = `${year} ${makeText} ${modelText}`.trim();
+                        var startId   = (document.getElementById('start_id_business')?.value || '').trim();
+                        var destId    = (document.getElementById('destination_id_business')?.value || '').trim();
+                        var makeId    = (makeEl?.value || '').trim();
+                        var modelId   = (modelEl?.value || '').trim();
+                        var rowNumber = tbody.querySelectorAll('tr').length + 1;
+                        var vehicle   = (year + ' ' + makeText + ' ' + modelText).trim();
 
-                        const rowNumber = tbody.querySelectorAll('tr').length + 1;
-
-                        const tr = document.createElement('tr');
-
-                        // capture ids as well
-                        const startId = (document.getElementById('start_id_business')?.value || '').trim();
-                        const destinationId = (document.getElementById('destination_id_business')?.value || '').trim();
-                        const makeId = (document.getElementById('make2')?.value || '').trim();
-                        const modelId = (modelEl?.value || '').trim();
-
-                        tr.innerHTML = `
-                        <td class="text-center">${rowNumber}</td>
-                        <td class="text-center">
-                            ${start}
-                            <input type="hidden" name="start[]" value="${start}">
-                            <input type="hidden" name="start_id_business[]" value="${startId}">
-                        </td>
-                        <td class="text-center">
-                            ${destination}
-                            <input type="hidden" name="destination[]" value="${destination}">
-                            <input type="hidden" name="destination_id_business[]" value="${destinationId}">
-                        </td>
-                        <td class="text-center">
-                            ${vehicle}
-                            <input type="hidden" name="year[]" value="${year}">
-                            <input type="hidden" name="make_id[]" value="${makeId}">
-                            <input type="hidden" name="make_text[]" value="${makeText}">
-                            <input type="hidden" name="model_id[]" value="${modelId}">
-                            <input type="hidden" name="model_text[]" value="${modelText}">
-                        </td>
-                        <td class="text-center text-capitalize">
-                            ${transportType || '-'}
-                            <input type="hidden" name="transport_type[]" value="${transportType}">
-                        </td>
-                        <td class="text-center text-capitalize">
-                            ${operable || '-'}
-                            <input type="hidden" name="operable[]" value="${operable}">
-                        </td>
-                        <td class="text-center">
-                            <input type="number" min="1" value="1" name="qty[]" class="custom-input text-center" placeholder="Vehicle QTY">
-                        </td>
-                        <td class="text-center">
-                            <button type="button" class="btn btn-sm btn-link text-danger js-remove-row">Remove</button>
-                        </td>
-                    `;
+                        var tr = document.createElement('tr');
+                        tr.innerHTML =
+                            '<td>' + rowNumber + '</td>' +
+                            '<td>' + start +
+                            '<input type="hidden" name="start[]" value="' + start + '">' +
+                            '<input type="hidden" name="start_id_business[]" value="' + startId + '">' +
+                            '</td>' +
+                            '<td>' + destination +
+                            '<input type="hidden" name="destination[]" value="' + destination + '">' +
+                            '<input type="hidden" name="destination_id_business[]" value="' + destId + '">' +
+                            '</td>' +
+                            '<td>' + vehicle +
+                            '<input type="hidden" name="year[]" value="' + year + '">' +
+                            '<input type="hidden" name="make_id[]" value="' + makeId + '">' +
+                            '<input type="hidden" name="make_text[]" value="' + makeText + '">' +
+                            '<input type="hidden" name="model_id[]" value="' + modelId + '">' +
+                            '<input type="hidden" name="model_text[]" value="' + modelText + '">' +
+                            '</td>' +
+                            '<td>' + transportBadge(transportType) +
+                            '<input type="hidden" name="transport_type[]" value="' + transportType + '">' +
+                            '</td>' +
+                            '<td>' + operableBadge(operable) +
+                            '<input type="hidden" name="operable[]" value="' + operable + '">' +
+                            '</td>' +
+                            '<td><input type="number" min="1" value="1" name="qty[]" class="iqb-qty-input"></td>' +
+                            '<td><button type="button" class="iqb-remove-btn js-remove-row">Remove</button></td>';
 
                         tbody.appendChild(tr);
-                        attachRemoveHandlers(tr);
-                        toggleOtpVisibility();
-                        // Clear the form fields inside #add_vehicles after successfully adding the row
+                        attachRemoveHandler(tr);
+                        syncTableVisibility();
                         clearVehicleInputs();
                     });
 
-                    // Attach remove to any pre-existing rows if present
-                    Array.from(tbody.querySelectorAll('tr')).forEach(attachRemoveHandlers);
-                    // Initialize visibility state on load
-                    toggleOtpVisibility();
+                    Array.from(tbody.querySelectorAll('tr')).forEach(attachRemoveHandler);
+                }
+
+                if (typeof htmx !== 'undefined') {
+                    htmx.process(document.getElementById('business_otp_target'));
                 }
             });
-        </script>
-    </div>
 
-    <div  class="individual_scripts">
-
-
-    </div>
-
-
-    <script>
-        // Show form if turnstile is successfull
-        {{--window.onloadTurnstileCallback = function () {--}}
-        {{--    turnstile.render("#turnstile-business", {--}}
-        {{--        sitekey: "0x4AAAAAABmcVARJuH5NYIlN",--}}
-        {{--        callback: function (token) {--}}
-        {{--            htmx.ajax('post', '{{route('turnstile.verify')}}', {--}}
-        {{--                values: {--}}
-        {{--                    cf_token: token,--}}
-        {{--                    _token: '{{ csrf_token() }}'--}}
-        {{--                },--}}
-        {{--                target: '#turnstile-business',--}}
-        {{--            });--}}
-        {{--        },--}}
-        {{--    });--}}
-        {{--}--}}
-
+        }());
     </script>
-
 @endsection

@@ -2,43 +2,46 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Http\Controllers\Controller;
 use App\Mail\NewQuotationEmail;
 use App\Mail\SendQuotationEmail;
 use App\Models\Availability;
 use App\Models\CarBrand;
 use App\Models\CarModel;
 use App\Models\Quotation;
+use App\Models\Quotationb2b;
 use App\Models\QuotationCharge;
 use App\Models\User;
+use App\Rules\UsPhone;
 use App\Services\TwilioService;
-use Illuminate\Support\Facades\Http;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use App\Rules\UsPhone;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class QuotationController extends Controller
 {
-
     public function index(Request $request)
     {
         $availabilities = Availability::orderBy('created_at', 'desc')->get();
-        $q = trim((string)$request->query('q', ''));
-        $dateFrom = trim((string)$request->query('date_from', ''));
-        $dateTo = trim((string)$request->query('date_to', ''));
+        $q = trim((string) $request->query('q', ''));
+        $dateFrom = trim((string) $request->query('date_from', ''));
+        $dateTo = trim((string) $request->query('date_to', ''));
 
         $quotationsQuery = Quotation::orderBy('id', 'desc')
             ->with('user');
-        $users=User::all();
+        $users = User::all();
 
         if ($q !== '') {
             $quotationsQuery->where(function ($sub) use ($q) {
                 // Numeric exact matches for id and distance
                 if (is_numeric($q)) {
-                    $sub->orWhere('id', (int)$q)
-                        ->orWhere('distance_mile', (float)$q)
+                    $sub->orWhere('id', (int) $q)
+                        ->orWhere('distance_mile', (float) $q)
                         ->orWhere('body_weight', 'like', "%$q%");
                 }
                 // Textual partial matches across common columns
@@ -72,8 +75,9 @@ class QuotationController extends Controller
             'date_to' => $dateTo,
         ]);
 
-        return view('backend.quotations.index', compact('availabilities', 'quotations','users'));
+        return view('backend.quotations.index', compact('availabilities', 'quotations', 'users'));
     }
+
     public function getModels(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -85,11 +89,10 @@ class QuotationController extends Controller
 
             return response()->noContent();
 
-//            return response()
-//                ->view('components.frontend.htmx.htmx_validation_errors', compact('htmxErrors'))
-//                ->header('X-HTMX-Request-Type', 'htmx_validation_errors');
+            //            return response()
+            //                ->view('components.frontend.htmx.htmx_validation_errors', compact('htmxErrors'))
+            //                ->header('X-HTMX-Request-Type', 'htmx_validation_errors');
         }
-
 
         if ($request->filled('make_id') && is_numeric($request->make_id)) {
             $request->validate([
@@ -101,36 +104,35 @@ class QuotationController extends Controller
             $carmodels = null;
         }
 
-
         return view('components.frontend.htmx.models_htmx', compact('carmodels'));
     }
+
     public function sendOtp(Request $request)
     {
-//        if (env('LOCAL_TEST')) {
-//            $secret_key = '1x0000000000000000000000000000000AA';
-//        } else {
-//            $secret_key = config('milestone.CLOUDFLARE_SECRET_KEY');
-//        }
-//
-//        // Check cloudflare Turnstile
-//        $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
-//            'secret' => $secret_key,
-//            'response' => $request->input('cloudflare_captcha'),
-//            'remoteip' => $request->ip(),
-//        ]);
-//
-//
-//        if (!($response->json('success') ?? false)) {
-//            $errormsg = 'Captcha validation failed.';
-//
-//            return response()
-//                ->view('components.frontend.htmx.captcha_failed', compact('errormsg'))
-//                ->header('X-HTMX-Request-Type', 'manual-otp');
-//        }
-
+        //        if (env('LOCAL_TEST')) {
+        //            $secret_key = '1x0000000000000000000000000000000AA';
+        //        } else {
+        //            $secret_key = config('milestone.CLOUDFLARE_SECRET_KEY');
+        //        }
+        //
+        //        // Check cloudflare Turnstile
+        //        $response = Http::asForm()->post('https://challenges.cloudflare.com/turnstile/v0/siteverify', [
+        //            'secret' => $secret_key,
+        //            'response' => $request->input('cloudflare_captcha'),
+        //            'remoteip' => $request->ip(),
+        //        ]);
+        //
+        //
+        //        if (!($response->json('success') ?? false)) {
+        //            $errormsg = 'Captcha validation failed.';
+        //
+        //            return response()
+        //                ->view('components.frontend.htmx.captcha_failed', compact('errormsg'))
+        //                ->header('X-HTMX-Request-Type', 'manual-otp');
+        //        }
 
         if (env('LOCAL_TEST')) {
-            $number = '+995551507697';
+            $number = env('LOCAL_TEST_NUMBER');
         } else {
             $request->validate([
                 'phone' => ['required', new UsPhone],
@@ -141,27 +143,33 @@ class QuotationController extends Controller
             if (strlen($digits) === 11 && str_starts_with($digits, '1')) {
                 $digits = substr($digits, 1);
             }
-            $number = '+1' . $digits;
+            $number = '+1'.$digits;
         }
         $response = Http::withBasicAuth(
             config('milestone.twilio_username'),
             config('milestone.twilio_password'),
-        )->asForm()->post('https://verify.twilio.com/v2/Services/' . config('milestone.twilio_otp_service_sid') . '/Verifications',
+        )->asForm()->post('https://verify.twilio.com/v2/Services/'.config('milestone.twilio_otp_service_sid').'/Verifications',
             [
                 'Channel' => 'sms',
                 'To' => $number,
             ]);
 
         if ($response->successful()) {
-            Log::channel('twilio')->info('Successfully send OTP to ' . $number, [
+            Log::channel('twilio')->info('Successfully send OTP to '.$number, [
                 'Response' => $response->json(),
             ]);
 
-            return view('components.frontend.htmx.confirm_phone_htmx');
+            return view('components.frontend.htmx.confirm_phone_htmx', [
+                'phone' => $number,
+                'email' => $request->input('email', ''),
+            ]);
         } else {
-            dd($response->json());
+            Log::channel('twilio')->error('Successfully send OTP to '.$number, [
+                'Response' => $response->json(),
+            ]);
         }
     }
+
     public function sendOtpBusiness(Request $request)
     {
         if (env('LOCAL_TEST')) {
@@ -170,9 +178,8 @@ class QuotationController extends Controller
             $secret_key = config('milestone.CLOUDFLARE_SECRET_KEY');
         }
 
-
         if (env('LOCAL_TEST')) {
-            $number = '+995551507697';
+            $number = env('LOCAL_TEST_NUMBER');
         } else {
             $request->validate([
                 'phone' => ['required', new UsPhone],
@@ -184,19 +191,19 @@ class QuotationController extends Controller
             if (strlen($digits) === 11 && str_starts_with($digits, '1')) {
                 $digits = substr($digits, 1);
             }
-            $number = '+1' . $digits;
+            $number = '+1'.$digits;
         }
         $response = Http::withBasicAuth(
             config('milestone.twilio_username'),
             config('milestone.twilio_password'),
-        )->asForm()->post('https://verify.twilio.com/v2/Services/' . config('milestone.twilio_otp_service_sid') . '/Verifications',
+        )->asForm()->post('https://verify.twilio.com/v2/Services/'.config('milestone.twilio_otp_service_sid').'/Verifications',
             [
                 'Channel' => 'sms',
                 'To' => $number,
             ]);
 
         if ($response->successful()) {
-            Log::channel('twilio')->info('Successfully send OTP to ' . $number, [
+            Log::channel('twilio')->info('Successfully send OTP to '.$number, [
                 'Response' => $response->json(),
             ]);
 
@@ -205,106 +212,112 @@ class QuotationController extends Controller
             dd($response->json());
         }
     }
+
     public function confirmOtp(Request $request)
     {
 
-      $response= (new TwilioService())->otpConfirm($request);
+        $response = (new TwilioService)->otpConfirm($request);
 
-        if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
+        if ($response instanceof Response) {
             return $response;
         }
 
+        //  ==========  DATA FROM HTMX FORM
+        //            "code" => "598586"
+        //  "phone_hidden" => "+15985689859"
+        //  "destination_id" => "ChIJ0-t45g8Tg4cRpTZYXuQu70I"
+        //  "start_id" => "ChIJJTGgBnGWyYcRcdPZHNWACC4"
+        //  "email_hidden" => "gmta.constantine@gmail.com"
+        //  "from" => "59858 S 4710 Rd, Watts, OK, USA"
+        //  "destination" => "87929 445th Avenue, Long Pine, NE, USA"
+        //  "transport_type" => "open"
+        //  "operable" => "yes"
+        //  "year" => "2023"
+        //  "make" => "3"
+        //  "model" => "54"
 
-//  ==========  DATA FROM HTMX FORM
-//            "code" => "598586"
-//  "phone_hidden" => "+15985689859"
-//  "destination_id" => "ChIJ0-t45g8Tg4cRpTZYXuQu70I"
-//  "start_id" => "ChIJJTGgBnGWyYcRcdPZHNWACC4"
-//  "email_hidden" => "gmta.constantine@gmail.com"
-//  "from" => "59858 S 4710 Rd, Watts, OK, USA"
-//  "destination" => "87929 445th Avenue, Long Pine, NE, USA"
-//  "transport_type" => "open"
-//  "operable" => "yes"
-//  "year" => "2023"
-//  "make" => "3"
-//  "model" => "54"
+        $data = $response->json();
 
-            $data = $response->json();
-
-            if ($data['valid'] == true) {
-                if (is_numeric($request->make) && (int)$request->make == $request->make) {
-                    $make = CarBrand::find($request->make)->name;
-                    $model = CarModel::find($request->model)->name;
-                } else {
-                    $make = $request->make;
-                    $model = $request->model;
-                }
-
-                $availability = Availability::where('id', $request->availability)->first();
-                if ($request->type==1){
-                    $request_type='individual';
-                }elseif($request->type==2){
-                    $request_type='business';
-                } else {
-                    $request_type='individual';
-                }
-
-               $quotation= Quotation::create([
-                    'start_place_id' => $request->start_id,
-                    'destination_place_id' => $request->destination_id,
-                    'start_address' => $request->from,
-                    'destination_address' => $request->destination,
-                    'transport_type' => $request->transport_type,
-                    'vehicle' => $request->year . ' ' . $make . ' ' . $model,
-                    'operable' => $request->operable,
-                    'email' => $request->email,
-                    'phone' => $request->phone_hidden,
-                    'availability' => $availability->getTranslation('title', 'en'),
-//                    'car_brand_id' => $request->make,
-//                    'car_model_id' => $request->model,
-                    'request_type' => $request_type,
-                ]);
-
-                $users=User::all();
-                foreach ($users as $user){
-                    if($user->send_quotation==1){
-
-                        Mail::to($user->email)
-                            ->cc('michael@milestonebrokers.us')
-                            ->send(new NewQuotationEmail($quotation->email,$quotation));
-
-                        (new TwilioService())->notify($user->phone, 'New Individual quotation received, please check');
-
-                    }
-                }
-
-                return response()->view('components.frontend.htmx.otp_success')->header('X-HTMX-Request-Type',
-                    'ind-quotation-success');
+        if ($data['valid'] == true) {
+            if (is_numeric($request->make) && (int) $request->make == $request->make) {
+                $make = optional(CarBrand::find($request->make))->name ?? $request->make;
+            } else {
+                $make = $request->make;
             }
 
-            if ($data['valid'] == false) {
-                $errormsg = 'The code is invalid';
-
-                return response()
-                    ->view('components.frontend.htmx.otp_invalid', compact('errormsg'))
-                    ->header('X-HTMX-Request-Type', 'manual-otp');
+            if (is_numeric($request->model) && (int) $request->model == $request->model) {
+                $model = optional(CarModel::find($request->model))->name ?? $request->model;
+            } else {
+                $model = $request->model;
             }
 
-//   if twilio response is successfull but some other error ?
-            Log::channel('twilio')->error('unknown error during confirmation ' . $request->phone_hidden, [
-                'Response' => $response->json(),
+            $availability = Availability::where('id', $request->availability)->first();
+            $availabilityTitle = $availability ? $availability->getTranslation('title', 'en') : '';
+
+            if ($request->type == 1) {
+                $request_type = 'individual';
+            } elseif ($request->type == 2) {
+                $request_type = 'business';
+            } else {
+                $request_type = 'individual';
+            }
+
+            $quotation = Quotation::create([
+                'start_place_id' => $request->start_id,
+                'destination_place_id' => $request->destination_id,
+                'start_address' => $request->from,
+                'destination_address' => $request->destination,
+                'transport_type' => $request->transport_type,
+                'vehicle' => $request->year.' '.$make.' '.$model,
+                'operable' => $request->operable,
+                'email' => $request->email,
+                'phone' => $request->phone_hidden,
+                'availability' => $availabilityTitle,
+                //                    'car_brand_id' => $request->make,
+                //                    'car_model_id' => $request->model,
+                'request_type' => $request_type,
             ]);
 
-             return back()->with('error', 'Unknown error during confirmation');
+            $users = User::all();
+            foreach ($users as $user) {
+                if ($user->send_quotation === true) {
 
+                    Mail::to($user->email)
+                        ->cc('info@milestonebrokers.us')
+                        ->send(new NewQuotationEmail($quotation->email, $quotation));
+
+                    (new TwilioService)->notify($user->phone, 'New Individual quotation received, please check');
+
+                }
+            }
+
+            return response()->view('components.frontend.htmx.otp_success')->header('X-HTMX-Request-Type',
+                'ind-quotation-success');
+        }
+
+        if ($data['valid'] == false) {
+            $errormsg = 'The code is invalid';
+
+            return response()
+                ->view('components.frontend.htmx.otp_invalid', compact('errormsg'))
+                ->header('X-HTMX-Request-Type', 'manual-otp');
+        }
+
+        //   if twilio response is successfull but some other error ?
+        Log::channel('twilio')->error('unknown error during confirmation '.$request->phone_hidden, [
+            'Response' => $response->json(),
+        ]);
+
+        return back()->with('error', 'Unknown error during confirmation');
 
     }
+
     public function confirmOtpBusiness(Request $request)
     {
 
-        $response= (new TwilioService())->otpConfirm($request);
+        $response = (new TwilioService)->otpConfirm($request);
 
-        if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
+        if ($response instanceof Response) {
             return $response;
         }
 
@@ -324,23 +337,25 @@ class QuotationController extends Controller
                 ->header('X-HTMX-Request-Type', 'manual-otp');
         }
 
-//   if twilio response is successfull but some other error ?
-        Log::channel('twilio')->error('unknown error during confirmation ' . $request->phone_hidden, [
+        //   if twilio response is successfull but some other error ?
+        Log::channel('twilio')->error('unknown error during confirmation '.$request->phone_hidden, [
             'Response' => $response->json(),
         ]);
 
         return back()->with('error', 'Unknown error during confirmation');
 
-
     }
+
     public function changePhone(Request $request)
     {
         return view('components.frontend.htmx.change_phone_htmx');
     }
+
     public function changePhoneBusiness(Request $request)
     {
         return view('components.frontend.htmx.change_phone_htmx_business');
     }
+
     public function delete(Request $request)
     {
         $request->validate([
@@ -352,6 +367,7 @@ class QuotationController extends Controller
 
         return back();
     }
+
     public function calculateDistance(Request $request)
     {
         $request->validate([
@@ -363,22 +379,31 @@ class QuotationController extends Controller
         $origins = $quotation->start_place_id;
         $destinations = $quotation->destination_place_id;
 
-        $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
-            'origins' => "place_id:" . $origins,
-            'destinations' => "place_id:" . $destinations,
-            'key' => config('milestone.google_map_api_key'),
-        ]);
+        try {
+            $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
+                'origins' => 'place_id:'.$origins,
+                'destinations' => 'place_id:'.$destinations,
+                'key' => config('milestone.google_map_api_key'),
+            ]);
+            $data = $response->json();
 
-        $data = $response->json();
-        $meters = $data['rows'][0]['elements'][0]['distance']['value'];
-        $miles = $meters * 0.000621371;
-        $miles = round($miles, 2);
+            $meters = $data['rows'][0]['elements'][0]['distance']['value'];
+            $miles = $meters * 0.000621371;
+            $miles = round($miles, 2);
 
-        $quotation->distance_mile = $miles;
-        $quotation->save();
+            $quotation->distance_mile = $miles;
+            $quotation->save();
+        } catch (\Exception $e) {
+            Log::channel('google_map_api')->error('Failed to fetch distance', [
+                'Error' => $e->getMessage(),
+            ]);
+
+            return back()->with('error', 'Failed to fetch distance');
+        }
 
         return back()->with('success', 'Distance calculated successfully');
     }
+
     public function requestAiData(Request $request)
     {
         $request->validate([
@@ -396,13 +421,13 @@ class QuotationController extends Controller
                 'tools' => [
                     ['type' => 'web_search_preview'],
                 ],
-                'input' => 'Give body weight in lbs, width in inches, height in inches, length in inches and type (like SUV, sedan, motorcycle, etc.) and possible specs links (as array) for ' . $quotation->vehicle . '. Respond in **JSON** format only, and nothing else. The format must look exactly like: { "body_weight": "value",  "width": "value", "height": "value", "length": "value", "type": "value",  "specs_links": ["url1", "url2"]}',
+                'input' => 'Give body weight in lbs, width in inches, height in inches, length in inches and type (like SUV, sedan, motorcycle, etc.) and possible specs links (as array) for '.$quotation->vehicle.'. Respond in **JSON** format only, and nothing else. The format must look exactly like: { "body_weight": "value",  "width": "value", "height": "value", "length": "value", "type": "value",  "specs_links": ["url1", "url2"]}',
                 'temperature' => 0.3,
             ]);
 
         if ($response->successful()) {
             $data = $response->json();
-//            dd($data);
+            //            dd($data);
 
             $rawJson = $data['output'][1]['content'][0]['text'];
 
@@ -424,9 +449,9 @@ class QuotationController extends Controller
                     return '';
                 }
                 if (is_numeric($value)) {
-                    return (string)$value;
+                    return (string) $value;
                 }
-                if (!is_string($value)) {
+                if (! is_string($value)) {
                     return '';
                 }
                 // Replace commas and extract first numeric (int/float) occurrence
@@ -436,6 +461,7 @@ class QuotationController extends Controller
                 }
                 // Fallback: remove known unit words and trim
                 $v = preg_replace('/\b(lbs?|pounds?|kg|inches|inch|in|cm|mm)\b\.?/i', '', $v);
+
                 return trim($v);
             };
 
@@ -461,17 +487,17 @@ class QuotationController extends Controller
 
         $quotation = Quotation::find($request->quotation_id);
 
-        if (!$quotation->distance_mile) {
+        if (! $quotation->distance_mile) {
             return back()->with('error', 'Please calculate distance');
         }
 
-        if (!$quotation->body_weight) {
+        if (! $quotation->body_weight) {
             return back()->with('error', 'Please get car specs');
         }
 
         $chargesArray = [];
 
-        $surcharges = QuotationCharge::where('is_active',1)->get();
+        $surcharges = QuotationCharge::where('is_active', 1)->get();
         $existingSurcharges = $quotation->surcharges ?? [];
         $total_surcharge = 0;
 
@@ -482,7 +508,6 @@ class QuotationController extends Controller
                 $total_surcharge += $existing['value'];
             }
         }
-
 
         if ($request->filled('custom_charge_name') && $request->filled('custom_charge_value')) {
             $rand = random_int(10000, 99999);
@@ -496,7 +521,7 @@ class QuotationController extends Controller
         }
 
         foreach ($surcharges as $surcharge) {
-//            dd($surcharge);
+            //            dd($surcharge);
             if ($surcharge->slug == 'base-rate') {
                 $chargesArray[] = [
                     'id' => $surcharge->id,
@@ -506,7 +531,6 @@ class QuotationController extends Controller
                 ];
                 $total_surcharge += $surcharge->surcharge * $quotation->distance_mile;
             }
-
 
             if ($quotation->operable != 'yes' && $surcharge->slug == 'non-operational') {
                 $chargesArray[] = [
@@ -528,7 +552,7 @@ class QuotationController extends Controller
 
                 $total_surcharge += $surcharge->surcharge;
                 $quotation->suv = 1;
-            } elseif (!$request->filled('suv') && $surcharge->slug != 'suv') {
+            } elseif (! $request->filled('suv') && $surcharge->slug != 'suv') {
                 $quotation->suv = 0;
             }
 
@@ -542,10 +566,9 @@ class QuotationController extends Controller
 
                 $total_surcharge += $surcharge->surcharge;
                 $quotation->luxury = 1;
-            } elseif (!$request->filled('luxury') && $surcharge->slug != 'luxury') {
+            } elseif (! $request->filled('luxury') && $surcharge->slug != 'luxury') {
                 $quotation->luxury = 0;
             }
-
 
             //  =====================================
 
@@ -629,8 +652,7 @@ class QuotationController extends Controller
         return back()->with('success', 'Cost calculated successfully');
     }
 
-    public
-    function updateCharge(Request $request)
+    public function updateCharge(Request $request)
     {
         $request->validate(['quotation_id' => 'required|exists:quotations,id']);
 
@@ -638,7 +660,7 @@ class QuotationController extends Controller
         $existingSurcharges = $quotation->surcharges;
 
         $existingIds = collect($existingSurcharges)->pluck('id');
-        if (!$existingIds->contains($request->surcharge_id)) {
+        if (! $existingIds->contains($request->surcharge_id)) {
             return back()->with('error', 'Surcharge not found');
         }
 
@@ -658,8 +680,7 @@ class QuotationController extends Controller
 
     }
 
-    public
-    function deleteCharge(Request $request)
+    public function deleteCharge(Request $request)
     {
         $request->validate(['quotation_id' => 'required|exists:quotations,id']);
 
@@ -667,47 +688,67 @@ class QuotationController extends Controller
         $existingSurcharges = $quotation->surcharges;
 
         $existingIds = collect($existingSurcharges)->pluck('id');
-        if (!$existingIds->contains($request->surcharge_id)) {
+        if (! $existingIds->contains($request->surcharge_id)) {
             return back()->with('error', 'Surcharge not found');
         }
 
+        // Find the charge being deleted before filtering
+        $deletedCharge = collect($existingSurcharges)->firstWhere('id', $request->surcharge_id);
+
         // Filter out the surcharge to be deleted
-        $updatedSurcharges = array_filter($existingSurcharges, function($charge) use ($request) {
+        $updatedSurcharges = array_filter($existingSurcharges, function ($charge) use ($request) {
             return $charge['id'] != $request->surcharge_id;
         });
 
         $quotation->surcharges = array_values($updatedSurcharges); // Reset array keys
+
         $quotation->calculated_cost = collect($updatedSurcharges)->sum('value');
+
+        if ($deletedCharge) {
+            $surcharge = QuotationCharge::find($deletedCharge['id']);
+            if ($surcharge && $surcharge->slug === 'luxury-vehicle') {
+                $quotation->luxury = 0;
+            }
+        }
+
         $quotation->save();
 
         return back()->with('success', 'Surcharge deleted successfully');
 
     }
 
-    public function approve(Request $request){
+    public function approve(Request $request)
+    {
         $request->validate([
             'quotation_id' => 'required|exists:quotations,id',
         ]);
 
-        $quotation=Quotation::find($request->quotation_id);
+        $quotation = Quotation::find($request->quotation_id);
 
-        if($quotation->approved==0){
-            $quotation->approved=1;
+        if ($quotation->approved == 0) {
+            $quotation->approved = 1;
             $quotation->save();
-            return back()->with('success','Quotation approved successfully');
-        }else{
-            $quotation->approved=0;
+
+            return back()->with('success', 'Quotation approved successfully');
+        } else {
+            $quotation->approved = 0;
             $quotation->save();
-            return back()->with('success','Quotation disapproved');
+
+            return back()->with('success', 'Quotation disapproved');
         }
 
     }
 
-    public function notifyUsers(Request $request){
+    public function notifyUsers(Request $request)
+    {
         // Expecting an array of user IDs in 'users2'. If absent, treat as empty.
         $ids = collect($request->input('users', []))
-            ->map(function ($v) { return (int) $v; })
-            ->filter(function ($v) { return $v > 0; })
+            ->map(function ($v) {
+                return (int) $v;
+            })
+            ->filter(function ($v) {
+                return $v > 0;
+            })
             ->unique()
             ->values();
 
@@ -721,58 +762,63 @@ class QuotationController extends Controller
         return back()->with('success', 'Notify users list updated successfully.');
     }
 
-    public function sendQuotationOffer(Request $request){
+    public function sendQuotationOffer(Request $request)
+    {
         $request->validate([
             'quotation_id' => 'required|exists:quotations,id',
         ]);
 
-        $quotation=Quotation::find($request->quotation_id);
+        $quotation = Quotation::find($request->quotation_id);
 
-        if(!$quotation->calculated_cost){
-            return back()->with('error','Please calculate cost');
+        if (! $quotation->calculated_cost) {
+            return back()->with('error', 'Please calculate cost');
         }
 
-         if($quotation->email){
-             Mail::to($quotation->email)
-                 ->cc('michael@milestonebrokers.us')
-                 ->send(new SendQuotationEmail($quotation->email,$quotation));
-             $quotation->quotation_sent=1;
-             $quotation->quotation_sent_date=now();
-             $quotation->sent_by_id=auth('web')->user()->id;
-             $quotation->save();
-         }
+        if ($quotation->email) {
 
-        (new TwilioService())->sendQuotationOffert($quotation->phone,$quotation);
+            $signed_url = URL::temporarySignedRoute(
+                'approve.b2c.offer',
+                now()->addHours(24),
+                ['quotation' => $quotation->id]
+            );
 
-        return back()->with('success','Quotation sent successfully');
+            Mail::to($quotation->email)
+                ->cc('michael@milestonebrokers.us')
+                ->send(new SendQuotationEmail($quotation->email, $quotation, $signed_url));
+            $quotation->quotation_sent = 1;
+            $quotation->quotation_sent_date = now();
+            $quotation->sent_by_id = auth('web')->user()->id;
+            $quotation->save();
+        }
+
+        (new TwilioService)->sendQuotationOffert($quotation->phone, $quotation);
+
+        return back()->with('success', 'Quotation sent successfully');
 
     }
 
-    public
-    function htmxspinner(Request $request)
+    public function htmxspinner(Request $request)
     {
         return view('components.frontend.htmx.hmxspinner');
     }
 
     /**
      * Export quotations to Excel (CSV format).
-     *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function export(): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function export(): StreamedResponse
     {
         $quotations = Quotation::with('user')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $filename = 'quotations_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'quotations_'.date('Y-m-d_H-i-s').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
-        $callback = function() use ($quotations) {
+        $callback = function () use ($quotations) {
             $file = fopen('php://output', 'w');
 
             // Add headers
@@ -801,7 +847,7 @@ class QuotationController extends Controller
                 'Quotation Sent Date',
                 'Quotation Sent By',
                 'Created At',
-                'Updated At'
+                'Updated At',
             ]);
 
             // Add data rows
@@ -837,7 +883,7 @@ class QuotationController extends Controller
                     $quotation->quotation_sent_date,
                     $quotation->user ? $quotation->user->name : '',
                     $quotation->created_at ? $quotation->created_at->format('Y-m-d H:i:s') : '',
-                    $quotation->updated_at ? $quotation->updated_at->format('Y-m-d H:i:s') : ''
+                    $quotation->updated_at ? $quotation->updated_at->format('Y-m-d H:i:s') : '',
                 ]);
             }
 
@@ -847,5 +893,43 @@ class QuotationController extends Controller
         return response()->stream($callback, 200, $headers);
     }
 
+    public function approveB2cQuotation(Request $request)
+    {
 
+        $quotation = Quotation::find($request->quotation);
+        $quotation->approved = 1;
+        $quotation->save();
+
+        $users = User::all();
+
+        foreach ($users as $user) {
+            if ($user->send_quotation === true) {
+                (new TwilioService)->notify($user->phone, $quotation->first()->email . ': B2C quotation approved by customer');
+            }
+        }
+
+        return to_route('frontend.index')->with('approve_success', __('Quotation approved successfully'));
+
+    }
+
+    public function approveB2bQuotation(Request $request)
+    {
+
+        $quotation = Quotationb2b::where('quotation_identifier', $request->quotation)->get();
+        foreach ($quotation as $q) {
+            $q->approved = 1;
+            $q->save();
+        }
+
+        $users = User::all();
+        foreach ($users as $user) {
+            if ($user->send_quotation === true) {
+
+                (new TwilioService)->notify($user->phone, $quotation->first()->email . ': B2B quotation approved by customer');
+            }
+        }
+
+        return to_route('frontend.index')->with('approve_success', __('Quotation approved successfully'));
+
+    }
 }

@@ -2,30 +2,31 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Http\Controllers\Controller;
 use App\Mail\NewB2bQuotationEmail;
-use App\Mail\SendQuotationEmail;
 use App\Mail\SendQuotationEmailB2b;
 use App\Models\Availability;
 use App\Models\Quotationb2b;
 use App\Models\QuotationCharge;
 use App\Models\User;
 use App\Services\TwilioService;
-use Illuminate\Support\Facades\Http;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Quotationb2bController extends Controller
 {
-
     public function index(Request $request)
     {
         $availabilities = Availability::orderBy('created_at', 'desc')->get();
         $users = User::all();
-        $q = trim((string)$request->query('q', ''));
-        $dateFrom = trim((string)$request->query('date_from', ''));
-        $dateTo = trim((string)$request->query('date_to', ''));
+        $q = trim((string) $request->query('q', ''));
+        $dateFrom = trim((string) $request->query('date_from', ''));
+        $dateTo = trim((string) $request->query('date_to', ''));
 
         $quotationsQuery = Quotationb2b::with('user')
             ->orderBy('id', 'desc');
@@ -34,8 +35,8 @@ class Quotationb2bController extends Controller
             $quotationsQuery->where(function ($sub) use ($q) {
                 // Numeric exact matches for id and distance
                 if (is_numeric($q)) {
-                    $sub->orWhere('id', (int)$q)
-                        ->orWhere('distance_mile', (float)$q)
+                    $sub->orWhere('id', (int) $q)
+                        ->orWhere('distance_mile', (float) $q)
                         ->orWhere('body_weight', 'like', "%$q%");
                 }
                 // Textual partial matches across common columns
@@ -70,15 +71,22 @@ class Quotationb2bController extends Controller
             'date_to' => $dateTo,
         ]);
 
-        return view('backend.quotations.b2b_index', compact('availabilities', 'quotations', 'users'));
+        // Identifiers where every row has a calculated_cost (non-null, non-zero)
+        $identifiersFullyCalculated = Quotationb2b::select('quotation_identifier')
+            ->groupBy('quotation_identifier')
+            ->havingRaw('MIN(COALESCE(calculated_cost, 0)) > 0')
+            ->pluck('quotation_identifier')
+            ->flip();
+
+        return view('backend.quotations.b2b_index', compact('availabilities', 'quotations', 'users', 'identifiersFullyCalculated'));
     }
 
     public function confirmOtp(Request $request)
     {
 
-        $response = (new TwilioService())->otpConfirm($request);
+        $response = (new TwilioService)->otpConfirm($request);
 
-        if ($response instanceof \Symfony\Component\HttpFoundation\Response) {
+        if ($response instanceof Response) {
             return $response;
         }
 
@@ -92,8 +100,8 @@ class Quotationb2bController extends Controller
                 ->header('X-HTMX-Request-Type', 'manual-otp');
         }
 
-//   if twilio response is successfull but some other error ?
-        Log::channel('twilio')->error('unknown error during confirmation ' . $request->phone_hidden, [
+        //   if twilio response is successfull but some other error ?
+        Log::channel('twilio')->error('unknown error during confirmation '.$request->phone_hidden, [
             'Response' => $response->json(),
         ]);
 
@@ -116,7 +124,7 @@ class Quotationb2bController extends Controller
         }
 
         $request->validate([
-//            'turnstile'=>'required|string',
+            //            'turnstile'=>'required|string',
             'start' => 'required|array|min:1',
             'start.*' => 'required|string|max:255',
             'destination' => 'required|array|min:1',
@@ -132,8 +140,8 @@ class Quotationb2bController extends Controller
             'model_text.*' => 'required|string|max:255',
             'transport_type' => 'required|array|min:1',
             'transport_type.*' => 'required|string|in:open,closed',
-            'operable' => 'required|array|min:1',
-            'operable.*' => 'required|string|in:yes,no',
+            'operable' => 'nullable|array|min:1',
+            'operable.*' => 'nullable|string|in:yes,no',
             // qty[] comes from the table, allow array of integers
             'qty' => 'nullable|array',
             'qty.*' => 'nullable|integer|min:1',
@@ -170,10 +178,10 @@ class Quotationb2bController extends Controller
             $modelId = $modelIds[$i] ?? null;
             $transport = $transportArr[$i] ?? null;
             $operable = $operableArr[$i] ?? null;
-            $qty = (int)($qtyArr[$i] ?? 1);
+            $qty = (int) ($qtyArr[$i] ?? 1);
             $qty = $qty > 0 ? $qty : 1;
 
-            $vehicle = trim(($year ? $year . ' ' : '') . $makeText . ' ' . $modelText);
+            $vehicle = trim(($year ? $year.' ' : '').$makeText.' '.$modelText);
 
             for ($q = 0; $q < $qty; $q++) {
                 $items[] = [
@@ -197,25 +205,28 @@ class Quotationb2bController extends Controller
         usort($items, function ($a, $b) {
             $keys = ['start_address', 'destination_address', 'vehicle', 'transport_type', 'operable'];
             foreach ($keys as $k) {
-                $cmp = strcasecmp((string)($a[$k] ?? ''), (string)($b[$k] ?? ''));
-                if ($cmp !== 0) return $cmp;
+                $cmp = strcasecmp((string) ($a[$k] ?? ''), (string) ($b[$k] ?? ''));
+                if ($cmp !== 0) {
+                    return $cmp;
+                }
             }
+
             return 0;
         });
 
         // Create grouped identifier for this batch
-        $identifier = 'B2B-' . now()->format('YmdHis') . '-' . random_int(1000, 9999);
+        $identifier = 'B2B-'.now()->format('YmdHis').'-'.random_int(1000, 9999);
 
         foreach ($items as $row) {
             $brandId = null;
             $modelId = null;
 
             // Prefer numeric IDs if provided; otherwise leave null
-            if (!empty($row['make_id']) && is_numeric($row['make_id'])) {
-                $brandId = (int)$row['make_id'];
+            if (! empty($row['make_id']) && is_numeric($row['make_id'])) {
+                $brandId = (int) $row['make_id'];
             }
-            if (!empty($row['model_id']) && is_numeric($row['model_id'])) {
-                $modelId = (int)$row['model_id'];
+            if (! empty($row['model_id']) && is_numeric($row['model_id'])) {
+                $modelId = (int) $row['model_id'];
             }
 
             Quotationb2b::create([
@@ -235,14 +246,14 @@ class Quotationb2bController extends Controller
             ]);
         }
 
-        $quotations=Quotationb2b::where('quotation_identifier',$identifier)->get();
-        $users=User::all();
-        foreach ($users as $user){
-            if($user->send_quotation==1){
+        $quotations = Quotationb2b::where('quotation_identifier', $identifier)->get();
+        $users = User::all();
+        foreach ($users as $user) {
+            if ($user->send_quotation == 1) {
                 Mail::to($user->email)
                     ->cc('michael@milestonebrokers.us')
-                    ->send(new NewB2bQuotationEmail($quotations->first()->email,$quotations));
-                (new TwilioService())->notify($user->phone, 'New B2B quotation received, please check');
+                    ->send(new NewB2bQuotationEmail($quotations->first()->email, $quotations));
+                (new TwilioService)->notify($user->phone, 'New B2B quotation received, please check');
             }
         }
 
@@ -274,8 +285,8 @@ class Quotationb2bController extends Controller
         $destinations = $quotation->destination_place_id;
 
         $response = Http::get('https://maps.googleapis.com/maps/api/distancematrix/json', [
-            'origins' => "place_id:" . $origins,
-            'destinations' => "place_id:" . $destinations,
+            'origins' => 'place_id:'.$origins,
+            'destinations' => 'place_id:'.$destinations,
             'key' => config('milestone.google_map_api_key'),
         ]);
 
@@ -307,13 +318,13 @@ class Quotationb2bController extends Controller
                 'tools' => [
                     ['type' => 'web_search_preview'],
                 ],
-                'input' => 'Give body weight in lbs, width in inches, height in inches, length in inches and type (like SUV, sedan, motorcycle, etc.) and possible specs links (as array) for ' . $quotation->vehicle . '. Respond in **JSON** format only, and nothing else. The format must look exactly like: { "body_weight": "value",  "width": "value", "height": "value", "length": "value", "type": "value",  "specs_links": ["url1", "url2"]}',
+                'input' => 'Give body weight in lbs, width in inches, height in inches, length in inches and type (like SUV, sedan, motorcycle, etc.) and possible specs links (as array) for '.$quotation->vehicle.'. Respond in **JSON** format only, and nothing else. The format must look exactly like: { "body_weight": "value",  "width": "value", "height": "value", "length": "value", "type": "value",  "specs_links": ["url1", "url2"]}',
                 'temperature' => 0.3,
             ]);
 
         if ($response->successful()) {
             $data = $response->json();
-//            dd($data);
+            //            dd($data);
 
             $rawJson = $data['output'][1]['content'][0]['text'];
 
@@ -335,9 +346,9 @@ class Quotationb2bController extends Controller
                     return '';
                 }
                 if (is_numeric($value)) {
-                    return (string)$value;
+                    return (string) $value;
                 }
-                if (!is_string($value)) {
+                if (! is_string($value)) {
                     return '';
                 }
                 // Replace commas and extract first numeric (int/float) occurrence
@@ -347,9 +358,9 @@ class Quotationb2bController extends Controller
                 }
                 // Fallback: remove known unit words and trim
                 $v = preg_replace('/\b(lbs?|pounds?|kg|inches|inch|in|cm|mm)\b\.?/i', '', $v);
+
                 return trim($v);
             };
-
 
             $quotation->body_weight = $normalize($specs['body_weight'] ?? '');
             $quotation->length = $normalize($specs['length'] ?? '');
@@ -371,11 +382,11 @@ class Quotationb2bController extends Controller
 
         $quotation = Quotationb2b::find($request->quotation_id);
 
-        if (!$quotation->distance_mile) {
+        if (! $quotation->distance_mile) {
             return back()->with('error', 'Please calculate distance');
         }
 
-        if (!$quotation->body_weight) {
+        if (! $quotation->body_weight) {
             return back()->with('error', 'Please get car specs');
         }
 
@@ -393,7 +404,6 @@ class Quotationb2bController extends Controller
             }
         }
 
-
         if ($request->filled('custom_charge_name') && $request->filled('custom_charge_value')) {
             $rand = random_int(10000, 99999);
             $chargesArray[] = [
@@ -406,7 +416,7 @@ class Quotationb2bController extends Controller
         }
 
         foreach ($surcharges as $surcharge) {
-//            dd($surcharge);
+            //            dd($surcharge);
             if ($surcharge->slug == 'base-rate') {
                 $chargesArray[] = [
                     'id' => $surcharge->id,
@@ -416,7 +426,6 @@ class Quotationb2bController extends Controller
                 ];
                 $total_surcharge += $surcharge->surcharge * $quotation->distance_mile;
             }
-
 
             if ($quotation->operable != 'yes' && $surcharge->slug == 'non-operational') {
                 $chargesArray[] = [
@@ -438,7 +447,7 @@ class Quotationb2bController extends Controller
 
                 $total_surcharge += $surcharge->surcharge;
                 $quotation->suv = 1;
-            } elseif (!$request->filled('suv') && $surcharge->slug != 'suv') {
+            } elseif (! $request->filled('suv') && $surcharge->slug != 'suv') {
                 $quotation->suv = 0;
             }
 
@@ -452,10 +461,9 @@ class Quotationb2bController extends Controller
 
                 $total_surcharge += $surcharge->surcharge;
                 $quotation->luxury = 1;
-            } elseif (!$request->filled('luxury') && $surcharge->slug != 'luxury') {
+            } elseif (! $request->filled('luxury') && $surcharge->slug != 'luxury') {
                 $quotation->luxury = 0;
             }
-
 
             //  =====================================
 
@@ -539,8 +547,7 @@ class Quotationb2bController extends Controller
         return back()->with('success', 'Cost calculated successfully');
     }
 
-    public
-    function updateCharge(Request $request)
+    public function updateCharge(Request $request)
     {
         $request->validate(['quotation_id' => 'required|exists:App\Models\Quotationb2b,id']);
 
@@ -548,7 +555,7 @@ class Quotationb2bController extends Controller
         $existingSurcharges = $quotation->surcharges;
 
         $existingIds = collect($existingSurcharges)->pluck('id');
-        if (!$existingIds->contains($request->surcharge_id)) {
+        if (! $existingIds->contains($request->surcharge_id)) {
             return back()->with('error', 'Surcharge not found');
         }
 
@@ -568,8 +575,7 @@ class Quotationb2bController extends Controller
 
     }
 
-    public
-    function deleteCharge(Request $request)
+    public function deleteCharge(Request $request)
     {
         $request->validate(['quotation_id' => 'required|exists:App\Models\Quotationb2b,id']);
 
@@ -577,7 +583,7 @@ class Quotationb2bController extends Controller
         $existingSurcharges = $quotation->surcharges;
 
         $existingIds = collect($existingSurcharges)->pluck('id');
-        if (!$existingIds->contains($request->surcharge_id)) {
+        if (! $existingIds->contains($request->surcharge_id)) {
             return back()->with('error', 'Surcharge not found');
         }
 
@@ -594,39 +600,26 @@ class Quotationb2bController extends Controller
 
     }
 
-    public function approve(Request $request)
-    {
-        $request->validate([
-            'quotation_id' => 'required|exists:App\Models\Quotationb2b,id',
-        ]);
-
-        $quotation = Quotationb2b::find($request->quotation_id);
-
-        if ($quotation->approved == 0) {
-            $quotation->approved = 1;
-            $quotation->save();
-            return back()->with('success', 'Quotation approved successfully');
-        } else {
-            $quotation->approved = 0;
-            $quotation->save();
-            return back()->with('success', 'Quotation disapproved');
-        }
-
-    }
-
     public function sendQuotationOffer(Request $request)
     {
 
         $quotations = Quotationb2b::where('quotation_identifier', $request->identifier)->get();
 
-        if (!$quotations->first()->calculated_cost) {
+        if (! $quotations->first()->calculated_cost) {
             return back()->with('error', 'Please calculate cost');
         }
 
         if ($quotations->first()->email) {
+
+            $signed_url = URL::temporarySignedRoute(
+                'approve.b2b.offer',
+                now()->addHours(24),
+                ['quotation' => $quotations->first()->quotation_identifier]
+            );
+
             Mail::to($quotations->first()->email)
                 ->cc('michael@milestonebrokers.us')
-                    ->send(new SendQuotationEmailB2b($quotations->first()->email, $quotations));
+                ->send(new SendQuotationEmailB2b($quotations->first()->email, $quotations,$signed_url));
 
             foreach ($quotations as $quotation) {
                 $quotation->quotation_sent = 1;
@@ -636,8 +629,7 @@ class Quotationb2bController extends Controller
             }
         }
 
-        (new TwilioService())->sendQuotationOffert($quotations->first()->phone, 'test');
-
+        (new TwilioService)->sendQuotationOffert($quotations->first()->phone, 'test');
 
         return back()->with('success', 'Quotation sent successfully');
 
@@ -648,7 +640,7 @@ class Quotationb2bController extends Controller
         // Expecting an array of user IDs in 'users2'. If absent, treat as empty.
         $ids = collect($request->input('users', []))
             ->map(function ($v) {
-                return (int)$v;
+                return (int) $v;
             })
             ->filter(function ($v) {
                 return $v > 0;
@@ -673,23 +665,21 @@ class Quotationb2bController extends Controller
 
     /**
      * Export B2B quotations to Excel (CSV format).
-     *
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function export(): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function export(): StreamedResponse
     {
         $quotations = Quotationb2b::with('user')
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $filename = 'b2b_quotations_' . date('Y-m-d_H-i-s') . '.csv';
+        $filename = 'b2b_quotations_'.date('Y-m-d_H-i-s').'.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ];
 
-        $callback = function() use ($quotations) {
+        $callback = function () use ($quotations) {
             $file = fopen('php://output', 'w');
 
             // Add headers
@@ -719,7 +709,7 @@ class Quotationb2bController extends Controller
                 'Quotation Sent Date',
                 'Quotation Sent By',
                 'Created At',
-                'Updated At'
+                'Updated At',
             ]);
 
             // Add data rows
@@ -756,7 +746,7 @@ class Quotationb2bController extends Controller
                     $quotation->quotation_sent_date,
                     $quotation->user ? $quotation->user->name : '',
                     $quotation->created_at ? $quotation->created_at->format('Y-m-d H:i:s') : '',
-                    $quotation->updated_at ? $quotation->updated_at->format('Y-m-d H:i:s') : ''
+                    $quotation->updated_at ? $quotation->updated_at->format('Y-m-d H:i:s') : '',
                 ]);
             }
 
@@ -765,5 +755,4 @@ class Quotationb2bController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
-
 }

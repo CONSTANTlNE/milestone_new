@@ -200,6 +200,7 @@
                                         <th scope="col" class="title text-center">Total Charge</th>
                                         <th scope="col" class="title text-center">Action</th>
                                         <th scope="col" class="title text-center">Quotation Sent By</th>
+                                        <th scope="col" class="title text-center">Approved by Customer</th>
                                     </tr>
                                     </thead>
                                     <tbody id="socials-tbody">
@@ -420,7 +421,7 @@
                                                 {{--                                                        </button>--}}
                                                 {{--                                                    @endif--}}
                                                 {{--                                                </form>--}}
-                                                @if(round($quotation->calculated_cost) != 0)
+                                                @if(round($quotation->calculated_cost) != 0 && $identifiersFullyCalculated->has($quotation->quotation_identifier))
                                                     <form action="{{route('backend.b2b_quotations.sendoffer')}}"
                                                           method="post">
                                                         @csrf
@@ -485,6 +486,13 @@
                                             <td>
                                                 @if($quotation->quotation_sent_date)
                                                     <p>{{$quotation->user->name}}</p>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($quotation->approved)
+                                                    approved
+                                                @else
+                                                    pending
                                                 @endif
                                             </td>
                                         </tr>

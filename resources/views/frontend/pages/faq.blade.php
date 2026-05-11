@@ -1,86 +1,67 @@
-@extends('frontend.layouts.master')
+@extends('frontend.layouts.master', ['class' => 'header-style-2'])
 @section('title') {{ $page->title }} - @endsection
 @section('seo')
     @include('components.frontend.socials.seo', ['data' => $page])
 @endsection
-@section('header_background')
-    <div class="pbmit-title-bar-wrapper" style="background-image: url({{asset($page->src ?: config('filemanager.default_backend_image'))}});">
-        <div class="container">
-            <div class="pbmit-title-bar-content">
-                <div class="pbmit-title-bar-content-inner">
-                    <div class="pbmit-tbar">
-                        <div class="pbmit-tbar-inner container">
-                            <h1 class="pbmit-tbar-title">{{$page->title}}</h1>
-                        </div>
-                    </div>
-                    <div class="pbmit-breadcrumb">
-                        <div class="pbmit-breadcrumb-inner">
-								<span>
-									<a title="" href="#" class="home"><span>{{__('page')}}</span></a>
-								</span>
-                            <span class="sep">
-									<i class="pbmit-base-icon-angle-right"></i>
-								</span>
-                            <span><span class="post-root post post-post current-item"> {{$page->title}}</span></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
-
 @section('content')
-    <section class="section-md">
+    <section class="section-md faqs">
         <div class="container">
-            <div class="pbmit-heading-subheading text-center animation-style2">
-                <h2 class="pbmit-title">{{$page->slogan}}</h2>
-                <div class="pbmit-heading-desc" style="width: 50%; margin:auto">
-                    {!! $page->content !!}
+            <div class="row">
+                <div class="col-lg-5 col-xl-5">
+                    <div class="pbmit-heading-subheading faqs-header text-center animation-style2">
+                        <h2 class="pbmit-title">{{$page->title}}</h2>
+                        <div class="pbmit-heading-desc">
+                            {{$page->slogan}}
+                        </div>
+                        <p>{{ clear_content($page->content)}}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="accordion style-3" id="accordionExample2">
-                @foreach($faqs as $key => $faq)
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading{{$key}}">
-                        <button
-                            class="accordion-button collapsed"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target="#collapse{{$key}}"
-                            aria-expanded="false"
-                            aria-controls="collapse{{$key}}"
-                        >
-                    <span class="pbmit-accordion-title">
-                      <span class="pbmit-number">{{$key < 10 ? '0'.$key+1 : $key+1}}</span>
-                      {{$faq->title}}
-                    </span>
-                            <span class="pbmit-accordion-icon">
-                      <span class="pbmit-accordion-icon-opened">
-                        <i
-                            class="pbmit-shipex-icon pbmit-shipex-icon-levels"
-                        ></i>
-                      </span>
-                      <span class="pbmit-accordion-icon-closed">
-                        <i
-                            class="pbmit-shipex-icon pbmit-shipex-icon-levels"
-                        ></i>
-                      </span>
-                    </span>
-                        </button>
-                    </h2>
-                    <div
-                        id="collapse{{$key}}"
-                        class="accordion-collapse collapse"
-                        aria-labelledby="heading{{$key}}"
-                        data-bs-parent="#accordionExample2"
-                    >
-                        <div class="accordion-body">
-                            {!! $faq->content  !!}
+                <div class="col-lg-7 col-xl-7">
+                    <div class="ps-xl-5">
+                        <div class="accordion style-3 mb-faq-sync-accordion" id="accordionExample1">
+                            @foreach($faqs as $key => $faq)
+                            <div class="accordion-item {{$key == 0 ? 'active' : ''}}">
+                                <h2 class="accordion-header" id="heading{{$key}}">
+                                    <button
+                                        class="accordion-button"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapse{{$key}}"
+                                        aria-expanded="{{$key == 0 ? 'true' : 'false'}}"
+                                        aria-controls="collapse{{$key}}"
+                                    >
+                                            <span class="pbmit-accordion-title">
+                                                {{ $faq->title }}
+                                            </span>
+                                            <span class="pbmit-accordion-icon">
+                                                <span class="pbmit-accordion-icon-opened">
+                                                  <i
+                                                      class="pbmit-shipex-icon pbmit-shipex-icon-levels"
+                                                  ></i>
+                                                </span>
+                                                <span class="pbmit-accordion-icon-closed">
+                                                  <i
+                                                      class="pbmit-shipex-icon pbmit-shipex-icon-levels"
+                                                  ></i>
+                                                </span>
+                                            </span>
+                                    </button>
+                                </h2>
+                                <div
+                                    id="collapse{{$key}}"
+                                    class="accordion-collapse collapse {{$key == 0 ? 'show' : 'hide'}}"
+                                    aria-labelledby="heading{{$key}}"
+                                    data-bs-parent="#accordionExample1"
+                                >
+                                    <div class="accordion-body" data-number="(0{{$key+1}})" data-name="{{$faq->title}}" data-image="">
+                                        {{ clear_content($faq->content)}}
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-                @endforeach
             </div>
         </div>
     </section>

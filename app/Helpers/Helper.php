@@ -177,6 +177,19 @@ if (! function_exists('getPageById')) {
     }
 }
 
+if (! function_exists('clear_content')) {
+    function clear_content($str): string
+    {
+        $str = html_entity_decode($str, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        $str = strip_tags($str);
+
+        $str = preg_replace('/\s+/', ' ', $str);
+
+        return trim($str);
+    }
+}
+
 if (! function_exists('clear')) {
     function clear($str): string
     {

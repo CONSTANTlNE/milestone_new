@@ -75,6 +75,12 @@ return [
             'level' => 'debug',
         ],
 
+        'google_map_api' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/google_map_api.log'),
+            'level' => 'debug',
+        ],
+
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
@@ -82,6 +88,7 @@ return [
             'days' => env('LOG_DAILY_DAYS', 14),
             'replace_placeholders' => true,
         ],
+        
 
         'slack' => [
             'driver' => 'slack',

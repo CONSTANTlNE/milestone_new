@@ -215,6 +215,7 @@
                                         <th scope="col" class="title text-center">Total Charge</th>
                                         <th scope="col" class="title text-center">Action</th>
                                         <th scope="col" class="title text-center">Quotation Sent By</th>
+                                        <th scope="col" class="title text-center">Approved by Customer</th>
                                     </tr>
                                     </thead>
                                     <tbody id="socials-tbody">
@@ -483,6 +484,13 @@
                                             <td>
                                                 @if($quotation->quotation_sent_date)
                                                     <p>{{$quotation->user->name}}</p>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($quotation->approved)
+                                                    approved
+                                                @else
+                                                    pending
                                                 @endif
                                             </td>
                                         </tr>

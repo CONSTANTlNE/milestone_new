@@ -37,28 +37,28 @@
     </div>
 </div>
 
-@if(getPageById(20) !== null or getPageById(19) !== null)
-    <div class="pbmit-floating-quotation-buttons clients-buttons clients-mobile-buttons">
-        @if(getPageById(19) !== null)
-            <div class="pbmit-button transform-bottom transform-delay-4 mt-3">
-                <a class="pbmit-btn" href="{{ route(getPageById(19)->template) }}">
-                    <span class="pbmit-button-content-wrapper">
-                        <span class="pbmit-button-text">{{getPageById(19)->title}}</span>
-                    </span>
-                </a>
-            </div>
-        @endif
-        @if(getPageById(20) !== null)
-            <div class="pbmit-button transform-bottom transform-delay-4 mt-3">
-                <a class="pbmit-btn" href="{{ route(getPageById(20)->template) }}">
-                    <span class="pbmit-button-content-wrapper">
-                            <span class="pbmit-button-text">{{getPageById(20)->title}}</span>
-                    </span>
-                </a>
-            </div>
-        @endif
-    </div>
-@endif
+{{--@if(getPageById(20) !== null or getPageById(19) !== null)--}}
+{{--    <div class="pbmit-floating-quotation-buttons clients-buttons clients-mobile-buttons">--}}
+{{--        @if(getPageById(19) !== null)--}}
+{{--            <div class="pbmit-button transform-bottom transform-delay-4 mt-3">--}}
+{{--                <a class="pbmit-btn" href="{{ route(getPageById(19)->template) }}">--}}
+{{--                    <span class="pbmit-button-content-wrapper">--}}
+{{--                        <span class="pbmit-button-text">{{getPageById(19)->title}}</span>--}}
+{{--                    </span>--}}
+{{--                </a>--}}
+{{--            </div>--}}
+{{--        @endif--}}
+{{--        @if(getPageById(20) !== null)--}}
+{{--            <div class="pbmit-button transform-bottom transform-delay-4 mt-3">--}}
+{{--                <a class="pbmit-btn" href="{{ route(getPageById(20)->template) }}">--}}
+{{--                    <span class="pbmit-button-content-wrapper">--}}
+{{--                            <span class="pbmit-button-text">{{getPageById(20)->title}}</span>--}}
+{{--                    </span>--}}
+{{--                </a>--}}
+{{--            </div>--}}
+{{--        @endif--}}
+{{--    </div>--}}
+{{--@endif--}}
 
 @include('frontend.layouts.consultation-drawer')
 <div id="htmx-validation-errors"></div>
@@ -120,6 +120,15 @@
             document.getElementById('adresses').innerHTML = response;
         }
 
+    });
+
+    document.body.addEventListener('htmx:afterSwap', function () {
+        if (typeof window.initStaggerLetters === 'function') {
+            window.initStaggerLetters();
+        }
+        if (typeof window.initRevealWipe === 'function') {
+            window.initRevealWipe();
+        }
     });
 
     // Consultation Drawer Functionality
@@ -229,3 +238,4 @@
 </script>
 
 @yield('scripts')
+@stack('scripts')

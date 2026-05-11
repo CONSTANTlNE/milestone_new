@@ -1,18 +1,3 @@
-/******************************
-INDEX:
-    00 - General
-    01 - Typography
-    02 - Text Color & Background Color
-    03 - Background Position & Size
-    04 - Helper class
-    05 - Social icons
-    06 - Header
-    07 - Bootstrap Overwrite
-    08 - Swiper
-    09 - Scroll To Top
-    10 - Search Box
-******************************/
-
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet');
 
 :root {
@@ -28,17 +13,14 @@ INDEX:
     --pbmit-link-color-normal: #00112e;
     --pbmit-link-color-hover: #00358d;
     --pbmit-responsive-breakpoint: 1200px;
-
     --pbmit-body-typography-font-family: "Instrument Sans", serif;
     --pbmit-body-typography-variant: regular;
     --pbmit-body-typography-font-size: 16px;
     --pbmit-body-typography-line-height: 1.6;
     --pbmit-body-typography-color: #304364;
-
-    --pbmit-heading-typography-font-family: "Instrument Sans", serif;
+    /* --pbmit-heading-typography-font-family: "SF Pro Display", serif; */
     --pbmit-heading-color: #00112e;
     --pbmit-heading-font-variant: 600;
-
     --pbmit-btn-typography-font-family: "Instrument Sans", serif;
     --pbmit-btn-typography-variant: 500;
     --pbmit-btn-typography-font-size: 15px;
@@ -305,12 +287,31 @@ a.link-btn i, .link-btn a i{
     display: flex;
     justify-content: center;
 }
+/*.pbmit-btn .pbmit-button-text:before{*/
+/*    content: '\e8d2';*/
+/*    font-family: "pbminfotech-base-icons";*/
+/*    position: absolute;*/
+/*    font-size: 16px;*/
+/*    right: -38px;*/
+/*    top: 8px;*/
+/*    left: auto;*/
+/*    width: 45px;*/
+/*    height: 45px;*/
+/*    background-color: var(--pbmit-white-color);*/
+/*    color: var(--pbmit-blackish-color);*/
+/*    border-radius: 50%;*/
+/*    line-height: 45px;*/
+/*    text-align: center;*/
+/*    -webkit-transition: all .3s ease-in-out;*/
+/*    -moz-transition: all .3s ease-in-out;*/
+/*    transition: all .3s ease-in-out;*/
+/*}*/
+
 .pbmit-btn .pbmit-button-text:before{
-    content: '\e8d2';
-    font-family: "pbminfotech-base-icons";
+    content: '';
     position: absolute;
     font-size: 16px;
-    right: 5px;
+    right: -38px;
     top: 8px;
     left: auto;
     width: 45px;
@@ -323,6 +324,24 @@ a.link-btn i, .link-btn a i{
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
     transition: all .3s ease-in-out;
+    background-image: url(http://localhost:8000/assets/images/arrow1.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-size: 24px 24px;
+}
+
+.pbmit-slider-content .pbmit-btn:hover .pbmit-button-text:before,
+.clients .pbmit-button:hover .pbmit-button-text:before{
+    background-image: url(http://localhost:8000/assets/images/arrow3.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-size: 24px 24px;
+}
+
+.clients .pbmit-btn .pbmit-button-text:before{
+    background-image: url(http://localhost:8000/assets/images/arrow3.svg);
 }
 .pbmit-btn:hover{
     color: var(--pbmit-white-color);
@@ -506,23 +525,30 @@ ul.pbmit-contact-info{
 }
 .site-header{
     position: relative;
+    margin: 10px;
 }
 .site-header .site-branding img {
     max-width: 100%;
     height: auto;
-    max-height: 45px;
+    /* max-height: 37px; */
     display: inline-block;
     -webkit-transition: all 300ms ease;
     transition: all 300ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5.07px 8.11px 5.07px 0;
+    gap: 5.07px;
+    height: 38px;
 }
 .site-navigation ul.navigation > li > a {
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 400;
     position: relative;
     z-index: 1;
     display: block;
-    text-transform: uppercase;
-    letter-spacing: .5px;
+    text-transform: capitalize;
+    letter-spacing: 0;
     color: var(--pbmit-white-color);
 }
 .site-navigation ul.navigation > li > a:hover:after{

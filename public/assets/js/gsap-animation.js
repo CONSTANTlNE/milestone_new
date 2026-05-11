@@ -42,6 +42,43 @@ gsap.config({
 		}
 	});
 
+	/** About strip: vertical parallax on the hero image (desktop only; mobile kills all ST above). */
+	ScrollTrigger.matchMedia({
+		"(min-width: 1201px)": function () {
+			if (typeof gsap === "undefined") {
+				return;
+			}
+			if (
+				window.matchMedia &&
+				window.matchMedia("(prefers-reduced-motion: reduce)").matches
+			) {
+				return;
+			}
+			var wrap = document.querySelector(".mb-hap-visual");
+			var img = document.querySelector(".mb-hap-visual-img");
+			if (!wrap || !img) {
+				return;
+			}
+
+			gsap.fromTo(
+				img,
+				{ yPercent: 18, scale: 1.06 },
+				{
+					yPercent: -18,
+					scale: 1.06,
+					ease: "none",
+					scrollTrigger: {
+						trigger: wrap,
+						start: "top bottom",
+						end: "bottom top",
+						scrub: 0.75,
+						invalidateOnRefresh: true,
+					},
+				}
+			);
+		},
+	});
+
 	/* Static Box Slider */
 	var pbmit_staticbox_hover_slide = function() {
 		if (typeof Swiper !== 'undefined') {
@@ -130,6 +167,157 @@ gsap.config({
 		}
 	}
 
+	/**
+	 * Staggered letter reveal (SplitText + GSAP).
+	 * Usage: <h3 class="stagger-letters">Your heading</h3>
+	 * Re-runs safely after HTMX swaps via window.initStaggerLetters().
+	 */
+	var initStaggerLetters = function () {
+		if (typeof gsap === 'undefined' || typeof SplitText === 'undefined') {
+			return;
+		}
+		if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			return;
+		}
+
+		var nodes = document.querySelectorAll('.stagger-letters');
+		if (!nodes.length) {
+			return;
+		}
+
+		var run = function (el) {
+			if (el.getAttribute('data-stagger-letters-done') === '1') {
+				return;
+			}
+			el.setAttribute('data-stagger-letters-done', '1');
+			var split;
+			try {
+				split = SplitText.create(el, { type: 'chars' });
+			} catch (err) {
+				return;
+			}
+			var chars = split.chars;
+			if (!chars || !chars.length) {
+				return;
+			}
+			gsap.from(chars, {
+				y: 50,
+				opacity: 0,
+				stagger: 0.03,
+				duration: 0.6,
+				ease: 'back.out(1.7)'
+			});
+		};
+
+		var useIO = typeof IntersectionObserver !== 'undefined';
+		Array.prototype.forEach.call(nodes, function (el) {
+			if (el.getAttribute('data-stagger-letters-done') === '1') {
+				return;
+			}
+			if (!useIO) {
+				run(el);
+				return;
+			}
+			var obs = new IntersectionObserver(function (entries, o) {
+				entries.forEach(function (entry) {
+					if (!entry.isIntersecting) {
+						return;
+					}
+					o.unobserve(entry.target);
+					run(entry.target);
+				});
+			}, { rootMargin: '0px 0px -8% 0px', threshold: 0.1 });
+			obs.observe(el);
+		});
+	};
+
+	window.initStaggerLetters = initStaggerLetters;
+
+	/**
+	 * Reveal wipe on headings (clip-path inset).
+	 * Usage: <h2 class="mb-reveal-wipe">Title</h2>
+	 * Re-runs safely after HTMX swaps via window.initRevealWipe().
+	 */
+	var initRevealWipe = function () {
+		if (typeof gsap === 'undefined') {
+			return;
+		}
+
+		var nodes = document.querySelectorAll('.mb-reveal-wipe');
+		if (!nodes.length) {
+			return;
+		}
+
+		var reduced =
+			window.matchMedia &&
+			window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+		var run = function (el) {
+			if (el.getAttribute('data-reveal-wipe-done') === '1') {
+				return;
+			}
+			el.setAttribute('data-reveal-wipe-done', '1');
+			if (reduced) {
+				el.classList.add('mb-reveal-wipe--done');
+				return;
+			}
+			var clipHidden = { clipPath: 'inset(0 100% 0 0)', webkitClipPath: 'inset(0 100% 0 0)' };
+			var clipShown = { clipPath: 'inset(0 0% 0 0)', webkitClipPath: 'inset(0 0% 0 0)' };
+			try {
+				var tl = gsap.timeline({
+					onComplete: function () {
+						el.classList.add('mb-reveal-wipe--done');
+						if (typeof gsap.set === 'function') {
+							gsap.set(el, { clearProps: 'clipPath,webkitClipPath' });
+						}
+					},
+				});
+				tl.set(el, clipHidden).to(el, {
+					clipPath: clipShown.clipPath,
+					webkitClipPath: clipShown.webkitClipPath,
+					duration: 1.8,
+					ease: 'power3.inOut',
+				});
+			} catch (e) {
+				el.classList.add('mb-reveal-wipe--done');
+			}
+		};
+
+		var useIO = typeof IntersectionObserver !== 'undefined';
+		Array.prototype.forEach.call(nodes, function (el) {
+			if (el.getAttribute('data-reveal-wipe-done') === '1') {
+				return;
+			}
+			if (el.getAttribute('data-reveal-wipe-observed') === '1') {
+				return;
+			}
+			if (!useIO) {
+				run(el);
+				return;
+			}
+			el.setAttribute('data-reveal-wipe-observed', '1');
+			var obs = new IntersectionObserver(
+				function (entries, o) {
+					entries.forEach(function (entry) {
+						if (!entry.isIntersecting) {
+							return;
+						}
+						o.unobserve(entry.target);
+						run(entry.target);
+					});
+				},
+				{ rootMargin: '0px', threshold: 0 }
+			);
+			obs.observe(el);
+		});
+	};
+
+	window.initRevealWipe = initRevealWipe;
+
+	jQuery(document).ready(function () {
+		initRevealWipe();
+	});
+
 	// on resize
 	jQuery(window).on('resize', function() {
 		pbmit_img_animation();
@@ -142,6 +330,8 @@ gsap.config({
 		pbmit_staticbox_hover_slide();
 		pbmit_thia_sticky();
 		pbmit_burger_menu();
+		initStaggerLetters();
+		initRevealWipe();
 		gsap.delayedCall(1, () =>
 			ScrollTrigger.getAll().forEach((t) => {
 				t.refresh();

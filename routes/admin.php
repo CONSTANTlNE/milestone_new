@@ -690,6 +690,7 @@ Route::group(
             Route::get('{id}', 'show')->name('show');
             Route::post('delete/{id}', 'destroy')->name('delete');
             Route::post('massDestroy', 'massDestroy')->name('massDestroy');
+            Route::post('download/', 'downloadFile')->name('download');
         });
     });
 

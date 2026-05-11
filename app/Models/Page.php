@@ -174,9 +174,12 @@ class Page extends Model
 
     public function statusImageShow($status)
     {
-        $general = Cache::remember('statusImageShowPage'.$this->id.'-'.$status, self::CACHE_TTL, function () use($status){
-            return $this->images()->where('cover', $status)->first();
-        });
+//        $general = Cache::remember('statusImageShowPage'.$this->id.'-'.$status, self::CACHE_TTL, function () use($status){
+//            return $this->images()->where('cover', $status)->first();
+//        });
+
+        $general = $this->images()->where('cover', $status)->first();
+
         if(is_object($general))
         {
             return $general->src;

@@ -1,154 +1,117 @@
-@extends('frontend.layouts.master')
+@extends('frontend.layouts.master', ['class' => 'header-style-2'])
 @section('title') {{ $blog->title }} - @endsection
 @section('seo')
     @include('components.frontend.socials.seo', ['data' => $blog])
 @endsection
-@section('header_background')
-    <div class="pbmit-title-bar-wrapper">
-        <div class="container">
-            <div class="pbmit-title-bar-content">
-                <div class="pbmit-title-bar-content-inner">
-                    <div class="pbmit-tbar">
-                        <div class="pbmit-tbar-inner container">
-                            <h1 class="pbmit-tbar-title"> {{$blog->title}}</h1>
-                        </div>
-                    </div>
-                    <div class="pbmit-breadcrumb">
-                        <div class="pbmit-breadcrumb-inner">
-								<span>
-									<a title="" href="#" class="home"><span>{{__('blog')}}</span></a>
-								</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
+@push('css')
+    <link rel="stylesheet" href="{{ asset('assets/css/blog_show.css') }}">
+@endpush
 
 @section('content')
 
-    <!-- Blog Single Details -->
-    <section class="site-content blog-details">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-9 blog-left-col">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <article>
-                                <div class="post blog-classic">
-                                    <div class="pbmit-img-wrapper">
-                                        <div class="pbmit-featured-img-wrapper">
-                                            <div class="pbmit-featured-wrapper">
-                                                <img src="{{asset($blog->src ?: config('filemanager.default_backend_image'))}}" class="img-fluid" alt="">
-                                            </div>
-                                        </div>
-                                        <span class="pbmit-meta pbmit-meta-cat">
-												<i class="pbmit-base-icon-calendar-3"></i>
-												<a href="#" rel="category tag">Freight</a>
-											</span>
-                                    </div>
-                                    <div class="pbmit-blog-classic-inner">
-                                        <div class="pbmit-blog-meta pbmit-blog-meta-top">
-                                            <div class="pbmit-meta pbmit-meta-cat">
-                                                <a href="#" rel="category tag">Freight</a>
-                                            </div>
+{{-- Hero --}}
+<section class="bs-hero">
+    <div class="bs-wrap">
+        <div class="bs-hero-text">
+            <p class="bs-hero-date">{{ $blog->created_at->format('M d, Y') }}</p>
+            <h1 class="bs-hero-title">{{ $blog->title }}</h1>
+            @if($blog->slogan)
+                <p class="bs-hero-desc">{{ $blog->slogan }}</p>
+            @endif
+        </div>
+        <div class="bs-hero-img-outer">
+            <div class="bs-hero-img-wrap">
+                <img src="{{ asset($blog->src ?: config('filemanager.default_backend_image')) }}"
+                     alt="{{ $blog->title }}" class="bs-hero-img">
+            </div>
+            @if($blog->categories->isNotEmpty())
+                <span class="bs-hero-badge">{{ $blog->categories->first()->title }}</span>
+            @endif
+        </div>
+    </div>
+</section>
 
-                                            <span class="pbmit-meta pbmit-meta-date">
-													<i class="pbmit-base-icon-calendar-3"></i>
-													<a href="#" rel="bookmark">
-														<span class="entry-date">27 Dec, 2024</span>
-													</a>
-												</span>
+{{-- Content --}}
+<section class="bs-content-section">
+    <div class="bs-wrap">
+        <div class="bs-content-grid">
 
-                                        </div>
-                                        <div class="pbmit-entry-content">
-                                            <p class="pbmit-firstletter">
-                                                Logistic regression is a data analysis technique that uses mathematics to find the relationships between two data factors. then uses this relationship to predict the value of one of those factors based on the other. <span class="pbmit-medium">Prediction usually has a finite</span> number of outcome
-                                            </p>
-                                            <p>For example, let’s say you want to guess if your website visitor will click the checkout button in their shopping cart or not. It determine that,  the past, if visitors spent more than five minutes on. <span class="pbmit-medium"><u>Logistic regression analysis</u></span>  looks at past visitor behavior, such as time spent on the as website and the number of items in the cart site and added more than three items to the cart, they clicked the checkout button. Using as this information, the logistic regression function can then predict the behavior of a new website visitor.</p>
-                                            <blockquote>
-                                                <p>“I actually think it’s better I started by being close to customers. That foundation early on helped me later I went into logistics & other kinds of management.” <cite>satisfied client</cite></p>
-                                            </blockquote>
-                                            <h3 class="pbmit-title mb-3">Negotiate with several carriers</h3>
-                                            <p>Logistics is the part of supply chain management that deals with the efficient forward and reverse flow of goods, services, and related information from the point of origin to the point of <span class="pbmit-medium"><u>Logistics management is a component</u></span>  that holds the supply chain together. acto consumption the needs of customers.</p>
-                                            <p>Logistics deals with the movements of materials or products from one facility to another it does not include material flow within duction or assembly plants, production machine scheduling. Logistics occupies a significant amount operational cost of an organisation or country.</p>
-                                            <ul class="list-group">
-                                                <li class="list-group-item">
-														<span class="pbmit-icon-list-icon">
-															<i aria-hidden="true" class="pbmit-base-icon-check-mark"></i>
-														</span>
-                                                    Function of understanding stock mix of a company and the different demands on that stock.
-                                                </li>
-                                                <li class="list-group-item">
-														<span class="pbmit-icon-list-icon">
-															<i aria-hidden="true" class="pbmit-base-icon-check-mark"></i>
-														</span>
-                                                    Legal demand by a shipper or consignee against a carrier in respect of damage or loss to a shipment.
-                                                </li>
-                                                <li class="list-group-item">
-														<span class="pbmit-icon-list-icon">
-															<i aria-hidden="true" class="pbmit-base-icon-check-mark"></i>
-														</span>
-                                                    Performance based logistics  Defense acquisition strategy for cost-effective weapon system support.
-                                                </li>
-                                                <li class="list-group-item">
-														<span class="pbmit-icon-list-icon">
-															<i aria-hidden="true" class="pbmit-base-icon-check-mark"></i>
-														</span>
-                                                    Sales territory  Geographic area or customer group managed by a sales representative
-                                                </li>
-                                            </ul>
-                                            <p class="mt-3">Order processing, inventory management, and freight transportation. Traditionally, order processing was a time-consuming activity that could take up to 70% of the order-cycle time.  and the availability of stocks can be checked in real time.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </article>
+            {{-- Sidebar --}}
+            <aside class="bs-sidebar">
+                <div class="bs-sidebar-card">
+                    <div class="bs-sidebar-top">
+                        <p class="bs-sidebar-heading">We Offer Fast and Reliable Transport</p>
+                        <div class="bs-sidebar-phone">
+                            <div class="bs-phone-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M17.45 14.33c-.37-.19-2.19-1.08-2.53-1.2-.34-.12-.59-.19-.84.19-.25.37-.96 1.2-1.18 1.45-.22.25-.43.28-.8.09-.37-.19-1.57-.58-2.99-1.84-1.11-.99-1.85-2.21-2.07-2.58-.22-.37-.02-.57.16-.76.17-.17.37-.43.56-.65.19-.21.25-.37.37-.62.12-.25.06-.46-.03-.65-.09-.19-.84-2.02-1.15-2.77-.3-.72-.61-.62-.84-.63-.22-.01-.46-.01-.71-.01-.25 0-.65.09-.99.46-.34.37-1.3 1.27-1.3 3.1s1.33 3.59 1.52 3.84c.19.25 2.62 4 6.35 5.61.89.38 1.58.61 2.12.78.89.28 1.7.24 2.34.15.71-.11 2.19-.9 2.5-1.76.31-.87.31-1.61.22-1.76-.09-.15-.34-.25-.71-.43z" fill="white"/>
+                                </svg>
+                            </div>
+                            @if(!empty(getContact()->phone))
+                                <a href="tel:{{ getContact()->phone }}" class="bs-phone-number">{{ getContact()->phone }}</a>
+                            @endif
                         </div>
                     </div>
+                    <div class="bs-sidebar-img">
+                        <img src="{{ asset('assets/images/bg/service-ad-bg.jpg') }}" alt="">
+                    </div>
                 </div>
-                <div class="col-md-3 blog-right-col">
-                    <aside class="sidebar">
-                        <aside class="widget widget-categories">
-                            <h2 class="widget-title">{{__('catagories')}}</h2>
-                            <ul>
-                                @foreach($blogCategories as $category)
-                                    <li>
-										<span class="pbmit-cat-li">
-											<a href="{{ route('frontend.blogCategories.show', ['id'=>$category->id, 'slug'=>$category->slug]) }}">{{$category->title}}</a>
-											<span class="pbmit-brackets">( {{count($category->blogs)}} )</span>
-										</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </aside>
-                        <aside class="widget pbmit-service-ad">
-                            <div class="pbmit-widget-ads">
-                                <img
-                                    src="{{asset('assets/images/bg/service-ad-bg.jpg')}}"
-                                    class="bg-img"
-                                    alt=""
-                                />
-                                <div class="pbmit-service-ad-wrapper">
-                                    <div class="pbmit-service-ads">
-                                        <div class="pbmit-ads-icon">
-                                            <i class="pbmit-base-icon-phone-call"></i>
-                                        </div>
-                                        <span>{{__('contact_text_number')}}</span>
-                                        @if(!empty(getContact()->phone) or !empty(getContact()->phone1))
-                                            <h3 class="pbmit-ads-call">
-                                                <a href="tel:{{getContact()->phone}}">{{getContact()->phone}}</a>
-                                                <a href="tel:{{getContact()->phone1}}">{{getContact()->phone1}}</a>
-                                            </h3>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        </aside>
-                    </aside>
+            </aside>
+
+            {{-- Article --}}
+            <article class="bs-article">
+                <div class="bs-article-body">
+                    {!! $blog->content !!}
                 </div>
+            </article>
+
+        </div>
+    </div>
+</section>
+
+{{-- Related Posts + CTA --}}
+<section class="bs-related-section">
+    <div class="bs-wrap">
+        <div class="bs-related-cta">
+            <h2 class="bs-related-heading">Looking for More Logistics Insights?</h2>
+            <p class="bs-related-subtext">Explore transport strategies, compliance guidance, and carrier management best practices.</p>
+            <div class="bs-browse-row">
+                <a href="{{ route('frontend.blogs.index') }}" class="bs-browse-text-btn">Browse More</a>
+                <a href="{{ route('frontend.blogs.index') }}" class="bs-browse-icon-btn" aria-label="Browse more">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M4.167 10h11.666M10 4.167 15.833 10 10 15.833" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
             </div>
         </div>
-    </section>
-    <!-- Blog Single Details End -->
+
+        @if($relatedBlogs->isNotEmpty())
+            <div class="bs-cards-grid">
+                @foreach($relatedBlogs as $i => $related)
+                    <a href="{{ route('frontend.blogs.show', ['id' => $related->id, 'slug' => $related->slug]) }}" class="bs-card">
+                        <div class="bs-card-img-wrap">
+                            <img src="{{ asset($related->src ?: config('filemanager.default_backend_image')) }}"
+                                 alt="{{ $related->title }}" class="bs-card-img">
+                        </div>
+                        <div class="bs-card-info">
+                            <div class="bs-card-text">
+                                <span class="bs-card-date">{{ $related->created_at->format('M d, Y') }}</span>
+                                <h3 class="bs-card-title">{{ $related->title }}</h3>
+                                @if($related->slogan)
+                                    <p class="bs-card-excerpt">{{ $related->slogan }}</p>
+                                @endif
+                            </div>
+                            <div class="bs-card-arrow">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M4.167 10h11.666M10 4.167 15.833 10 10 15.833" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</section>
+
 @endsection

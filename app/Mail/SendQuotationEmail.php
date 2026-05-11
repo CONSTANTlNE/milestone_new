@@ -2,23 +2,27 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class SendQuotationEmail extends Mailable
 {
-    use  SerializesModels;
+    use SerializesModels;
 
     public $mobile;
+
     public $quotation;
-    public function __construct($mobile,$quotation)
+
+    public $signed_url;
+
+    public function __construct($mobile, $quotation, $signed_url)
     {
         $this->mobile = $mobile;
         $this->quotation = $quotation;
+        $this->signed_url = $signed_url;
     }
 
     /**
@@ -37,14 +41,14 @@ class SendQuotationEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.quotation_offer',
+            view: 'email.b2c_quotation_offer_2',
         );
     }
 
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {

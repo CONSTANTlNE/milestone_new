@@ -12,11 +12,11 @@ class BlogController extends Controller
     public function index()
     {
         $page = Page::where('template', 'frontend.blogs.index')->first();
-        $blogs = Blog::whereNotNull('slug->' . app()->getLocale())
-        ->where('slug->'. app()->getLocale(), "!=", '')
-        ->where('status', 1)
-        ->orderBy('id', 'DESC')
-        ->paginate(6);
+        $blogs = Blog::whereNotNull('slug->'.app()->getLocale())
+            ->where('slug->'.app()->getLocale(), '!=', '')
+            ->where('status', 1)
+            ->orderBy('id', 'DESC')
+            ->paginate(6);
 
         $blogCategories = BlogCategory::where('status', 1)->orderBy('id', 'DESC')->get();
 
@@ -29,9 +29,9 @@ class BlogController extends Controller
 
         $blogCategories = BlogCategory::where('status', 1)->orderBy('id', 'DESC')->get();
 
-         $categoryBlogs = $page->blogs()
-            ->whereNotNull('slug->' . app()->getLocale())
-            ->where('slug->'. app()->getLocale(), "!=", '')
+        $categoryBlogs = $page->blogs()
+            ->whereNotNull('slug->'.app()->getLocale())
+            ->where('slug->'.app()->getLocale(), '!=', '')
             ->where('status', 1)
             ->orderBy('id', 'DESC')
             ->paginate(6);
@@ -44,9 +44,18 @@ class BlogController extends Controller
         $blogCategories = BlogCategory::where('status', 1)->orderBy('id', 'DESC')->get();
 
         $blog = Blog::whereNotNull('slug->'.app()->getLocale())
-            ->where('slug->'.app()->getLocale(), "!=", '')
+            ->where('slug->'.app()->getLocale(), '!=', '')
             ->where('id', $id)
             ->first();
-        return view('frontend.blogs.show', compact('blog', 'blogCategories'));
+
+        $relatedBlogs = Blog::whereNotNull('slug->'.app()->getLocale())
+            ->where('slug->'.app()->getLocale(), '!=', '')
+            ->where('status', 1)
+            ->where('id', '!=', $id)
+            ->orderBy('id', 'DESC')
+            ->limit(3)
+            ->get();
+
+        return view('frontend.blogs.show', compact('blog', 'blogCategories', 'relatedBlogs'));
     }
 }

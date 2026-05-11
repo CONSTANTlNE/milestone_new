@@ -83,7 +83,8 @@ class AppServiceProvider extends ServiceProvider
             return $request->user()
                 && in_array($request->user()->email, [
                     'gmta.constantine@gmail.com',
-                    'borisi.barabadze@gmail.com'
+                    'borisi.barabadze@gmail.com',
+                    'info@milestonebrokers.us'
                 ]);
         });
 

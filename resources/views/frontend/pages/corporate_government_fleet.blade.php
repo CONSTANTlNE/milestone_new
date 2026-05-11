@@ -36,21 +36,18 @@
             margin: 0;
         }
 
-        .form-section {
-            margin-bottom: 40px;
-            padding: 25px;
-            background: #f8f9fa;
+        .form-section.form-row-group {
+            padding: 0;
             border-radius: 8px;
-            border-left: 4px solid #3498db;
         }
 
         .form-section h4 {
-            color: #2c3e50;
-            font-size: 20px;
-            font-weight: 600;
+            color: rgba(0, 13, 36, 1);
             margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e9ecef;
+            font-weight: 500;
+            font-size: 22px;
+            line-height: 24px;
+            letter-spacing: -2%;
         }
 
         .form-group {
@@ -60,18 +57,30 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 14px;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: -1%;
+            text-transform: capitalize;
+            color: rgba(0, 13, 36, 0.8);
         }
 
-        .form-control {
+        .fleet-form .form-control {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 6px;
-            font-size: 14px;
+            border-radius: 12px;
             transition: border-color 0.3s ease;
+            gap: 10px;
+            padding-top: 12px;
+            padding-right: 16px;
+            padding-bottom: 12px;
+            padding-left: 16px;
+            background: rgba(245, 245, 245, 1);
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 24px;
+            letter-spacing: -1%;
+            color: rgba(79, 98, 130, 0.6);
         }
 
         .form-control:focus {
@@ -99,6 +108,33 @@
         .checkbox-item input, .radio-item input {
             margin: 0;
             cursor: pointer;
+        }
+
+        .form-group .checkbox-item {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            margin: 0;
+            padding: 10px 16px;
+            border-radius: 20px;
+            background: rgba(245, 245, 245, 1);
+            color: rgba(79, 98, 130, 0.8);
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .form-group .checkbox-item input[type="checkbox"] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .form-group .checkbox-item:has(input[type="checkbox"]:checked) {
+            background: rgba(79, 98, 130, 1);
+            color: #fff;
         }
 
         .form-text {
@@ -151,6 +187,276 @@
             color: inherit;
         }
 
+        .corporate-fleet-wizard-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10050;
+            align-items: center;
+            justify-content: center;
+            padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+            box-sizing: border-box;
+            background: rgba(0, 0, 0, 0.62);
+        }
+
+        .corporate-fleet-wizard-overlay.is-open {
+            display: flex;
+        }
+
+        .corporate-fleet-wizard-shell {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 640px;
+            max-height: min(88vh, 820px);
+            min-height: 0;
+            background: #fff;
+            margin: 0;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow:
+                0 24px 64px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+
+        .corporate-fleet-wizard-header {
+            flex-shrink: 0;
+            gap: 16px;
+            padding: 30px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .corporate-fleet-wizard-header-text h2 {
+            margin: 0;
+            font-weight: 500;
+            font-size: 26px;
+            line-height: 32px;
+            letter-spacing: -2%;
+            color: rgba(0, 13, 36, 1);
+        }
+
+        .corporate-fleet-wizard-close {
+            background: transparent;
+            border: none;
+            font-size: 1.75rem;
+            line-height: 1;
+            padding: 12px 18px;
+            cursor: pointer;
+            color: #64748b;
+            background: rgba(245, 245, 245, 1);
+            border-radius: 10px;
+        }
+
+        .corporate-fleet-wizard-close:hover {
+            color: #0f172a;
+        }
+
+        #corporateFleetWizardMainPanel {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        #corporateFleetWizardMainPanel > form.fleet-form,
+        .corporate-fleet-wizard-overlay .fleet-form {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .corporate-fleet-wizard-overlay .form-header {
+            display: none;
+        }
+
+        .corporate-fleet-wizard-progress-wrap {
+            margin-top: 4px;
+            max-width: 100%;
+        }
+
+        .corporate-fleet-wizard-step-label {
+            margin: 0 0 5px;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 24px;
+            letter-spacing: -2%;
+            color: rgba(0, 13, 36, 1);
+        }
+
+        .corporate-fleet-wizard-progress-bar {
+            position: relative;
+            height: 17px;
+            border-radius: 999px;
+            background: rgba(0, 50, 133, 0.1);
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .corporate-fleet-wizard-progress-fill {
+            width: 16.666667%;
+            height: 100%;
+            border-radius: inherit;
+            background: rgba(0, 50, 133, 1);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transition: width 0.35s ease;
+        }
+
+        .corporate-fleet-wizard-notification {
+            flex-shrink: 0;
+            margin: 20px 30px 0;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: rgba(255, 244, 230, 1);
+            color: rgba(126, 72, 11, 1);
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+        }
+
+        .corporate-fleet-wizard-body {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: 100%;
+            overflow-y: auto;
+            padding: 30px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .corporate-fleet-wizard-step {
+            display: none;
+        }
+
+        .corporate-fleet-wizard-step.is-active {
+            display: block;
+        }
+
+        .corporate-fleet-wizard-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e9ecef;
+            background: #fff;
+        }
+
+        .corporate-fleet-wizard-footer .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .corporate-fleet-wizard-footer .btn-wizard-close,
+        .corporate-fleet-wizard-footer .btn-wizard-back {
+            border: none;
+            border-radius: 100px;
+            background: rgba(245, 245, 245, 1);
+            color: rgba(31, 31, 31, 1);
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .corporate-fleet-wizard-footer .btn-wizard-close:hover,
+        .corporate-fleet-wizard-footer .btn-wizard-back:hover {
+            background: #dee2e6;
+        }
+
+        .corporate-fleet-wizard-footer .btn-wizard-next,
+        .corporate-fleet-wizard-footer .btn-wizard-submit {
+            border: none;
+            border-radius: 100px;
+            background: rgba(0, 50, 133, 1);
+            color: #fff;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.35);
+            line-height: 22px;
+            letter-spacing: 0%;
+        }
+
+        .corporate-fleet-wizard-footer .btn-wizard-next:hover,
+        .corporate-fleet-wizard-footer .btn-wizard-submit:hover {
+            transform: translateY(-1px);
+        }
+
+        body.corporate-fleet-wizard-open {
+            overflow: hidden;
+        }
+
+        .corporate-fleet-wizard-success-panel {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-height: 260px;
+            padding: 36px 28px 28px;
+            text-align: center;
+        }
+
+        .corporate-fleet-wizard-success-inner {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .corporate-fleet-success-icon-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .corporate-fleet-success-icon {
+            width: 72px;
+            height: 72px;
+        }
+
+        .corporate-fleet-wizard-success-panel.is-error .corporate-fleet-success-heading {
+            color: #991b1b;
+        }
+
+        .corporate-fleet-success-heading {
+            margin: 0 0 12px;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #2c3e50;
+            line-height: 1.3;
+        }
+
+        .corporate-fleet-success-text {
+            margin: 0 0 28px;
+            font-size: 1rem;
+            line-height: 1.55;
+            color: #64748b;
+        }
+
+        .corporate-fleet-success-close-btn {
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .corporate-fleet-wizard-success-dismiss {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+        }
+
+        label.checkbox-item {
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 18px;
+            letter-spacing: 0%;
+            background: rgba(79, 98, 130, 0.1);
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: rgba(79, 98, 130, 1);
+        }
+
+        .corporate-fleet-form-intro {
+            margin-top: 24px;
+        }
+
         @media (max-width: 768px) {
             .auto-auction-form {
                 padding: 20px;
@@ -170,427 +476,692 @@
 @endsection
 
 @section('header_background')
-    @include('components.frontend.header-banner', ['data' => $page])
+    @include('components.frontend.header-banner', ['data' => $page, 'popup' => 'corporate-fleet'])
 @endsection
 
 @section('content')
-    <section class="pbmit-section">
+    <section class="section-lg section-home-blogs service-one-bg-white pbmit-bg-color-white" data-aos="fade-up" data-aos-duration="750" data-aos-easing="ease-out">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="pbmit-heading-subheading">
-                        <p class="pbmit-title"> {!!$page->content!!}</p>
-                        <div class="pbmit-separator"></div>
-                    </div>
-                    <div class="pbmit-content">
-                        <div class="corporate-government-fleet-form">
-                            @if(session('success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    {{ session('success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif
-
-                            @if(session('error'))
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    {{ session('error') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif
-
-                            @if($errors->any())
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <ul class="mb-0">
-                                        @foreach($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-                            @endif
-
-                            <div class="form-header">
-                                <h3>{{$page->slogan}}</h3>
-                                <p class="form-subtitle">{{ __('accounts') }}</p>
+            <div class="row services-content">
+                @if(getPageById(28) !== null)
+                    <div class="col-md-5 mb-4 services-content-left">
+                        <div class="pbmit-heading-subheading">
+                            <h4 class="pbmit-subtitle" data-aos="fade-up" data-aos-delay="80" data-aos-duration="600" style="text-align: left;">
+                                <span>01</span> | {{ __('process') }}
+                            </h4>
+                            <h2 class="pbmit-title mb-reveal-wipe" style="text-align: left;">{{ getPageById(28)->slogan }}</h2>
+                            <p class="pbmit-title"> {!! getPageById(28)->content !!}</p>
+                            <div class="pbmit-separator"></div>
+                            <div class="col-md-4 all-blog d-md-block d-none">
+                                <a class="pbmit-btn js-open-corporate-fleet-wizard" href="#" role="button">
+                                <span class="pbmit-button-content-wrapper">
+                                    <span class="pbmit-button-text">{{ __('calculate_now') }}</span>
+                                </span>
+                                </a>
                             </div>
-
-                            <form class="fleet-form" method="POST" action="{{ route('frontend.corporate_government_fleet.store') }}" enctype="multipart/form-data">
-                                @csrf
-                                @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
-                                    <div
-                                        class="cf-turnstile"
-                                        data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
-                                        data-callback="javascriptCallback"
-                                    ></div>
-                                @endif
-                                <!-- Organization Information Section -->
-                                <div class="form-section  form-row-group">
-                                    <h4>Organization Information</h4>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="legal_organization_name">Legal Organization Name *</label>
-                                                <input type="text" class="form-control" id="legal_organization_name" name="legal_organization_name" value="{{ old('legal_organization_name') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="dba">DBA (If Any)</label>
-                                                <input type="text" class="form-control" id="dba" name="dba" value="{{ old('dba') }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="years_operation">Years in Operation *</label>
-                                                <input type="number" class="form-control" id="years_operation" name="years_operation" value="{{ old('years_operation') }}" min="0" max="100" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="website_url">Website URL</label>
-                                                <input type="url" class="form-control" id="website_url" name="website_url" value="{{ old('website_url') }}" placeholder="https://example.com">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Business Type *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="business_type" value="corporate" @checked(old('business_type')=='corporate') required> Corporate
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="business_type" value="government" @checked(old('business_type')=='government') required> Government
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="business_type" value="non_profit" @checked(old('business_type')=='non_profit') required> Non-Profit
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="department">Department (if applicable)</label>
-                                                <input type="text" class="form-control" id="department" name="department" value="{{ old('department') }}" placeholder="e.g., Fleet Management, Transportation">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Primary Contact Section -->
-                                <div class="form-section  form-row-group">
-                                    <h4>Primary Contact</h4>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="contact_name">Full Name *</label>
-                                                <input type="text" class="form-control" id="contact_name" name="contact_name" value="{{ old('contact_name') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="contact_title">Title/Position *</label>
-                                                <input type="text" class="form-control" id="contact_title" name="contact_title" value="{{ old('contact_title') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="contact_phone">Phone Number *</label>
-                                                <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="contact_email">Email Address *</label>
-                                                <input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ old('contact_email') }}" required>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Fleet Logistics & Operations Section -->
-                                <div class="form-section  form-row-group">
-                                    <h4>Fleet Logistics & Operations</h4>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="primary_garage_address">Primary Garage or Lot Address *</label>
-                                                <input type="text" class="form-control" id="primary_garage_address" name="primary_garage_address" value="{{ old('primary_garage_address') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="fleet_management_software">Fleet Management Software (if any)</label>
-                                                <input type="text" class="form-control" id="fleet_management_software" name="fleet_management_software" value="{{ old('fleet_management_software') }}" placeholder="e.g., Fleetio, Samsara, Geotab">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="fleet_locations">Number of Fleet Locations *</label>
-                                                <input type="number" class="form-control" id="fleet_locations" name="fleet_locations" value="{{ old('fleet_locations') }}" min="1" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="vehicle_release_contact">Point-of-Contact for Vehicle Releases *</label>
-                                                <input type="text" class="form-control" id="vehicle_release_contact" name="vehicle_release_contact" value="{{ old('vehicle_release_contact') }}" placeholder="Name and contact info" required>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Typical Usage Type *</label>
-                                                <div class="checkbox-group">
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="law_enforcement" @checked(in_array('law_enforcement', old('usage_type', [])))> Law Enforcement
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="utility" @checked(in_array('utility', old('usage_type', [])))> Utility
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="passenger" @checked(in_array('passenger', old('usage_type', [])))> Passenger
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="construction" @checked(in_array('construction', old('usage_type', [])))> Construction
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="mixed" @checked(in_array('mixed', old('usage_type', [])))> Mixed
-                                                    </label>
-                                                    <label class="checkbox-item">
-                                                        <input type="checkbox" name="usage_type[]" value="mixed"> Other
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="vehicle_condition">Are Vehicles Mostly New or Used? *</label>
-                                                <select class="form-control" id="vehicle_condition" name="vehicle_condition" required>
-                                                    <option value="">Select Option</option>
-                                                    <option value="mostly_new" @selected(old('vehicle_condition')=='mostly_new')>Mostly New</option>
-                                                    <option value="mostly_used" @selected(old('vehicle_condition')=='mostly_used')>Mostly Used</option>
-                                                    <option value="mixed" @selected(old('vehicle_condition')=='mixed')>Mixed</option>
-                                                    <option value="varies" @selected(old('vehicle_condition')=='varies')>Varies by Department</option>
-                                                </select>
-                                            </div>
-                                        </div>
-{{--                                        <div class="col-md-3">--}}
-{{--                                            <div class="form-group">--}}
-{{--                                                <label>Upload a file with the list of Vehicles</label>--}}
-{{--                                                <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.doc,.docx" required style="margin-bottom: 0">--}}
-{{--                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, Excel</small>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-                                    </div>
-                                </div>
-
-                                <!-- Transport Needs & Preferences Section -->
-                                <div class="form-section  form-row-group">
-                                    <h4>Transport Needs & Preferences</h4>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="vehicles_per_month">Estimated Vehicles Transported/Month *</label>
-                                                <input type="number" class="form-control" id="vehicles_per_month" name="vehicles_per_month" value="{{ old('vehicles_per_month') }}" min="1" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="security_requirements">Security/Clearance Requirements (if any)</label>
-                                                <input type="text" class="form-control" id="security_requirements" name="security_requirements" value="{{ old('security_requirements') }}" placeholder="e.g., Background check, Security clearance level">
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Transport Scope *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="transport_scope" value="local" @checked(old('transport_scope')=='local') required> Local
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="transport_scope" value="regional" @checked(old('transport_scope')=='regional') required> Regional
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="transport_scope" value="nationwide" @checked(old('transport_scope')=='nationwide') required> Nationwide
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Transport Type *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="transport_type" value="open" @checked(old('transport_type')=='open') required> Open
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="transport_type" value="enclosed" @checked(old('transport_type')=='enclosed') required> Enclosed
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="pickup_protocols">Pickup/Drop-Off Protocols *</label>
-                                                <textarea class="form-control" id="pickup_protocols" name="pickup_protocols" rows="3" placeholder="Describe pickup and delivery procedures" required>{{ old('pickup_protocols') }}</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="special_handling">Special Handling Instructions</label>
-                                                <textarea class="form-control" id="special_handling" name="special_handling" rows="3" placeholder="Any special requirements or instructions">{{ old('special_handling') }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Billing & Payment Section -->
-                                <div class="form-section  form-row-group">
-                                    <h4> Billing & Payment</h4>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="billing_contact">Billing Contact Name *</label>
-                                                <input type="text" class="form-control" id="billing_contact" name="billing_contact" value="{{ old('billing_contact') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="billing_email">Billing Email *</label>
-                                                <input type="email" class="form-control" id="billing_email" name="billing_email" value="{{ old('billing_email') }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="payment_platform">Payment Platform (if any)</label>
-                                                <input type="text" class="form-control" id="payment_platform" name="payment_platform" value="{{ old('payment_platform') }}" placeholder="e.g., Ariba, Coupa, Jaggaer, Other">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Preferred Payment Method *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="checkbox" name="payment_method[]" value="ach" @checked(in_array('ach', old('payment_method', [])))> ACH
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="checkbox" name="payment_method[]" value="credit_card" @checked(in_array('credit_card', old('payment_method', [])))> Credit Card
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="checkbox" name="payment_method[]" value="government_po" @checked(in_array('government_po', old('payment_method', [])))> Government PO
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="checkbox" name="payment_method[]" value="net_terms" @checked(in_array('net_terms', old('payment_method', [])))> Other
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label>Do You Require Invoicing via Vendor Portal? *</label>
-                                                <div class="radio-group">
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="vendor_portal_invoicing" value="yes" @checked(old('vendor_portal_invoicing')=='yes') required> Yes
-                                                    </label>
-                                                    <label class="radio-item">
-                                                        <input type="radio" name="vendor_portal_invoicing" value="no" @checked(old('vendor_portal_invoicing')=='no') required> No
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Verification Documents Section -->
-                                <div class="form-section  form-row-group">
-                                    <h4>Verification Documents</h4>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="government_corporate_id">Government/Corporate ID or Certification # *</label>
-                                                <input type="text" class="form-control" id="government_corporate_id" name="government_corporate_id" value="{{ old('government_corporate_id') }}" placeholder="e.g., DUNS, CAGE Code, Tax ID" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="purchase_order_format">Purchase Order Format or Template (if used)</label>
-                                                <input type="text" class="form-control" id="purchase_order_format" name="purchase_order_format" value="{{ old('purchase_order_format') }}" placeholder="e.g., Standard PO, Custom template">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="w9_upload">W9 Upload *</label>
-                                                <input type="file" class="form-control" id="w9_upload" name="w9_upload" accept=".pdf,.doc,.docx" required>
-                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="insurance_certificate">Insurance Certificate Upload *</label>
-                                                <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.doc,.docx" required>
-                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX</small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="references_contractors">References or Past Contractors</label>
-                                                <textarea class="form-control" id="references_contractors" name="references_contractors" rows="3" placeholder="List any transportation or logistics companies you've worked with">{{ old('references_contractors') }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Submit Button -->
-                                <div class="form-section text-center mb-4">
-                                    <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
-                                </div>
-                            </form>
-
-                            @if(count($page->tiers))
-                                @include('frontend.pages.tier', ['data' => $page->tiers])
-                            @endif
                         </div>
                     </div>
+                @endif
+
+                <div class="col-md-7 mb-4 services-content-right">
+                    @if(count($page->tiers))
+                        @include('frontend.pages.tier', ['data' => $page->tiers])
+                    @endif
                 </div>
             </div>
         </div>
     </section>
+
+    <div id="corporateFleetWizardOverlay" class="corporate-fleet-wizard-overlay" aria-modal="true" role="dialog" aria-labelledby="corporateFleetWizardTitle" aria-hidden="true">
+        <div class="corporate-fleet-wizard-shell">
+            <div id="corporateFleetWizardMainPanel" class="@if(session('success') || session('error') || $errors->any()) d-none @endif">
+                <div class="corporate-fleet-wizard-header">
+                    <div class="corporate-fleet-wizard-header-text">
+                        <div class="header-title">
+                            <h2 id="corporateFleetWizardTitle">Corporate & Government Fleet Application</h2>
+                            <button type="button" class="corporate-fleet-wizard-close" id="corporateFleetWizardClose" aria-label="{{ __('admin.close') }}">&times;</button>
+                        </div>
+                        <div class="header-progress-bar">
+                            <p class="corporate-fleet-wizard-step-label" id="corporateFleetWizardStepLabel">{{ __('admin.corporate_fleet_wizard_step_prefix', ['current' => 1]) }} <span>{{ __('admin.corporate_fleet_wizard_step_total', ['total' => 6]) }}</span></p>
+                            <div class="corporate-fleet-wizard-progress-wrap">
+                                <div
+                                    class="corporate-fleet-wizard-progress-bar"
+                                    id="corporateFleetWizardProgress"
+                                    role="progressbar"
+                                    aria-valuemin="1"
+                                    aria-valuemax="6"
+                                    aria-valuenow="1"
+                                    aria-valuetext="{{ __('admin.corporate_fleet_wizard_step_count', ['current' => 1, 'total' => 6]) }}"
+                                    aria-labelledby="corporateFleetWizardStepLabel"
+                                >
+                                    <div class="corporate-fleet-wizard-progress-fill" id="corporateFleetWizardProgressFill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form class="fleet-form" method="POST" action="{{ route('frontend.corporate_government_fleet.store') }}" enctype="multipart/form-data" id="corporateFleetWizardForm" novalidate>
+                    @csrf
+                    <div class="corporate-fleet-wizard-notification d-none" id="corporateFleetWizardNotification" role="status" aria-live="polite"></div>
+                    <div class="corporate-fleet-wizard-body">
+                        @if(config('milestone.CLOUDFLARE_CAPTCHA')==true)
+                            <div
+                                class="cf-turnstile"
+                                data-sitekey="0x4AAAAAABmcVARJuH5NYIlN"
+                                data-callback="javascriptCallback"
+                            ></div>
+                        @endif
+
+                        <div class="corporate-fleet-wizard-step is-active" data-step="1">
+                            <div class="form-section  form-row-group">
+                                <h4>Organization Information</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="legal_organization_name">Legal Organization Name *</label>
+                                            <input type="text" class="form-control" id="legal_organization_name" name="legal_organization_name" value="{{ old('legal_organization_name') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="dba">DBA (If Any)</label>
+                                            <input type="text" class="form-control" id="dba" name="dba" value="{{ old('dba') }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="years_operation">Years in Operation *</label>
+                                            <input type="number" class="form-control" id="years_operation" name="years_operation" value="{{ old('years_operation') }}" min="0" max="100" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="website_url">Website URL</label>
+                                            <input type="url" class="form-control" id="website_url" name="website_url" value="{{ old('website_url') }}" placeholder="https://example.com">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Business Type *</label>
+                                            <div class="radio-group">
+                                                <label class="radio-item">
+                                                    <input type="radio" name="business_type" value="corporate" @checked(old('business_type')=='corporate') required> Corporate
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="business_type" value="government" @checked(old('business_type')=='government') required> Government
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="business_type" value="non_profit" @checked(old('business_type')=='non_profit') required> Non-Profit
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="department">Department (if applicable)</label>
+                                            <input type="text" class="form-control" id="department" name="department" value="{{ old('department') }}" placeholder="e.g., Fleet Management, Transportation">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="corporate-fleet-wizard-step" data-step="2">
+                            <div class="form-section  form-row-group">
+                                <h4>Primary Contact</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="contact_name">Full Name *</label>
+                                            <input type="text" class="form-control" id="contact_name" name="contact_name" value="{{ old('contact_name') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="contact_title">Title/Position *</label>
+                                            <input type="text" class="form-control" id="contact_title" name="contact_title" value="{{ old('contact_title') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="contact_phone">Phone Number *</label>
+                                            <input type="tel" class="form-control" id="contact_phone" name="contact_phone" value="{{ old('contact_phone') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="contact_email">Email Address *</label>
+                                            <input type="email" class="form-control" id="contact_email" name="contact_email" value="{{ old('contact_email') }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="corporate-fleet-wizard-step" data-step="3">
+                            <div class="form-section  form-row-group">
+                                <h4>Fleet Logistics & Operations</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="primary_garage_address">Primary Garage or Lot Address *</label>
+                                            <input type="text" class="form-control" id="primary_garage_address" name="primary_garage_address" value="{{ old('primary_garage_address') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="fleet_management_software">Fleet Management Software (if any)</label>
+                                            <input type="text" class="form-control" id="fleet_management_software" name="fleet_management_software" value="{{ old('fleet_management_software') }}" placeholder="e.g., Fleetio, Samsara, Geotab">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="fleet_locations">Number of Fleet Locations *</label>
+                                            <input type="number" class="form-control" id="fleet_locations" name="fleet_locations" value="{{ old('fleet_locations') }}" min="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="vehicle_release_contact">Point-of-Contact for Vehicle Releases *</label>
+                                            <input type="text" class="form-control" id="vehicle_release_contact" name="vehicle_release_contact" value="{{ old('vehicle_release_contact') }}" placeholder="Name and contact info" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Typical Usage Type *</label>
+                                            <div class="checkbox-group">
+                                                <label class="checkbox-item">
+                                                    <input type="checkbox" name="usage_type[]" value="law_enforcement" @checked(in_array('law_enforcement', old('usage_type', [])))> Law Enforcement
+                                                </label>
+                                                <label class="checkbox-item">
+                                                    <input type="checkbox" name="usage_type[]" value="utility" @checked(in_array('utility', old('usage_type', [])))> Utility
+                                                </label>
+                                                <label class="checkbox-item">
+                                                    <input type="checkbox" name="usage_type[]" value="passenger" @checked(in_array('passenger', old('usage_type', [])))> Passenger
+                                                </label>
+                                                <label class="checkbox-item">
+                                                    <input type="checkbox" name="usage_type[]" value="construction" @checked(in_array('construction', old('usage_type', [])))> Construction
+                                                </label>
+                                                <label class="checkbox-item">
+                                                    <input type="checkbox" name="usage_type[]" value="mixed" @checked(in_array('mixed', old('usage_type', [])))> Mixed
+                                                </label>
+                                                <label class="checkbox-item">
+                                                    <input type="checkbox" name="usage_type[]" value="mixed"> Other
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="vehicle_condition">Are Vehicles Mostly New or Used? *</label>
+                                            <select class="form-control" id="vehicle_condition" name="vehicle_condition" required>
+                                                <option value="">Select Option</option>
+                                                <option value="mostly_new" @selected(old('vehicle_condition')=='mostly_new')>Mostly New</option>
+                                                <option value="mostly_used" @selected(old('vehicle_condition')=='mostly_used')>Mostly Used</option>
+                                                <option value="mixed" @selected(old('vehicle_condition')=='mixed')>Mixed</option>
+                                                <option value="varies" @selected(old('vehicle_condition')=='varies')>Varies by Department</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    {{--                                        <div class="col-md-12">--}}
+                                    {{--                                            <div class="form-group">--}}
+                                    {{--                                                <label>Upload a file with the list of Vehicles</label>--}}
+                                    {{--                                                <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.doc,.docx" required style="margin-bottom: 0">--}}
+                                    {{--                                                <small class="form-text text-muted">Accepted formats: PDF, DOC, DOCX, Excel</small>--}}
+                                    {{--                                            </div>--}}
+                                    {{--                                        </div>--}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="corporate-fleet-wizard-step" data-step="4">
+                            <div class="form-section  form-row-group">
+                                <h4>Transport Needs & Preferences</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="vehicles_per_month">Estimated Vehicles Transported/Month *</label>
+                                            <input type="number" class="form-control" id="vehicles_per_month" name="vehicles_per_month" value="{{ old('vehicles_per_month') }}" min="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="security_requirements">Security/Clearance Requirements (if any)</label>
+                                            <input type="text" class="form-control" id="security_requirements" name="security_requirements" value="{{ old('security_requirements') }}" placeholder="e.g., Background check, Security clearance level">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Transport Scope *</label>
+                                            <div class="radio-group">
+                                                <label class="radio-item">
+                                                    <input type="radio" name="transport_scope" value="local" @checked(old('transport_scope')=='local') required> Local
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="transport_scope" value="regional" @checked(old('transport_scope')=='regional') required> Regional
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="transport_scope" value="nationwide" @checked(old('transport_scope')=='nationwide') required> Nationwide
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Transport Type *</label>
+                                            <div class="radio-group">
+                                                <label class="radio-item">
+                                                    <input type="radio" name="transport_type" value="open" @checked(old('transport_type')=='open') required> Open
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="transport_type" value="enclosed" @checked(old('transport_type')=='enclosed') required> Enclosed
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="pickup_protocols">Pickup/Drop-Off Protocols *</label>
+                                            <textarea class="form-control" id="pickup_protocols" name="pickup_protocols" rows="3" placeholder="Describe pickup and delivery procedures" required>{{ old('pickup_protocols') }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="special_handling">Special Handling Instructions</label>
+                                            <textarea class="form-control" id="special_handling" name="special_handling" rows="3" placeholder="Any special requirements or instructions">{{ old('special_handling') }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="corporate-fleet-wizard-step" data-step="5">
+                            <div class="form-section  form-row-group">
+                                <h4> Billing & Payment</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="billing_contact">Billing Contact Name *</label>
+                                            <input type="text" class="form-control" id="billing_contact" name="billing_contact" value="{{ old('billing_contact') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="billing_email">Billing Email *</label>
+                                            <input type="email" class="form-control" id="billing_email" name="billing_email" value="{{ old('billing_email') }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="payment_platform">Payment Platform (if any)</label>
+                                            <input type="text" class="form-control" id="payment_platform" name="payment_platform" value="{{ old('payment_platform') }}" placeholder="e.g., Ariba, Coupa, Jaggaer, Other">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Preferred Payment Method *</label>
+                                            <div class="radio-group">
+                                                <label class="radio-item">
+                                                    <input type="radio" name="payment_method" value="ach" @checked(old('payment_method')=='ach') required> ACH
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="payment_method" value="credit_card" @checked(old('payment_method')=='credit_card') required> Credit Card
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="payment_method" value="government_po" @checked(old('payment_method')=='government_po') required> Government PO
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="payment_method" value="net_terms" @checked(old('payment_method')=='net_terms') required> Other
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Do You Require Invoicing via Vendor Portal? *</label>
+                                            <div class="radio-group">
+                                                <label class="radio-item">
+                                                    <input type="radio" name="vendor_portal_invoicing" value="yes" @checked(old('vendor_portal_invoicing')=='yes') required> Yes
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="vendor_portal_invoicing" value="no" @checked(old('vendor_portal_invoicing')=='no') required> No
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="corporate-fleet-wizard-step" data-step="6">
+                            <div class="form-section  form-row-group">
+                                <h4>Verification Documents</h4>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="government_corporate_id">Government/Corporate ID or Certification # *</label>
+                                            <input type="text" class="form-control" id="government_corporate_id" name="government_corporate_id" value="{{ old('government_corporate_id') }}" placeholder="e.g., DUNS, CAGE Code, Tax ID" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="purchase_order_format">Purchase Order Format or Template (if used)</label>
+                                            <input type="file" class="form-control" id="purchase_order_format" name="purchase_order_format" accept=".pdf,.jpg,.jpeg,.png">
+                                            <small class="form-text text-muted">Accepted formats: PDF, JPG, JPEG, PNG</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="w9_upload">W9 Upload *</label>
+                                            <input type="file" class="form-control" id="w9_upload" name="w9_upload" accept=".pdf,.jpg,.jpeg,.png" required>
+                                            <small class="form-text text-muted">Accepted formats: PDF, JPG, JPEG, PNG</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="insurance_certificate">Insurance Certificate Upload *</label>
+                                            <input type="file" class="form-control" id="insurance_certificate" name="insurance_certificate" accept=".pdf,.jpg,.jpeg,.png" required>
+                                            <small class="form-text text-muted">Accepted formats: PDF, JPG, JPEG, PNG</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="references_contractors">References or Past Contractors</label>
+                                            <textarea class="form-control" id="references_contractors" name="references_contractors" rows="3" placeholder="List any transportation or logistics companies you've worked with">{{ old('references_contractors') }}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="corporate-fleet-wizard-footer">
+                        <div class="wizard-actions ms-auto">
+                            <button type="button" class="btn-wizard-close" id="wizardBtnClose">{{ __('admin.close') }}</button>
+                            <button type="button" class="btn-wizard-back" id="wizardBtnBack" style="display:none;">{{ __('admin.back') }}</button>
+                            <button type="button" class="btn-wizard-next" id="wizardBtnNext">{{ __('admin.next') }}</button>
+                            <button type="submit" class="btn-wizard-submit d-none" id="wizardBtnSubmit">{{ __('admin.submit_application') }}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div
+                id="corporateFleetWizardSuccessPanel"
+                class="corporate-fleet-wizard-success-panel @if(!session('success') && !session('error') && !$errors->any()) d-none @endif @if(session('error') || $errors->any()) is-error @endif"
+                role="alertdialog"
+                aria-modal="true"
+                aria-labelledby="corporateFleetSuccessHeading"
+                aria-describedby="corporateFleetSuccessText"
+            >
+                <button type="button" class="corporate-fleet-wizard-close corporate-fleet-wizard-success-dismiss" id="corporateFleetWizardSuccessDismissX" aria-label="{{ __('admin.close') }}">&times;</button>
+                <div class="corporate-fleet-wizard-success-inner">
+                    <div class="corporate-fleet-success-icon-wrap">
+                        @if(session('success'))
+                            <svg class="corporate-fleet-success-icon" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <circle cx="36" cy="36" r="34" stroke="#22c55e" stroke-width="3" fill="#ecfdf5"/>
+                                <path d="M22 37l10 10 18-22" stroke="#16a34a" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        @else
+                            <svg class="corporate-fleet-success-icon" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <circle cx="36" cy="36" r="34" stroke="#ef4444" stroke-width="3" fill="#fef2f2"/>
+                                <path d="M25 25l22 22M47 25L25 47" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                            </svg>
+                        @endif
+                    </div>
+                    <h3 id="corporateFleetSuccessHeading" class="corporate-fleet-success-heading">
+                        {{ session('success') ? __('admin.application_submitted') : __('admin.application_not_submitted') }}
+                    </h3>
+                    <p id="corporateFleetSuccessText" class="corporate-fleet-success-text">
+                        {{ session('success') ? __('admin.application_submitted_text') : __('admin.application_not_submitted_text') }}
+                    </p>
+                    <button type="button" class="btn-wizard-next corporate-fleet-success-close-btn" id="corporateFleetWizardSuccessCloseBtn">{{ __('admin.close') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
     <script>
-        document.querySelector('.fleet-form').addEventListener("submit", function(e) {
-            const checkboxes = document.querySelectorAll("input[name='usage_type[]']:checked");
-            if (checkboxes.length === 0) {
-                e.preventDefault();
-                alert("Please select at least one usage type in Fleet Logistics & Operations.");
-                return;
+        (function () {
+            function initCorporateFleetWizard() {
+                var overlay = document.getElementById('corporateFleetWizardOverlay');
+                if (!overlay) return;
+
+                var bodyEl = document.body;
+                var mainPanel = document.getElementById('corporateFleetWizardMainPanel');
+                var successPanel = document.getElementById('corporateFleetWizardSuccessPanel');
+                var closeBtn = document.getElementById('corporateFleetWizardClose');
+                var form = document.getElementById('corporateFleetWizardForm');
+                var notification = document.getElementById('corporateFleetWizardNotification');
+                var stepLabel = document.getElementById('corporateFleetWizardStepLabel');
+                var progressBar = document.getElementById('corporateFleetWizardProgress');
+                var progressFill = document.getElementById('corporateFleetWizardProgressFill');
+                var btnClose = document.getElementById('wizardBtnClose');
+                var btnBack = document.getElementById('wizardBtnBack');
+                var btnNext = document.getElementById('wizardBtnNext');
+                var btnSubmit = document.getElementById('wizardBtnSubmit');
+                var totalSteps = 6;
+                var currentStep = 1;
+                var stepCountText = @json(__('admin.corporate_fleet_wizard_step_count'));
+                var stepPrefixText = @json(__('admin.corporate_fleet_wizard_step_prefix'));
+                var stepTotalText = @json(__('admin.corporate_fleet_wizard_step_total'));
+
+                function showFormPanel() {
+                    if (successPanel) successPanel.classList.add('d-none');
+                    if (mainPanel) mainPanel.classList.remove('d-none');
+                }
+
+                function showNotification(message) {
+                    if (!notification) return;
+
+                    notification.textContent = message;
+                    notification.classList.remove('d-none');
+                    notification.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+                function hideNotification() {
+                    if (!notification) return;
+
+                    notification.textContent = '';
+                    notification.classList.add('d-none');
+                }
+
+                function clearFormFields() {
+                    if (!form) return;
+
+                    form.querySelectorAll('input, select, textarea').forEach(function (field) {
+                        if (field.name === '_token') return;
+
+                        if (field.type === 'checkbox' || field.type === 'radio') {
+                            field.checked = false;
+                            return;
+                        }
+
+                        if (field.type === 'file') {
+                            field.value = '';
+                            return;
+                        }
+
+                        if (field.tagName === 'SELECT') {
+                            field.selectedIndex = 0;
+                            return;
+                        }
+
+                        field.value = '';
+                    });
+
+                    form.querySelectorAll('.is-invalid, .is-valid').forEach(function (el) {
+                        el.classList.remove('is-invalid', 'is-valid');
+                    });
+                }
+
+                function resetWizard() {
+                    hideNotification();
+                    clearFormFields();
+
+                    if (typeof setStep === 'function' && typeof totalSteps === 'number') {
+                        setStep(1);
+                    }
+                }
+
+                function setStep(step) {
+                    hideNotification();
+                    currentStep = Math.max(1, Math.min(totalSteps, step));
+
+                    overlay.querySelectorAll('.corporate-fleet-wizard-step').forEach(function (panel) {
+                        var panelStep = parseInt(panel.getAttribute('data-step'), 10);
+                        panel.classList.toggle('is-active', panelStep === currentStep);
+                    });
+
+                    if (stepLabel) {
+                        stepLabel.textContent = '';
+                        stepLabel.appendChild(document.createTextNode(stepPrefixText.replace(':current', currentStep) + ' '));
+                        var stepTotal = document.createElement('span');
+                        stepTotal.textContent = stepTotalText.replace(':total', totalSteps);
+                        stepLabel.appendChild(stepTotal);
+                    }
+
+                    var pct = (100 * currentStep) / totalSteps;
+                    if (progressFill) {
+                        progressFill.style.width = pct + '%';
+                    }
+
+                    if (progressBar) {
+                        progressBar.setAttribute('aria-valuenow', String(currentStep));
+                        progressBar.setAttribute('aria-valuetext', stepCountText
+                            .replace(':current', currentStep)
+                            .replace(':total', totalSteps));
+                    }
+
+                    overlay.querySelectorAll('[data-step-chip]').forEach(function (chip) {
+                        var sn = parseInt(chip.getAttribute('data-step-chip'), 10);
+                        chip.classList.toggle('is-complete', sn < currentStep);
+                        chip.classList.toggle('is-active', sn === currentStep);
+                        chip.classList.toggle('is-pending', sn > currentStep);
+                    });
+
+                    if (btnClose) btnClose.classList.toggle('d-none', currentStep !== 1);
+                    if (btnBack) btnBack.style.display = currentStep === 1 ? 'none' : '';
+                    if (btnNext) btnNext.classList.toggle('d-none', currentStep === totalSteps);
+                    if (btnSubmit) btnSubmit.classList.toggle('d-none', currentStep !== totalSteps);
+
+                    var scrollBody = overlay.querySelector('.corporate-fleet-wizard-body');
+                    if (scrollBody) scrollBody.scrollTop = 0;
+                    overlay.setAttribute('aria-hidden', 'false');
+                }
+
+                function validateStep(step) {
+                    var panel = overlay.querySelector('.corporate-fleet-wizard-step[data-step="' + step + '"]');
+                    if (!panel) return false;
+
+                    if (step === 3 && !panel.querySelectorAll('input[name="usage_type[]"]:checked').length) {
+                        showNotification(@json(__('admin.select_at_least_one_usage_type')));
+                        return false;
+                    }
+
+                    var controls = panel.querySelectorAll('input, select, textarea');
+                    for (var i = 0; i < controls.length; i++) {
+                        var el = controls[i];
+                        if (el.disabled) continue;
+
+                        if (el.type === 'checkbox') {
+                            if (el.name === 'usage_type[]') continue;
+                            if (el.required && !el.checked) {
+                                el.reportValidity();
+                                return false;
+                            }
+                            continue;
+                        }
+
+                        if (el.type === 'file') {
+                            if (el.hasAttribute('required') && (!el.files || !el.files.length)) {
+                                if (typeof el.reportValidity === 'function') el.reportValidity();
+                                else showNotification(@json(__('admin.please_upload_required_files')));
+                                return false;
+                            }
+                            continue;
+                        }
+
+                        if (!el.checkValidity()) {
+                            el.reportValidity();
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                function openWizard(e, keepCurrentPanel) {
+                    if (e) e.preventDefault();
+                    if (!keepCurrentPanel) showFormPanel();
+                    overlay.classList.add('is-open');
+                    bodyEl.classList.add('corporate-fleet-wizard-open');
+                    overlay.setAttribute('aria-hidden', 'false');
+                    setStep(keepCurrentPanel ? currentStep : 1);
+                }
+
+                function closeWizard() {
+                    resetWizard();
+                    showFormPanel();
+                    overlay.classList.remove('is-open');
+                    bodyEl.classList.remove('corporate-fleet-wizard-open');
+                    overlay.setAttribute('aria-hidden', 'true');
+                }
+
+                document.addEventListener('click', function (e) {
+                    var trigger = e.target && e.target.closest && e.target.closest('.js-open-corporate-fleet-wizard');
+                    if (!trigger) return;
+
+                    openWizard(e);
+                }, true);
+
+                if (closeBtn) closeBtn.addEventListener('click', closeWizard);
+                if (btnClose) btnClose.addEventListener('click', closeWizard);
+                var successDismiss = document.getElementById('corporateFleetWizardSuccessDismissX');
+                var successClose = document.getElementById('corporateFleetWizardSuccessCloseBtn');
+                if (successDismiss) successDismiss.addEventListener('click', closeWizard);
+                if (successClose) successClose.addEventListener('click', closeWizard);
+
+                overlay.addEventListener('click', function (e) {
+                    if (e.target === overlay) closeWizard();
+                });
+
+                if (btnNext) {
+                    btnNext.addEventListener('click', function () {
+                        if (!validateStep(currentStep)) return;
+                        setStep(currentStep + 1);
+                    });
+                }
+
+                if (btnBack) {
+                    btnBack.addEventListener('click', function () {
+                        setStep(currentStep - 1);
+                    });
+                }
+
+                if (form) {
+                    form.addEventListener('submit', function (e) {
+                        if (!validateStep(totalSteps)) {
+                            e.preventDefault();
+                        }
+                    });
+                }
+
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape' && overlay.classList.contains('is-open')) {
+                        closeWizard();
+                    }
+                });
+
+                setStep(1);
+
+                @if(session('success') || session('error') || $errors->any())
+                    openWizard(null, true);
+                @endif
             }
 
-            const checkboxes2 = document.querySelectorAll("input[name='payment_method[]']:checked");
-            if (checkboxes2.length === 0) {
-                e.preventDefault();
-                alert("Please select at least one payment method in Billing and Payment.");
-                return;
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initCorporateFleetWizard);
+            } else {
+                initCorporateFleetWizard();
             }
-
-        });
+        })();
     </script>
 @endsection
