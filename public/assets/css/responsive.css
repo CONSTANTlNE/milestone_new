@@ -76,6 +76,11 @@ body {
         font-size: 15px;
         line-height: 24px;
     }
+    .pbmit-slider-area .pbmit-slider-content .pbmit-title,
+    .banner-section-left .pbmit-content .pbmit-title {
+        font-size: 88px;
+        line-height: 88px;
+    }
     /*=== Homepage 02 ===*/
     .about-two-right-box{
         padding: 70px 30px 70px 60px;
@@ -595,7 +600,7 @@ body {
         line-height: 66px;
     }
     .pbmit-slider-one .pbmit-slider-right-content{
-        padding-left: 100px;
+        padding-left: 0;
     }
     .pbmit-slider-one .swiper-horizontal>.swiper-pagination-bullets,
     .pbmit-slider-two .swiper-horizontal>.swiper-pagination-bullets{
@@ -1248,6 +1253,9 @@ body {
         padding: 3px 15px;
     }
     .pbmit-slider-one .pbmit-slider-content .pbmit-title{
+        font-size: 42px;
+        line-height: 44px;
+        letter-spacing: -2px;
         margin-bottom: 20px;
     }
     .pbmit-slider-one .pbmit-slider-content .pbmit-desc{
@@ -1306,6 +1314,7 @@ body {
     .pbmit-slider-one .pbmit-slider-content .pbmit-title{
         font-size: 35px;
         line-height: 35px;
+        letter-spacing: -1px;
     }
     .pbmit-slider-area .pbmit-button .pbmit-btn{
         font-size: 13px;
@@ -1873,6 +1882,7 @@ body {
     .pbmit-slider-one .pbmit-slider-content .pbmit-title{
         font-size: 30px;
         line-height: 35px;
+        letter-spacing: 0;
     }
     .pbmit-slider-two .pbmit-slider-content .pbmit-title{
         font-size: 30px;
@@ -1884,6 +1894,19 @@ body {
     }
     .ihbox-swiper-arrow{
         top: 40px;
+    }
+}
+
+@media (max-width: 360px) {
+    /*=== Banner Slider ===*/
+    .pbmit-slider-one .pbmit-slider-content .pbmit-title {
+        font-size: 22px;
+        line-height: 26px;
+        letter-spacing: 0;
+    }
+    .pbmit-slider-area .pbmit-slider-content .pbmit-sub-title {
+        font-size: 9px;
+        padding: 2px 8px;
     }
 }
 

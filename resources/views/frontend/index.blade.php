@@ -18,14 +18,16 @@
                             <div class="container-fluid container-content">
                                 <div class="pbmit-slider-content">
                                     <div class="row align-items-end g-0">
-                                        <div class="col-md-12 col-lg-8">
+                                        <div class="col-12 col-sm-12 col-md-12 col-lg-9 col-xl-8">
                                             <h5 class="pbmit-sub-title transform-right transform-delay-1">
                                                 <span><img src="{{asset('assets/images/logistics.png')}}" alt="{{$slider->slogan}}"> {{$slider->slogan}}</span>
                                             </h5>
                                             <h2 class="pbmit-title transform-left-1 transform-delay-2">
-                                                <span>{{$slider->title}}</span></h2>
+                                                <span>{{$slider->title}}
+                                                </span>
+                                            </h2>
                                         </div>
-                                        <div class="col-md-12 col-lg-7">
+                                        <div class="col-12 col-sm-12 col-md-12 col-lg-10 col-xl-7">
                                             <div class="pbmit-slider-right-content">
                                                 <div class="pbmit-desc transform-center transform-delay-3">
                                                     {!! clear($slider->content) !!}

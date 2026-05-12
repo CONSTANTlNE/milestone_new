@@ -3035,8 +3035,8 @@
 }
 .pbmit-slider-area .pbmit-slider-content .pbmit-title,
 .banner-section-left .pbmit-content .pbmit-title{
-    font-size: 100px;
-    line-height: 100px;
+    font-size: clamp(24px, 6.9vw, 100px);
+    line-height: clamp(28px, 6.9vw, 100px);
     font-weight: 500;
     letter-spacing: -4px;
     color: var(--pbmit-white-color);
